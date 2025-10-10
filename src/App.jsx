@@ -1,21 +1,32 @@
-import { Route, Routes } from "react-router-dom";
 
-import Sidnav from "./Components/Sidnav";
-import Dashboard from "./Components/Dashboard";
 
-import Navbar from "./Components/Navbar";
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
-function App() {
-  return ( 
-    <Routes>
+import Login from "./Auth/Login";
+import Register from "./Auth/Register";
+import LandingPage from "./Component/LandingPage";
+import Sidnav from "./Component/Sidnav";
+import Dashboard from "./Component/Dashboard";
 
-      <Route path="/" element={<Sidnav/>}/>
-      <Route path="dashboard" element={<Dashboard/>}/>
 
-      <Route path="/navbar" element={<Navbar/>}/>
 
-    </Routes>
-  );
-}
+  function App() {
+    return (
 
-export default App;
+      <Router>
+        <Routes>
+          
+          <Route path="/login" element={<Login/>}/>
+          <Route path="/register" element={<Register/>}/>
+          <Route path="/" element={<LandingPage/>}/>
+          <Route path="/sidnav" element={<Sidnav/>}/>
+          <Route path="/dashboard" element={<Dashboard/>}/>
+
+          
+
+        </Routes>
+      </Router>
+    );
+  }
+
+  export default App;
