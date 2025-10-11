@@ -1,152 +1,87 @@
-// dashboard.jsx
+
 import React, { useState } from 'react';
-import Swal from 'sweetalert2';
+import { useLocation } from 'react-router-dom';
+import Sidenav from './Sidnav';
+import './Dashboard.css'; // Import CSS
 
 const Dashboard = () => {
-  // Data contoh (seperti data login terdaftar otomatis setelah login)
-  const [data, setData] = useState([
-    { id: 1, email: 'user1@example.com', password: 'pass123' },
-    { id: 2, email: 'user2@example.com', password: 'pass456' },
-  ]);
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [editingItem, setEditingItem] = useState(null);
-  const [newData, setNewData] = useState({ email: '', password: '' });
-  const [editData, setEditData] = useState({ email: '', password: '' });
+  const location = useLocation();
+  const activeMenu = location.pathname.split('/')[1] || 'dashboard'; // Deteksi menu aktif
 
-  // Fungsi tambah data
-  const handleAdd = () => {
-    if (newData.email && newData.password) {
-      const newId = data.length + 1;
-      setData([...data, { id: newId, ...newData }]);
-      setNewData({ email: '', password: '' });
-      setIsAddModalOpen(false);
-      Swal.fire('Sukses!', 'Data berhasil ditambahkan.', 'success');
-    } else {
-      Swal.fire('Error!', 'Email dan password harus diisi.', 'error');
-    }
+  // Data dummy kosong untuk tabel (nanti ganti dengan data dari sistem tagihan)
+  const [tableData, _setTableData] = useState([]);
+
+  // Statistik dummy (ganti dengan data real)
+  const stats = {
+    totalPendaftar: 0,
+    totalTagihan: 0,
+    dibayarkan: 0
   };
 
-  // Fungsi edit
-  const handleEditClick = (item) => {
-    Swal.fire({
-      title: 'Apakah Anda ingin mengedit?',
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonText: 'OK',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        setEditingItem(item);
-        setEditData({ email: item.email, password: item.password });
-        setIsEditModalOpen(true);
-      }
-    });
-  };
-
-  const handleEditSave = () => {
-    if (editData.email && editData.password) {
-      setData(data.map((item) => (item.id === editingItem.id ? { ...editData, id: item.id } : item)));
-      setIsEditModalOpen(false);
-      setEditingItem(null);
-      Swal.fire('Sukses!', 'Data berhasil diedit.', 'success');
-    } else {
-      Swal.fire('Error!', 'Email dan password harus diisi.', 'error');
-    }
-  };
-
-  // Fungsi hapus
-  const handleDelete = (id) => {
-    Swal.fire({
-      title: 'Apakah yakin ingin menghapus?',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Ya, hapus!',
-      cancelButtonText: 'Batal',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        setData(data.filter((item) => item.id !== id));
-        Swal.fire('Terhapus!', 'Data telah dihapus permanen.', 'success');
-      }
-    });
-  };
+  const columns = [
+    { key: 'no', label: 'No' },
+    { key: 'nama', label: 'Nama' },
+    { key: 'keterangan', label: 'Keterangan' },
+    { key: 'nisn', label: 'NISN' },
+    { key: 'noHp', label: 'No. HP' },
+    { key: 'deskripsi', label: 'Deskripsi' },
+    { key: 'harga', label: 'Harga' },
+    { key: 'tanggal', label: 'Tanggal' },
+    { key: 'status', label: 'Status' }
+  ];
 
   return (
-    <div className="dashboard">
-      <h1>Dashboard</h1>
-      <button onClick={() => setIsAddModalOpen(true)} className="add-btn">
-        Tambah Data
-      </button>
+    <div className="dashboard-container">
+      <Sidenav activeMenu={activeMenu} />
+      <div className="dashboard-content">
+        <header>
+          <h1>Dashboard</h1>
+        </header>
 
-      {/* Tabel */}
-      <table className="data-table">
-        <thead>
-          <tr>
-            <th>No</th>
-            <th>Email</th>
-            <th>Password</th>
-            <th>Aksi</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((item, index) => (
-            <tr key={item.id}>
-              <td>{index + 1}</td>
-              <td>{item.email}</td>
-              <td>{item.password}</td>
-              <td>
-                <button onClick={() => handleEditClick(item)} className="edit-btn">📝</button>
-                <button onClick={() => handleDelete(item.id)} className="delete-btn">🗑️</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      {/* Modal Tambah */}
-      {isAddModalOpen && (
-        <div className="modal">
-          <div className="modal-content">
-            <h2>Tambah Data Login</h2>
-            <input
-              type="email"
-              placeholder="Email"
-              value={newData.email}
-              onChange={(e) => setNewData({ ...newData, email: e.target.value })}
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              value={newData.password}
-              onChange={(e) => setNewData({ ...newData, password: e.target.value })}
-            />
-            <button onClick={handleAdd}>Simpan</button>
-            <button onClick={() => setIsAddModalOpen(false)}>Batal</button>
+        {/* Kotak Statistik */}
+        <div className="stats-grid">
+          <div className="stat-card">
+            <h3>Total Pendaftar</h3>
+            <p>{stats.totalPendaftar}</p>
+          </div>
+          <div className="stat-card">
+            <h3>Tagihan</h3>
+            <p>{stats.totalTagihan}</p>
+          </div>
+          <div className="stat-card">
+            <h3>Dibayarkan</h3>
+            <p>{stats.dibayarkan}</p>
           </div>
         </div>
-      )}
 
-      {/* Modal Edit */}
-      {isEditModalOpen && (
-        <div className="modal">
-          <div className="modal-content">
-            <h2>Edit Data Login</h2>
-            <input
-              type="email"
-              placeholder="Email"
-              value={editData.email}
-              onChange={(e) => setEditData({ ...editData, email: e.target.value })}
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              value={editData.password}
-              onChange={(e) => setEditData({ ...editData, password: e.target.value })}
-            />
-            <button onClick={handleEditSave}>OK</button>
-            <button onClick={() => setIsEditModalOpen(false)}>Batal</button>
-          </div>
+        {/* Tabel */}
+        <div className="table-container">
+          <table>
+            <thead>
+              <tr>
+                {columns.map((col) => (
+                  <th key={col.key}>{col.label}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {tableData.length === 0 ? (
+                <tr>
+                  <td colSpan={columns.length} className="empty-table">Tabel kosong - Data tagihan akan diisi dari sistem</td>
+                </tr>
+              ) : (
+                tableData.map((row, index) => (
+                  <tr key={index}>
+                    {columns.map((col) => (
+                      <td key={col.key}>{row[col.key] || ''}</td>
+                    ))}
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
         </div>
-      )}
+      </div>
     </div>
   );
 };

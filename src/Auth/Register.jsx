@@ -50,7 +50,7 @@ const Register = () => {
       </div>
       <form onSubmit={handleSubmit} className="register-form">
         <div className="input-group">
-          <label>Username</label>
+          <label>Nama lengkap</label>
           <input
             type="text"
             name="username"
@@ -90,7 +90,7 @@ const Register = () => {
               checked={formData.agreeTerms}
               onChange={handleChange}
             />
-            Remember 
+            Setuju 
           </label>
         </div>
         <button type="submit" className="register-btn">Masuk</button>
@@ -103,7 +103,7 @@ const Register = () => {
       </div>
       {/* Bottom navigation hint - matches image, but full in Dashboard */}
       <div className="bottom-nav-placeholder">
-        <p>Agak laen</p>
+        <p>Akun dan Password ini di buat Untuk Keamanan</p>
       </div>
     </div>
   );
