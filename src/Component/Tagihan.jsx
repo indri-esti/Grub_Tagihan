@@ -1,231 +1,122 @@
-import React, { useState, useEffect } from 'react'; // Fixed: tambah useEffect ke import
-import { Link, useNavigate } from 'react-router-dom';
-import Swal from 'sweetalert2';
-import './Tagihan.css';
-
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import Swal from "sweetalert2";
+import Sidebar from "/Sidebar";  // Pastikan path ini benar
+import classes from "./Tagihan.css";  // Pastikan file CSS ada
 
 const Tagihan = () => {
-  const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState('');
-  // Tambahkan dummy data untuk testing (hapus jika data dari API)
-  const [dataTagihan, setDataTagihan] = useState([
-    {
-      id: 1,
-      nama: 'John Doe',
-      keterangan: 'Tagihan Bulanan',
-      nisn: '123456789',
-      noHp: '08123456789',
-      deskripsiBarang: 'Buku Pelajaran',
-      harga: '50000',
-      tanggal: '2023-10-01',
-      status: 'Belum Bayar'
-    },
-    {
-      id: 2,
-      nama: 'Jane Smith',
-      keterangan: 'Tagihan SPP',
-      nisn: '987654321',
-      noHp: '08987654321',
-      deskripsiBarang: 'Uang Seragam',
-      harga: '100000',
-      tanggal: '2023-10-05',
-      status: 'Sudah Bayar'
-    }
+  // 1. Isi data dummy untuk menghindari error rendering
+  const [data, setData] = useState([
+    { id: 1, no: 1, nama: 'John Doe', keterangan: 'Tagihan sekolah', nisn: '123456', noHP: '08123456789', deskripsi: 'Deskripsi lengkap tagihan', harga: 'Rp 100.000', tanggal: '01/01/2023', status: 'Belum Lunas' },
+    { id: 2, no: 2, nama: 'Jane Smith', keterangan: 'Tagihan lain', nisn: '654321', noHP: '08123456788', deskripsi: 'Deskripsi tagihan kedua', harga: 'Rp 200.000', tanggal: '02/01/2023', status: 'Lunas' },
+    // Tambahkan lebih banyak data jika perlu
   ]);
 
-  // Fixed: useEffect dengan fetch simulasi (ganti dengan API real)
-  useEffect(() => {
-    // Contoh fetch real: 
-    // fetch('/api/tagihan').then(res => res.json()).then(setDataTagihan);
-    console.log('Data tagihan di-load dari sistem dashboard');
-  }, []);
+  const [search, setSearch] = useState('');  // Ganti _search dengan search untuk kesederhanaan
 
-  // Fixed: Filter dengan optional chaining untuk hindari crash jika properti undefined
-  const filteredData = dataTagihan.filter(item => {
-    const nama = item.nama?.toLowerCase() || '';
-    const nisn = item.nisn?.toLowerCase() || '';
-    const keterangan = item.keterangan?.toLowerCase() || '';
-    const term = searchTerm.toLowerCase();
-    return nama.includes(term) || nisn.includes(term) || keterangan.includes(term);
-  });
-
-  // Fungsi tambah data
-  const handleTambahData = () => {
+  const handleDelete = (id) => {  // Ganti _handleDelete dan _Id dengan nama biasa
     Swal.fire({
-      title: 'Tambah Data Tagihan',
-      text: 'Apakah Anda ingin menambahkan data baru?',
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Ya, Tambah!',
-      cancelButtonText: 'Batal'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        navigate('/tambah-tagihan'); // Pastikan route ini ada
-      }
-    });
-  };
-
-  // Fixed: Syntax error di navigate - pakai backticks untuk template literal
-  const handleEdit = (id) => {
-    Swal.fire({
-      title: 'Edit Data',
-      text: 'Apakah Anda ingin mengedit data ini?',
-      icon: 'info',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Ya, Edit!',
-      cancelButtonText: 'Batal'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        navigate(`/edit-tagihan/${id}`); // Fixed: backticks untuk ${id}
-      }
-    });
-  };
-
-  // Fungsi hapus
-  const handleHapus = (id) => {
-    Swal.fire({
-      title: 'Hapus Data',
-      text: 'Apakah Anda yakin ingin menghapus data ini? Aksi ini tidak bisa dibatalkan!',
+      title: 'Apakah Anda yakin ingin menghapus?',
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Ya, Hapus!',
+      confirmButtonText: 'Ya, Hapus',
       cancelButtonText: 'Batal'
     }).then((result) => {
       if (result.isConfirmed) {
-        setDataTagihan(dataTagihan.filter(item => item.id !== id));
-        Swal.fire('Terhapus!', 'Data telah dihapus.', 'success');
-        // Kirim ke API: fetch(`/api/tagihan/${id}`, { method: 'DELETE' });
+        // Hapus data dari state
+        setData(data.filter(item => item.id !== id));
+        Swal.fire('Dihapus!', 'Data telah dihapus.', 'success');
       }
     });
   };
 
-  // Fungsi logout
-  const handleLogout = () => {
-    Swal.fire({
-      title: 'Logout',
-      text: 'Apakah Anda ingin keluar?',
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Ya, Keluar!',
-      cancelButtonText: 'Batal'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        navigate('/menu'); // Pastikan route ini ada
-      }
-    });
+  const addData = () => {
+    // Logika tambah data: Buat data baru dan tambahkan ke state
+    const newData = {
+      id: data.length + 1,  // Auto-increment ID sederhana
+      no: data.length + 1,
+      nama: 'Nama Baru',  // Di dunia nyata, gunakan form input
+      keterangan: 'Keterangan baru',
+      nisn: 'NISN Baru',
+      noHP: 'No HP Baru',
+      deskripsi: 'Deskripsi baru',
+      harga: 'Rp 0',
+      tanggal: '01/01/2023',  // Gunakan date library untuk format yang benar
+      status: 'Belum Lunas'
+    };
+    setData([...data, newData]);  // Tambahkan ke state
+    // Untuk "Kirim ke dashboard": Gunakan Context API atau props untuk berbagi data
+    // Contoh: Jika menggunakan Context, dispatch ke state global
   };
+
+  // Filter data berdasarkan search (opsional, untuk fungsi pencarian)
+  const filteredData = data.filter(item =>
+    item.nama.toLowerCase().includes(search.toLowerCase()) ||  // Cari berdasarkan nama
+    item.keterangan.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
-    <div className="tagihan-container">
-      {/* Sidenav Kiri */}
-      <nav className="sidenav">
-        <h2>Menu Keuangan</h2>
-        <ul>
-          <li>
-            <Link to="/dashboard" className="nav-item">
-              <span className="icon">📊</span> Dashboard
-            </Link>
-          </li>
-          <li className="active">
-            <Link to="/tagihan" className="nav-item">
-              <span className="icon">💸</span> Tagihan
-            </Link>
-          </li>
-          <li>
-            <Link to="/jenis-tagihan" className="nav-item">
-              <span className="icon">💵</span> Jenis Tagihan
-            </Link>
-          </li>
-        <button className="logout-btn" onClick={handleLogout}>
-          Logout
-        </button>
-        </ul>
-      </nav>
-
-      {/* Area Utama */}
-      <main className="main-content">
-        <div className="header">
-          <h1>Halaman Tagihan</h1>
-        </div>
-
-        {/* Pencarian dan Tombol Tambah */}
-        <div className="search-add-container">
+    <div className={classes.tagihanContainer}>
+      <Sidebar />
+      <div className={classes.mainContent}>
+        <h1 className={classes.pageTitle}>Tagihan</h1>
+        <div className={classes.headerActions}>
           <input
             type="text"
-            placeholder="Cari data tagihan..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="search-input"
+            placeholder="Cari..."
+            onChange={(e) => setSearch(e.target.value)}  // Update state search
+            className={classes.searchInput}
           />
-          <button onClick={handleTambahData} className="tambah-btn">
-            + Tambah Data
+          <button onClick={addData} className={classes.addButton}>
+            Tambah Data
           </button>
         </div>
-
-        {/* Tabel */}
-        <div className="table-container">
-          <table className="tagihan-table">
-            <thead>
-              <tr>
-                <th>No</th>
-                <th>Nama</th>
-                <th>Keterangan</th>
-                <th>NISN</th>
-                <th>No. HP</th>
-                <th>Deskripsi Barang</th>
-                <th>Harga</th>
-                <th>Tanggal</th>
-                <th>Status</th>
-                <th>Aksi</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredData.length === 0 ? (
-                <tr>
-                  <td colSpan="10" className="empty-state">
-                    Tidak ada data tagihan. Tambahkan data baru dari dashboard.
+        <table className={classes.table}>
+          <thead>
+            <tr>
+              <th style={{ textAlign: 'right' }}>No</th>
+              <th style={{ textAlign: 'left' }}>Nama</th>
+              <th style={{ textAlign: 'left' }}>Keterangan</th>
+              <th style={{ textAlign: 'left' }}>NISN</th>
+              <th style={{ textAlign: 'left' }}>No. HP</th>
+              <th style={{ textAlign: 'left' }}>Deskripsi</th>
+              <th style={{ textAlign: 'right' }}>Harga</th>
+              <th>Tanggal</th>  {/* Format dd/mm/yyyy */}
+              <th style={{ textAlign: 'center' }}>Status</th>
+              <th style={{ textAlign: 'center' }}>Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredData.length > 0 ? (  // Cek jika ada data untuk hindari error
+              filteredData.map(item => (
+                <tr key={item.id}>
+                  <td style={{ textAlign: 'right' }}>{item.no}</td>
+                  <td style={{ textAlign: 'left' }}>{item.nama}</td>
+                  <td style={{ textAlign: 'left' }}>{item.keterangan}</td>
+                  <td style={{ textAlign: 'left' }}>{item.nisn}</td>
+                  <td style={{ textAlign: 'left' }}>{item.noHP}</td>
+                  <td style={{ textAlign: 'left' }}>{item.deskripsi}</td>
+                  <td style={{ textAlign: 'right' }}>{item.harga}</td>
+                  <td>{item.tanggal}</td>
+                  <td style={{ textAlign: 'center' }}>{item.status}</td>
+                  <td style={{ textAlign: 'center' }}>
+                    <Link to={`/edit/${item.id}`} className={classes.actionButton}>
+                      Edit
+                    </Link>
+                    <button onClick={() => handleDelete(item.id)} className={classes.actionButton}>
+                      Hapus
+                    </button>
                   </td>
                 </tr>
-              ) : (
-                filteredData.map((item, index) => (
-                  <tr key={item.id}>
-                    <td>{index + 1}</td>
-                    <td>{item.nama || 'N/A'}</td> {/* Fallback jika undefined */}
-                    <td>{item.keterangan || 'N/A'}</td>
-                    <td>{item.nisn || 'N/A'}</td>
-                    <td>{item.noHp || 'N/A'}</td>
-                    <td>{item.deskripsiBarang || 'N/A'}</td>
-                    <td>{item.harga || 'N/A'}</td>
-                    <td>{item.tanggal || 'N/A'}</td>
-                    <td>
-                      {/* Fixed: Syntax error - pakai backticks untuk template literal */}
-                      <span className={`status ${item.status || ''}`}>
-                        {item.status || 'N/A'}
-                      </span>
-                    </td>
-                    <td className="aksi">
-                      <button onClick={() => handleEdit(item.id)} className="edit-btn">
-                        ✏️ Edit
-                      </button>
-                      <button onClick={() => handleHapus(item.id)} className="hapus-btn">
-                        🗑️ Hapus
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-      </main>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="10" style={{ textAlign: 'center' }}>Tidak ada data</td>  // Pesan jika data kosong
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

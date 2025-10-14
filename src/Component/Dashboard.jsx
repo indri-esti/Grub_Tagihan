@@ -1,86 +1,75 @@
-
 import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import Sidenav from './Sidnav';
-import './Dashboard.css'; // Import CSS
+import { Link } from 'react-router-dom';
+import Swal from "sweetalert2";
+import Sidebar from "/Sidebar"; // Import sidebar
+import classes from "./Dashboard.css";
 
 const Dashboard = () => {
-  const location = useLocation();
-  const activeMenu = location.pathname.split('/')[1] || 'dashboard'; // Deteksi menu aktif
+  const [data, setData] = useState([
+    { id: 1, no: 1, nama: 'John Doe', keterangan: 'Pendaftaran sekolah', nisn: '123456', noHP: '08123456789', deskripsi: 'Deskripsi lengkap', harga: 'Rp 100.000', tanggal: '01/01/2023', status: 'Lunas' },
+    // Tambahkan data dummy lainnya
+  ]);
 
-  // Data dummy kosong untuk tabel (nanti ganti dengan data dari sistem tagihan)
-  const [tableData, _setTableData] = useState([]);
-
-  // Statistik dummy (ganti dengan data real)
-  const stats = {
-    totalPendaftar: 0,
-    totalTagihan: 0,
-    dibayarkan: 0
+  const handleDelete = (id) => {
+    Swal.fire({
+      title: 'Apakah Anda yakin ingin menghapus?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Ya, Hapus',
+      cancelButtonText: 'Batal'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        setData(data.filter(item => item.id !== id));
+        Swal.fire('Dihapus!', 'Data telah dihapus.', 'success');
+      }
+    });
   };
 
-  const columns = [
-    { key: 'no', label: 'No' },
-    { key: 'nama', label: 'Nama' },
-    { key: 'keterangan', label: 'Keterangan' },
-    { key: 'nisn', label: 'NISN' },
-    { key: 'noHp', label: 'No. HP' },
-    { key: 'deskripsi', label: 'Deskripsi' },
-    { key: 'harga', label: 'Harga' },
-    { key: 'tanggal', label: 'Tanggal' },
-    { key: 'status', label: 'Status' }
-  ];
-
   return (
-    <div className="dashboard-container">
-      <Sidenav activeMenu={activeMenu} />
-      <div className="dashboard-content">
-        <header>
-          <h1>Dashboard</h1>
-        </header>
-
-        {/* Kotak Statistik */}
-        <div className="stats-grid">
-          <div className="stat-card">
-            <h3>Total Pendaftar</h3>
-            <p>{stats.totalPendaftar}</p>
-          </div>
-          <div className="stat-card">
-            <h3>Tagihan</h3>
-            <p>{stats.totalTagihan}</p>
-          </div>
-          <div className="stat-card">
-            <h3>Dibayarkan</h3>
-            <p>{stats.dibayarkan}</p>
-          </div>
+    <div className={classes.dashboardContainer}>
+      <Sidebar />
+      <div className={classes.mainContent}>
+        <h1 className={classes.pageTitle}>Dashboard</h1>
+        <div className={classes.summaryBoxes}>
+          <div className={classes.box}>Total Pendaftar: 50</div> {/* Ganti dengan data dinamis */}
+          <div className={classes.box}>Total Tagihan: Rp 500.000</div>
+          <div className={classes.box}>Dibayarkan: Rp 300.000</div>
         </div>
-
-        {/* Tabel */}
-        <div className="table-container">
-          <table>
-            <thead>
-              <tr>
-                {columns.map((col) => (
-                  <th key={col.key}>{col.label}</th>
-                ))}
+        <table className={classes.table}>
+          <thead>
+            <tr>
+              <th style={{ textAlign: 'right' }}>No</th>
+              <th style={{ textAlign: 'left' }}>Nama</th>
+              <th style={{ textAlign: 'left' }}>Keterangan</th>
+              <th style={{ textAlign: 'left' }}>NISN</th>
+              <th style={{ textAlign: 'left' }}>No. HP</th>
+              <th style={{ textAlign: 'left' }}>Deskripsi</th>
+              <th style={{ textAlign: 'right' }}>Harga</th>
+              <th>Tanggal</th>
+              <th style={{ textAlign: 'center' }}>Status</th>
+              <th style={{ textAlign: 'center' }}>Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.map(item => (
+              <tr key={item.id}>
+                <td style={{ textAlign: 'right' }}>{item.no}</td>
+                <td style={{ textAlign: 'left' }}>{item.nama}</td>
+                <td style={{ textAlign: 'left' }}>{item.keterangan}</td>
+                <td style={{ textAlign: 'left' }}>{item.nisn}</td>
+                <td style={{ textAlign: 'left' }}>{item.noHP}</td>
+                <td style={{ textAlign: 'left' }}>{item.deskripsi}</td>
+                <td style={{ textAlign: 'right' }}>{item.harga}</td>
+                <td>{item.tanggal}</td> {/* Format dd/mm/yyyy */}
+                <td style={{ textAlign: 'center' }}>{item.status}</td>
+                <td style={{ textAlign: 'center' }}>
+                  <Link to={`/edit/${item.id}`} className={classes.actionButton}>Edit</Link>
+                  <button onClick={() => handleDelete(item.id)} className={classes.actionButton}>Hapus</button>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {tableData.length === 0 ? (
-                <tr>
-                  <td colSpan={columns.length} className="empty-table">Tabel kosong - Data tagihan akan diisi dari sistem</td>
-                </tr>
-              ) : (
-                tableData.map((row, index) => (
-                  <tr key={index}>
-                    {columns.map((col) => (
-                      <td key={col.key}>{row[col.key] || ''}</td>
-                    ))}
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );

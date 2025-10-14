@@ -5,11 +5,14 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from "./Auth/Login";
 import Register from "./Auth/Register";
 import LandingPage from "./Component/LandingPage";
-import Sidnav from "./Component/Sidnav";
+import Sidebar from "./Component/Sidebar";
 import Dashboard from "./Component/Dashboard";
+
 import Tagihan from "./Component/Tagihan";
 import JenisTagihan from "./Component/JenisTagihan";
-import TambahTagihan from "./Component/TambahTagihan";
+
+
+
 
 
 
@@ -22,11 +25,15 @@ import TambahTagihan from "./Component/TambahTagihan";
           <Route path="/login" element={<Login/>}/>
           <Route path="/register" element={<Register/>}/>
           <Route path="/" element={<LandingPage/>}/>
-          <Route path="/sidnav" element={<Sidnav/>}/>
+          <Route path="/sidebar" element={<Sidebar/>}/>
           <Route path="/dashboard" element={<Dashboard/>}/>
-          <Route path="/tagihan" element={<Tagihan/>}/>
-          <Route path="/jenis-tagihan" element={<JenisTagihan/>}/>
-          <Route path="/tambah-tagihan" element={<TambahTagihan/>}/>
+          
+          <Route path="/tagihan" elment={<Tagihan/>}/>
+          <Route path="/jenistagihan" element={<JenisTagihan/>}/>
+          
+         
+          
+        
           
 
         </Routes>

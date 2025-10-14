@@ -1,4 +1,4 @@
-.register-container {
+.login-container {
   min-height: 100vh;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
   display: flex;
@@ -8,7 +8,9 @@
   overflow: hidden;
 }
 
-.register-container::before {
+
+
+.login-container::before {
   content: '';
   position: absolute;
   bottom: 0;
@@ -16,25 +18,25 @@
   width: 100%;
   height: 50%;
   background: linear-gradient(to top, #ff6b6b, transparent);
+  
   z-index: 1;
 }
 
-
-.register-form {
+.login-form {
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
   border-radius: 20px;
-  padding: 40px;
+  padding: 100px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.973);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   width: 100%;
-  max-width: 400px;
+  max-width: 800px;
   z-index: 2;
   text-align: center;
-  color: white;
+  color: rgb(18, 19, 18);
 }
 
-.register-form h2 {
+.login-form h2 {
   margin-bottom: 30px;
   font-size: 2em;
   font-weight: bold;
@@ -51,18 +53,18 @@
   border: none;
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.2);
-  color: white;
+  color: rgb(20, 14, 14);
   font-size: 16px;
   backdrop-filter: blur(5px);
 }
 
 .input-group input::placeholder {
-  color: rgba(255, 255, 255, 0.959);
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .input-group input:focus {
   outline: none;
-  box-shadow: 0 0 10px rgba(232, 233, 231, 0.945);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
 }
 
 .password-toggle {
@@ -71,16 +73,14 @@
   top: 50%;
   transform: translateY(-50%);
   cursor: pointer;
-  color: rgb(51, 137, 218);
+  color: rgb(74, 109, 226);
   font-size: 18px;
 }
 
-
-
-.register-btn {
+.login-btn {
   width: 100%;
   padding: 15px;
-  background: linear-gradient(135deg, #4ecdc4, #44a08d);
+  background: linear-gradient(135deg, #ff6b6b, #feca57);
   border: none;
   border-radius: 10px;
   color: white;
@@ -91,28 +91,28 @@
   margin-bottom: 20px;
 }
 
-.register-btn:hover {
+.login-btn:hover {
   transform: scale(1.05);
 }
 
-.register-form p {
+.login-form p {
   margin: 0;
   color: rgba(255, 255, 255, 0.8);
 }
 
-.register-form a {
-  color: #4ecdc4;
+.login-form a {
+  color: #feca57;
   text-decoration: none;
   font-weight: bold;
 }
 
-.register-form a:hover {
+.login-form a:hover {
   text-decoration: underline;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-  .register-form {
+  .login-form {
     padding: 30px 20px;
     margin: 20px;
   }
