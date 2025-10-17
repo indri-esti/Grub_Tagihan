@@ -1,62 +1,187 @@
-.dashboardContainer {
+.dashboard-container {
   display: flex;
-
+  min-height: 100vh;
+  background-color: #f5f5f5;
 }
 
-.mainContent {
+.dashboard-content {
   flex: 1;
   padding: 20px;
-
+  background-color: white;
 }
 
-.pageTitle {
-  font-size: 2rem;
+.dashboard-title {
+  font-size: 24px;
+  font-weight: bold;
   color: #333;
   margin-bottom: 20px;
-
+  text-align: center;
 }
 
-.summaryBoxes {
+/* Stats Kotak */
+.stats-container {
   display: flex;
   gap: 20px;
   margin-bottom: 30px;
+  justify-content: space-around;
 }
 
-.box {
-  background-color: #e9ecef;
-  padding: 20px;
+.stat-box {
+  background-color: #f8f9fa;
+  border: 1px solid #689bcf;
   border-radius: 8px;
-  flex: 1;
+  padding: 20px;
   text-align: center;
-  font-size: 1.2rem;
+  flex: 1;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.table {
+.stat-box h3 {
+  margin: 0 0 10px 0;
+  font-size: 14px;
+  color: #666;
+}
+
+.stat-box p {
+  margin: 0;
+  font-size: 24px;
+  font-weight: bold;
+  color: #007bff;
+}
+
+/* Tabel */
+.table-container {
+  overflow-x: auto;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.dashboard-table {
   width: 100%;
   border-collapse: collapse;
-  background-color: white;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
 }
 
-.table th, .table td {
-  padding: 12px;
-  border-bottom: 1px solid #dee2e6;
+.dashboard-table th,
+.dashboard-table td {
+  padding: 20px;
   text-align: left;
-  
-
+  border-bottom: 1px solid #dee9f5;
 }
 
-.actionButton {
-  margin-right: 10px;
-  padding: 5px 10px;
-  background-color: #007bff;
-  color: white;
+.dashboard-table th {
+  background-color: #057cf3;
+  font-weight: bold;
+  color: #f8f3f3;
+}
+
+.dashboard-table tr:hover {
+  background-color: #f8f9fa;
+}
+
+/* Aksi Buttons */
+.action-btn {
+  padding: 6px 12px;
+  margin: 0 2px;
   border: none;
-  border-radius: 5px;
+  border-radius: 4px;
   cursor: pointer;
-  text-decoration: none;
+  font-size: 20px;
 }
 
-.actionButton:hover {
-  background-color: #0056b3;
+.edit-btn {
+  background-color: #28a745;
+  color: rgb(90, 216, 17);
+}
+
+.delete-btn {
+  background-color: #f70522ef;
+  color: white;
+}
+
+.action-btn:hover {
+  opacity: 0.8;
+}
+
+/* Modal Edit */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 400px;
+  max-width: 90%;
+}
+
+.modal-content h2 {
+  margin-top: 0;
+  text-align: center;
+}
+
+.modal-content input,
+.modal-content textarea,
+.modal-content select {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.modal-content textarea {
+  height: 80px;
+  resize: vertical;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.modal-actions button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.modal-actions button[type="submit"] {
+  background-color: #28a745;
+  color: white;
+}
+
+.modal-actions button[type="button"] {
+  background-color: #6db6f7;
+  color: white;
+}
+
+/* Responsif */
+@media (max-width: 768px) {
+  .stats-container {
+    flex-direction: column;
+  }
+  
+  .dashboard-table {
+    font-size: 12px;
+  }
+  
+  .dashboard-table th,
+  .dashboard-table td {
+    padding: 8px;
+  }
 }

@@ -1,42 +1,47 @@
-.register-container {
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); /* Gradient latar belakang */
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+
   display: flex;
   justify-content: center;
   align-items: center;
-  position: relative;
-  overflow: hidden;
+
 }
 
-.register-container::before {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
+.register-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 100%;
-  height: 50%;
-  background: linear-gradient(to top, #ff6b6b, transparent);
-  z-index: 1;
+  min-height: 100vh;
+  padding: 20px;
 }
 
 
 .register-form {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border-radius: 20px;
+  background: rgba(253, 251, 251, 0.95); /* Background semi-transparan */
   padding: 40px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.973);
+  border-radius: 20px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 400px;
-  z-index: 2;
-  text-align: center;
-  color: white;
+  text-align: center; /* Center text di dalam form */
+  backdrop-filter: blur(10px); /* Efek blur untuk modern look */
+  border: 1px solid rgba(13, 74, 85, 0.2);
 }
 
-.register-form h2 {
+.form-title {
+  color: #221818;
   margin-bottom: 30px;
-  font-size: 2em;
+  font-size: 28px;
   font-weight: bold;
 }
 
@@ -48,72 +53,106 @@
 .input-group input {
   width: 100%;
   padding: 15px;
-  border: none;
+  border: 2px solid #83ebc8;
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
-  font-size: 16px;
-  backdrop-filter: blur(5px);
-}
 
-.input-group input::placeholder {
-  color: rgba(255, 255, 255, 0.959);
+  font-size: 16px;
+  transition: border-color 0.3s ease;
 }
 
 .input-group input:focus {
   outline: none;
-  box-shadow: 0 0 10px rgba(232, 233, 231, 0.945);
+  border-color: #667eea;
+}
+
+.password-group {
+  display: flex;
+  align-items: center;
+}
+
+.password-group input {
+  flex: 1;
+  border-radius: 10px 0 0 10px;
+  border-right: none;
 }
 
 .password-toggle {
-  position: absolute;
-  right: 15px;
-  top: 50%;
-  transform: translateY(-50%);
+  background: #78e8ec;
+  padding: 10px;
+  border: 2px solid #e8ebf0;
+  border-left: none;
+  border-radius: 0 10px 10px 0;
   cursor: pointer;
-  color: rgb(51, 137, 218);
+
   font-size: 18px;
+  transition: background 0.3s ease;
+  user-select: none;
 }
 
+.password-toggle:hover {
+  background: #5e5959;
+}
 
-
-.register-btn {
+.submit-btn {
   width: 100%;
   padding: 15px;
-  background: linear-gradient(135deg, #4ecdc4, #44a08d);
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); /* Gradient biru */
+  color: rgb(40, 149, 163);
   border: none;
   border-radius: 10px;
-  color: white;
+
   font-size: 18px;
   font-weight: bold;
   cursor: pointer;
   transition: transform 0.3s ease;
+  margin-bottom: 15px;
+}
+
+.submit-btn:hover {
+  transform: translateY(-2px);
+}
+
+.logout-btn {
+  width: 100%;
+  padding: 10px;
+  background: #ff6b6b;
+  color: rgb(126, 118, 118);
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s ease;
   margin-bottom: 20px;
 }
 
-.register-btn:hover {
-  transform: scale(1.05);
+.logout-btn:hover {
+  background: #ff5252;
 }
 
-.register-form p {
-  margin: 0;
-  color: rgba(255, 255, 255, 0.8);
+.login-link {
+  color: #666;
+  font-size: 14px;
 }
 
-.register-form a {
-  color: #4ecdc4;
-  text-decoration: none;
+.link-text {
+  color: #667eea;
+  cursor: pointer;
+  text-decoration: underline;
   font-weight: bold;
 }
 
-.register-form a:hover {
-  text-decoration: underline;
+.link-text:hover {
+  color: #764ba2;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
+/* Responsive untuk mobile */
+@media (max-width: 480px) {
   .register-form {
     padding: 30px 20px;
-    margin: 20px;
+    margin: 10px;
+  }
+  
+  .form-title {
+    font-size: 24px;
   }
 }

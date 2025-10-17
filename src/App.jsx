@@ -8,8 +8,10 @@ import LandingPage from "./Component/LandingPage";
 import Sidebar from "./Component/Sidebar";
 import Dashboard from "./Component/Dashboard";
 
-import Tagihan from "./Component/Tagihan";
+
 import JenisTagihan from "./Component/JenisTagihan";
+import Tagihan from "./Component/Tagihan";
+
 
 
 
@@ -25,11 +27,13 @@ import JenisTagihan from "./Component/JenisTagihan";
           <Route path="/login" element={<Login/>}/>
           <Route path="/register" element={<Register/>}/>
           <Route path="/" element={<LandingPage/>}/>
-          <Route path="/sidebar" element={<Sidebar/>}/>
+          <Route path="/Sidebar" element={<Sidebar/>}/>
           <Route path="/dashboard" element={<Dashboard/>}/>
           
-          <Route path="/tagihan" elment={<Tagihan/>}/>
-          <Route path="/jenistagihan" element={<JenisTagihan/>}/>
+          
+          <Route path="/jenis-tagihan" element={<JenisTagihan/>}/>
+          <Route path="/tagihan" element={<Tagihan/>}/>
+          
           
          
           

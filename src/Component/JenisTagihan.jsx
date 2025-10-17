@@ -1,103 +1,202 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import Swal from "sweetalert2";
-import Sidebar from "/Sidebar";  // Pastikan path ini benar
-import classes from "./Jenistagihan.css";  // Pastikan file CSS ada
+import Sidebar from './Sidebar'; // Asumsi path Sidebar; sesuaikan jika berbeda
+import Swal from 'sweetalert2';
+import './JenisTagihan.css'; // Import CSS
 
-const Jenistagihan = () => {
-  const [selectedType, setSelectedType] = useState('seragam');  // Hapus underscore
-  const [data, setData] = useState({  // Hapus underscore dari _data dan _setData
-    seragam: [
-      { id: 1, no: 1, deskripsi: 'Deskripsi seragam 1' },
-      { id: 2, no: 2, deskripsi: 'Deskripsi seragam 2' },
-    ],
-    spp: [
-      { id: 3, no: 3, deskripsi: 'Deskripsi SPP 1' },
-    ],
-    uanggedung: [
-      { id: 4, no: 4, deskripsi: 'Deskripsi uang gedung 1' },
-    ],
-  });  // Tambahkan data dummy untuk tiap jenis
+const JenisTagihan = () => {
+  const [activeTab, setActiveTab] = useState('SPP'); // Default tab: SPP
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editData, setEditData] = useState(null);
+  const [formData, setFormData] = useState({ no: '', deskripsi: '' });
+ 
 
-  const handleDelete = (id) => {  // Hapus underscore dan implementasikan
+  // Dummy data untuk masing-masing tab
+  const [dataSPP, setDataSPP] = useState([
+    { id: 1, no: 1, deskripsi: 'Biaya sekolah bulanan' }
+  ]);
+  const [dataSeragam, setDataSeragam] = useState([
+    { id: 1, no: 1, deskripsi: 'Pembelian seragam' }
+  ]);
+  const [dataUangGedung, setDataUangGedung] = useState([
+    { id: 1, no: 1, deskripsi: 'Biaya pembangunan gedung' }
+  ]);
+
+  const getCurrentData = () => {
+    switch (activeTab) {
+      case 'SPP': return { data: dataSPP, setter: setDataSPP };
+      case 'Seragam': return { data: dataSeragam, setter: setDataSeragam };
+      case 'Uang Gedung': return { data: dataUangGedung, setter: setDataUangGedung };
+      default: return { data: [], setter: () => {} };
+    }
+  };
+
+  const handleAddData = () => {
+    const { data, setter } = getCurrentData();
+    const newItem = { id: Date.now(), no: parseInt(formData.no), deskripsi: formData.deskripsi };
+    setter([...data, newItem]);
+    setShowAddModal(false);
+    setFormData({ no: '', deskripsi: '' });
+    Swal.fire('Sukses', 'Data berhasil ditambahkan!', 'success');
+  };
+
+  const handleEditData = (item) => {
+    setEditData(item);
+    setFormData({ no: item.no, deskripsi: item.deskripsi });
+    setShowEditModal(true);
+  };
+
+  const handleUpdateData = () => {
+    const { data, setter } = getCurrentData();
+    const updatedData = data.map(item => 
+      item.id === editData.id ? { ...item, no: parseInt(formData.no), deskripsi: formData.deskripsi } : item
+    );
+    setter(updatedData);
+    setShowEditModal(false);
+    setEditData(null);
+    setFormData({ no: '', deskripsi: '' });
+    Swal.fire('Sukses', 'Data berhasil diupdate!', 'success');
+  };
+
+  const handleDeleteData = (id) => {
     Swal.fire({
-      title: 'Apakah Anda yakin ingin menghapus?',
+      title: 'Apakah anda yakin ingin menghapus?',
+      text: 'Data ini tidak bisa dikembalikan!',
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonText: 'Ya, Hapus',
+      confirmButtonText: 'Hapus',
       cancelButtonText: 'Batal'
     }).then((result) => {
       if (result.isConfirmed) {
-        // Hapus data dari jenis yang dipilih
-        const updatedData = { ...data };
-        updatedData[selectedType] = updatedData[selectedType].filter(item => item.id !== id);
-        setData(updatedData);
-        Swal.fire('Dihapus!', 'Data telah dihapus.', 'success');
+        const { data, setter } = getCurrentData();
+        const filteredData = data.filter(item => item.id !== id);
+        setter(filteredData);
+        Swal.fire('Terhapus!', 'Data berhasil dihapus.', 'success');
       }
     });
   };
 
-  const addData = () => {  // Implementasikan fungsi
-    const newItem = {
-      id: data[selectedType].length + 1 + data.seragam.length + data.spp.length,  // Auto-increment ID sederhana
-      no: data[selectedType].length + 1,
-      deskripsi: 'Deskripsi baru untuk ' + selectedType,  // Di dunia nyata, gunakan form input
-    };
-
-    const updatedData = { ...data };
-    updatedData[selectedType].push(newItem);  // Tambahkan ke array yang dipilih
-    setData(updatedData);
-    // Otomatis update: Data sudah di state, jadi akan re-render
+  const handleInputChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Ambil data berdasarkan selectedType
-  const currentData = data[selectedType] || [];  // Hindari error jika array kosong
-
   return (
-    <div className={classes.jenisContainer}>
-      <Sidebar />
-      <div className={classes.mainContent}>
-        <h1 className={classes.pageTitle}>Jenis Tagihan</h1>
-        <div className={classes.typeButtons}>
-          <button onClick={() => setSelectedType('seragam')}>Seragam</button>
-          <button onClick={() => setSelectedType('spp')}>SPP</button>
-          <button onClick={() => setSelectedType('uanggedung')}>Uang Gedung</button>
-          <button onClick={addData} className={classes.addButton}>Tambah Data</button>
+    <div className="jenis-tagihan-container">
+      <Sidebar /> {/* Sidebar di kiri, sejajar dengan content */}
+      
+      <div className="content">
+        <h1>Halaman Jenis Tagihan</h1>
+        
+        {/* Tombol tabs dengan panah di bawah judul */}
+        <div className="tabs-container">
+          <button 
+            className={activeTab === 'SPP' ? 'tab active' : 'tab'}
+            onClick={() => setActiveTab('SPP')}
+          >
+            SPP ▼
+          </button>
+          <button 
+            className={activeTab === 'Seragam' ? 'tab active' : 'tab'}
+            onClick={() => setActiveTab('Seragam')}
+          >
+            Seragam ▼
+          </button>
+          <button 
+            className={activeTab === 'Uang Gedung' ? 'tab active' : 'tab'}
+            onClick={() => setActiveTab('Uang Gedung')}
+          >
+            Uang Gedung ▼
+          </button>
         </div>
-        <table className={classes.table}>
-          <thead>
-            <tr>
-              <th style={{ textAlign: 'right' }}>No</th>
-              <th style={{ textAlign: 'left' }}>Deskripsi</th>
-              <th style={{ textAlign: 'center' }}>Aksi</th>
-            </tr>
-          </thead>
-          <tbody>
-            {currentData.length > 0 ? (  // Cek jika ada data
-              currentData.map(item => (
+
+        {/* Tombol Tambah Data di kanan atas */}
+        <div className="header-actions">
+          <button className="btn-tambah" onClick={() => setShowAddModal(true)}>
+            + Tambah Data
+          </button>
+        </div>
+
+        {/* Tabel */}
+        <div className="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th className="no-col">No</th>
+                <th className="deskripsi-col">Deskripsi</th>
+                <th className="aksi-col">Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              {getCurrentData().data.map((item) => (
                 <tr key={item.id}>
-                  <td style={{ textAlign: 'right' }}>{item.no}</td>
-                  <td style={{ textAlign: 'left' }}>{item.deskripsi}</td>
-                  <td style={{ textAlign: 'center' }}>
-                    <Link to={`/edit/${item.id}`} className={classes.actionButton}>
-                      Edit
-                    </Link>
-                    <button onClick={() => handleDelete(item.id)} className={classes.actionButton}>
-                      Hapus
-                    </button>
+                  <td className="no-cell">{item.no}</td>
+                  <td className="deskripsi-cell">{item.deskripsi}</td>
+                  <td className="aksi-cell">
+                    <button className="btn-edit" onClick={() => handleEditData(item)}>🖊</button>
+                    <button className="btn-hapus" onClick={() => handleDeleteData(item.id)}>🗑</button>
                   </td>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="3" style={{ textAlign: 'center' }}>Tidak ada data untuk {selectedType}</td>  // Pesan jika data kosong
-              </tr>
-            )}
-          </tbody>
-        </table>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
+
+      {/* Modal Tambah Data */}
+      {showAddModal && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h2>Tambah Data</h2>
+            <input 
+              type="number" 
+              name="no" 
+              placeholder="No" 
+              value={formData.no} 
+              onChange={handleInputChange} 
+            />
+            <input 
+              type="text" 
+              name="deskripsi" 
+              placeholder="Deskripsi" 
+              value={formData.deskripsi} 
+              onChange={handleInputChange} 
+            />
+            <div className="modal-buttons">
+              <button onClick={handleAddData}>Simpan</button>
+              <button onClick={() => setShowAddModal(false)}>Batal</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Edit Data */}
+      {showEditModal && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h2>Edit Data</h2>
+            <input 
+              type="number" 
+              name="no" 
+              placeholder="No" 
+              value={formData.no} 
+              onChange={handleInputChange} 
+            />
+            <input 
+              type="text" 
+              name="deskripsi" 
+              placeholder="Deskripsi" 
+              value={formData.deskripsi} 
+              onChange={handleInputChange} 
+            />
+            <div className="modal-buttons">
+              <button onClick={handleUpdateData}>Update</button>
+              <button onClick={() => setShowEditModal(false)}>Batal</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
-export default Jenistagihan;
+export default JenisTagihan;
