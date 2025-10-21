@@ -2,79 +2,70 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import './login.css';
+import './Login.css';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  
 
-  const handleLogin = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    // Simulate login validation (add real auth logic here)
+    // Simple validation (add real auth later)
     if (email && password) {
       Swal.fire({
-        title: 'Success!',
-        text: 'Anda sudah berhasil login',
+        title: 'Login Berhasil!',
+        text: 'Selamat, Login Berhasil.',
         icon: 'success',
         confirmButtonText: 'OK'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          navigate('/dashboard');
-        }
+      }).then(() => {
+        navigate('/dashboard');
       });
     } else {
-      Swal.fire('Error!', 'Please fill in email and password', 'error');
+      Swal.fire('Error', 'Mohon isi semua field', 'error');
     }
   };
 
   return (
     <div className="login-container">
-      <div className="login-form-wrapper">
-        <form onSubmit={handleLogin} className="login-form">
-          <h2 className="login-title">Login</h2>
-          
+      <div className="login-form">
+        <h2>Login</h2>
+        <form onSubmit={handleSubmit}>
           <div className="input-group">
-            <label htmlFor="email">Akun Email</label>
+          </div>
+
+          <div className="input-group">
+
             <input
               type="email"
-              id="email"
+              placeholder="Masukkan email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="Masukkan alamat email"
+
               required
             />
           </div>
 
           <div className="input-group">
-            <label htmlFor="password">Password</label>
-            <div className="password-input-wrapper">
-              <input
-                type={showPassword ? 'text' : 'password'}
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Masukkan password"
-                required
-              />
-              <button
-                type="button"
-                className="password-toggle"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? <FaEyeSlash /> : <FaEye />}
-              </button>
-            </div>
+            <input
+              type={showPassword ? 'text' : 'password'}
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+
+              required
+            />
+            <span className="password-toggle" onClick={() => setShowPassword(!showPassword)}>
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </span>
           </div>
-
-          <button type="submit" className="login-button">Login</button>
-
-          <p className="register-link">
-            Belum punya akun? <Link to="/register">Daftar sekarang</Link>
-          </p>
+          <button type="submit" className="login-btn">Login</button>
         </form>
-        
+        <p>
+          Belum Punya akun? <Link to="/Register">Masuk</Link>
+        </p>
       </div>
     </div>
   );

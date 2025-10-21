@@ -132,8 +132,8 @@ const JenisTagihan = () => {
                   <td className="no-cell">{item.no}</td>
                   <td className="deskripsi-cell">{item.deskripsi}</td>
                   <td className="aksi-cell">
-                    <button className="btn-edit" onClick={() => handleEditData(item)}>🖊</button>
-                    <button className="btn-hapus" onClick={() => handleDeleteData(item.id)}>🗑</button>
+                    <button className="" onClick={() => handleEditData(item)}>✏️</button>
+                    <button className="" onClick={() => handleDeleteData(item.id)}>🗑️</button>
                   </td>
                 </tr>
               ))}

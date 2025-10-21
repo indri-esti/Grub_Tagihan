@@ -15,11 +15,12 @@
   font-size: 1.5em; /* Ukuran font judul */
   border-bottom: 1px solid #555; /* Garis bawah untuk pemisah */
   padding-bottom: 10px; /* Padding untuk garis bawah */
+  margin-left:24px;
 }
 
 .sidebar ul {
   list-style-type: none; /* Hilangkan bullet point */
-  padding: 0; /* Hilangkan padding default */
+  
 }
 
 .sidebar ul li {
@@ -30,9 +31,10 @@
   color: white; /* Warna link */
   text-decoration: none; /* Hilangkan garis bawah */
   display: block; /* Agar link memenuhi lebar li */
-  padding: 10px 15px; /* Padding untuk link */
+  padding: 10px 49px  ; /* Padding untuk link */
   border-radius: 5px; /* Sudut melengkung */
   transition: background-color 0.3s; /* Efek transisi hover */
+  /* margin-left: 10%; */
 }
 
 .sidebar ul li a:hover {
