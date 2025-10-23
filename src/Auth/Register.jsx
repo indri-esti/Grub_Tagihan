@@ -63,7 +63,7 @@ const Register = () => {
               required
             />
             <span className="password-toggle" onClick={() => setShowPassword(!showPassword)}>
-              {showPassword ? <FaEyeSlash /> : <FaEye />}
+              {showPassword ? <FaEye /> : <FaEyeSlash />}
             </span>
           </div>
           <button type="submit" className="register-btn">Masuk</button>

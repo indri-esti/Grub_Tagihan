@@ -12,6 +12,8 @@ import Dashboard from "./Component/Dashboard";
 import JenisTagihan from "./Component/JenisTagihan";
 import Tagihan from "./Component/Tagihan";
 
+import TambahDataTagihan from "./Component/TambahDataTagihan";
+import EditDataTagihan from "./Component/EditDataTagihan";
 
 
 
@@ -33,8 +35,9 @@ import Tagihan from "./Component/Tagihan";
           
           <Route path="/jenis-tagihan" element={<JenisTagihan/>}/>
           <Route path="/tagihan" element={<Tagihan/>}/>
-          
-          
+          <Route path="/tagihan" element={<Tagihan/>}/>
+          <Route path="/tambah-data-tagihan" element={<TambahDataTagihan/>}/>
+          <Route path="/editdatatagihan" element={<EditDataTagihan/>}/>
          
           
         

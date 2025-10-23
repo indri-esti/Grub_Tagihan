@@ -1,61 +1,78 @@
-import React, { useState, useMemo } from 'react';
-import Swal from 'sweetalert2';
-import './Tagihan.css';
-import Sidebar from './Sidebar'; // Import Sidebar
-import { FaSearch, FaTrashAlt } from 'react-icons/fa'; // Icon untuk Search, Plus, Edit, Hapus
-import { useNavigate } from 'react-router-dom'; // Gunakan useNavigate untuk navigasi
+import React, { useState, useMemo } from "react";
+import Swal from "sweetalert2";
+import Sidebar from "./Sidebar"; // Asumsikan Sidebar.jsx ada
+import TambahDataTagihan from "./TambahDataTagihan";
+import EditDataTagihan from "./EditDataTagihan";
 
-// DATA DUMMY (Asumsi data ini dikelola di komponen induk seperti App.js)
-const initialDataTagihan = [
-    { no: 1, nama: 'John Doe', keterangan: 'SPP', nisn: '1234567890', noHp: '08123456789', deskripsi: 'Pembayaran SPP bulan Oktober', harga: 200000, tanggal: '10/10/2025', status: 'Lunas' },
-    { no: 2, nama: 'Jane Smith', keterangan: 'Uang Gedung', nisn: '0987654321', noHp: '08987654321', deskripsi: 'Angsuran Uang Gedung ke-1', harga: 500000, tanggal: '13/10/2025', status: 'Belum Lunas' },
-    { no: 3, nama: 'Bob Johnson', keterangan: 'Seragam', nisn: '1122334455', noHp: '08765432109', deskripsi: 'Pembelian Seragam Sekolah', harga: 900000, tanggal: '20/10/2025', status: 'Lunas' },
+import "./tagihan.css";
+import { FaSearch, FaPlus, FaUsers, FaMoneyBillWave, FaCheckCircle, FaTimesCircle, FaFilter } from 'react-icons/fa';
+
+const initialData = [
+    { id: 1, nama: 'John Doe', keterangan: 'SPP', nisn: '123456', noHp: '08123456789', deskripsi: 'Pembayaran SPP', harga: 500000, tanggal: '20/10/2025', status: 'Lunas' },
+    { id: 2, nama: 'Jane Smith', keterangan: 'Uang Buku', nisn: '654321', noHp: '08987654321', deskripsi: 'Pembelian Buku Semester', harga: 750000, tanggal: '22/10/2025', status: 'Belum Lunas' },
+    { id: 3, nama: 'Alice Johnson', keterangan: 'Uang Gedung', nisn: '112233', noHp: '08112233445', deskripsi: 'Iuran Pembangunan Gedung', harga: 2000000, tanggal: '25/10/2025', status: 'Lunas' },
+    { id: 4, nama: 'Bob Brown', keterangan: 'SPP', nisn: '445566', noHp: '08556677889', deskripsi: 'Pembayaran SPP bulan 10', harga: 500000, tanggal: '01/10/2025', status: 'Belum Lunas' },
 ];
 
-// Komponen Tagihan menerima data dan fungsi update dari props (Asumsi App.js)
-const Tagihan = ({ dataTagihan = initialDataTagihan, setDataTagihan = () => {} }) => {
+const Tagihan = () => {
+    const [tagihanData, setTagihanData] = useState(initialData);
     const [searchTerm, setSearchTerm] = useState('');
-    const navigate = useNavigate();
+    const [filterJenis, setFilterJenis] = useState('Semua'); // State untuk filter jenis
+    
+    // State untuk Conditional Rendering
+    const [view, setView] = useState('list'); // 'list', 'add', 'edit'
+    const [selectedId, setSelectedId] = useState(null);
 
-    // Fungsi untuk memformat harga ke Rupiah
-    const formatRupiah = (angka) => {
-        return new Intl.NumberFormat('id-ID', {
-            style: 'currency',
-            currency: 'IDR',
-            minimumFractionDigits: 0,
-        }).format(angka);
+    // Fungsi untuk kembali ke tampilan daftar utama
+    const handleBackToList = () => {
+        setView('list');
+        setSelectedId(null);
     };
 
-    // Kalkulasi Ringkasan Data
-    const summaryData = useMemo(() => {
-        const totalTagihan = dataTagihan.reduce((sum, item) => sum + Number(item.harga), 0);
-        const lunasCount = dataTagihan.filter(item => item.status === 'Lunas').length;
-        const belumLunasCount = dataTagihan.filter(item => item.status === 'Belum Lunas').length;
-        // Hitung member unik
-        const totalMember = new Set(dataTagihan.map(item => item.nama)).size; 
+    const formatRupiah = (angka) => {
+        return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
+    };
+
+    // Data yang Difilter (Pencarian & Jenis)
+    const filteredData = tagihanData.filter(item => {
+        const matchesSearch = item.nama.toLowerCase().includes(searchTerm.toLowerCase());
+        
+        let matchesFilter = true;
+        if (filterJenis !== 'Semua') {
+            const itemKeterangan = item.keterangan.toLowerCase();
+            const filterLower = filterJenis.toLowerCase();
+            
+            if (filterLower === 'spp' && !itemKeterangan.includes('spp')) matchesFilter = false;
+            else if (filterLower === 'seragam' && !itemKeterangan.includes('seragam')) matchesFilter = false;
+            else if (filterLower === 'uang gedung' && !itemKeterangan.includes('gedung')) matchesFilter = false;
+        }
+
+        return matchesSearch && matchesFilter;
+    });
+
+    // Hitung Statistik
+    const statistik = useMemo(() => {
+        const totalTagihan = tagihanData.reduce((sum, item) => sum + item.harga, 0);
+        const dibayarkan = tagihanData.filter(item => item.status === 'Lunas').reduce((sum, item) => sum + item.harga, 0);
+        const belumDibayar = totalTagihan - dibayarkan;
+        const totalMember = new Set(tagihanData.map(item => item.nisn)).size;
 
         return {
             totalMember,
             totalTagihan: formatRupiah(totalTagihan),
-            dibayarkan: lunasCount,
-            belumDibayarkan: belumLunasCount,
+            dibayarkan: formatRupiah(dibayarkan),
+            belumDibayar: formatRupiah(belumDibayar),
         };
-    }, [dataTagihan]);
+    }, [tagihanData]);
 
-    // Filter data berdasarkan pencarian Nama
-    const filteredData = useMemo(() => {
-        if (!searchTerm) return dataTagihan;
+    // Handler untuk Tambah/Edit/Hapus
+    const handleTambahData = () => { setView('add'); };
+    const handleEdit = (id) => { setSelectedId(id); setView('edit'); };
 
-        return dataTagihan.filter((item) =>
-            item.nama.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-    }, [dataTagihan, searchTerm]);
-
-    // Handle Hapus dengan SweetAlert (Menggunakan setDataTagihan dari props)
-    const handleDelete = (no) => {
+    const handleDelete = (id) => {
         Swal.fire({
             title: 'Apakah Anda yakin ingin menghapus?',
-            text: 'Data tagihan ini akan dihapus permanen!',
+            text: 'Data tagihan ini akan terhapus sendiri (permanen)!',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#d33',
@@ -64,127 +81,141 @@ const Tagihan = ({ dataTagihan = initialDataTagihan, setDataTagihan = () => {} }
             cancelButtonText: 'Batal',
         }).then((result) => {
             if (result.isConfirmed) {
-                // Hapus data (simulasi update state di App.js)
-                setDataTagihan((prevData) => prevData.filter((item) => item.no !== no));
+                const newData = tagihanData.filter(item => item.id !== id);
+                setTagihanData(newData);
                 Swal.fire('Terhapus!', 'Data tagihan berhasil dihapus.', 'success');
             }
         });
     };
 
-    // Handle Edit (Navigasi ke halaman Edit)
-    const handleEdit = (item) => {
-        // Navigasi ke halaman/route edit dengan membawa data tagihan (state)
-        // Pastikan Anda sudah membuat route /tagihan/edit/:id di App.js
-        navigate(`/tagihan/edit/${item.no}`, { state: { tagihan: item } });
-    };
+    // Logika utama Conditional Rendering
+    const renderContent = () => {
+        if (view === 'add') {
+            return <TambahDataTagihan onBack={handleBackToList} setTagihanData={setTagihanData} />;
+        }
 
-    // Handle Tambah Data (Navigasi ke halaman Tambah)
-    const handleTambahData = () => {
-        // Pastikan Anda sudah membuat route /tagihan/tambah di App.js
-        navigate('/tagihan/tambah');
-    };
-    
-    // Komponen Ringkasan Kartu
-    const SummaryCard = ({ title, value, colorClass = '' }) => (
-        <div className={`summary-card ${colorClass}`}>
-            <div className="card-title">{title}</div>
-            <div className={`card-value`}>{value}</div>
-        </div>
-    );
-
-    return (
-        <div className="tagihan-page-container">
-            <Sidebar />
-            <div className="main-content-area">
-                <header className="page-header">
-                    <h2>Tagihan</h2>
-                </header>
-                
-                {/* --- Kartu Ringkasan --- */}
-                <div className="summary-cards-container">
-                    <SummaryCard title="Total Member" value={summaryData.totalMember} colorClass="info" />
-                    <SummaryCard title="Total Tagihan" value={summaryData.totalTagihan} colorClass="primary" />
-                    <SummaryCard title="Dibayarkan" value={summaryData.dibayarkan} colorClass="success" />
-                    <SummaryCard title="Belum Dibayarkan" value={summaryData.belumDibayarkan} colorClass="warning" />
+        if (view === 'edit') {
+            const dataToEdit = tagihanData.find(item => item.id === selectedId);
+            return <EditDataTagihan data={dataToEdit} onBack={handleBackToList} setTagihanData={setTagihanData} />;
+        }
+        
+        // Tampilan List (view === 'list')
+        return (
+            <>
+                <div className="header-tagihan">
+                    <h1 className="main-title">Tagihan</h1>
                 </div>
-                
-                {/* --- Kontrol Pencarian dan Tambah Data --- */}
-                <div className="controls-row">
-                    <div className="search-box-container">
-                        <FaSearch className="search-icon" />
-                        <input
-                            type="text"
-                            placeholder="Cari Nama..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                        />
+
+                {/* Kotak Statistik */}
+                <div className="statistik-container">
+                    <div className="stat-card total-member">
+                        <FaUsers className="stat-icon" />
+                        <p>Total Member</p>
+                        <h3>{statistik.totalMember}</h3>
                     </div>
-                    <button className="btn-tambah-data" onClick={handleTambahData}>
+                    <div className="stat-card total-tagihan">
+                        <FaMoneyBillWave className="stat-icon" />
+                        <p>Total Tagihan</p>
+                        <h3>{statistik.totalTagihan}</h3>
+                    </div>
+                    <div className="stat-card dibayarkan">
+                        <FaCheckCircle className="stat-icon" />
+                        <p>Dibayarkan</p>
+                        <h3>{statistik.dibayarkan}</h3>
+                    </div>
+                    <div className="stat-card belum-dibayar">
+                        <FaTimesCircle className="stat-icon" />
+                        <p>Belum Dibayar</p>
+                        <h3>{statistik.belumDibayar}</h3>
+                    </div>
+                </div>
+
+                {/* Kontrol Filter, Pencarian dan Tambah Data */}
+                <div className="controls-container">
+                    <div className="filter-and-search-group">
+                        {/* Filter Jenis Tagihan */}
+                        <div className="filter-container">
+                            <FaFilter className="filter-icon" />
+                            <label htmlFor="filterJenis">Filter Jenis:</label>
+                            <select id="filterJenis" value={filterJenis} onChange={(e) => setFilterJenis(e.target.value)} className="filter-select">
+                                <option value="Semua">Semua</option>
+                                <option value="SPP">SPP</option>
+                                <option value="Seragam">Seragam</option>
+                                <option value="Uang Gedung">Uang Gedung</option>
+                            </select>
+                        </div>
+
+                        {/* Pencarian */}
+                        <div className="search-container">
+                            <FaSearch className="search-icon" />
+                            <input
+                                type="text"
+                                placeholder="Cari nama..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="search-input"
+                            />
+                        </div>
+                    </div>
+                    
+                    <button onClick={handleTambahData} className="tambah-data-btn">
                         <FaPlus className="plus-icon" /> Tambah Data
                     </button>
                 </div>
 
-                {/* --- Tabel Tagihan --- */}
-                <div className="table-container">
+                {/* Tabel Data Tagihan */}
+                <div className="table-responsive">
                     <table className="tagihan-table">
                         <thead>
                             <tr>
-                                <th className="text-right">No</th>
-                                <th className="text-left">Nama</th>
-                                <th className="text-left">Keterangan</th>
-                                <th className="text-left">NISN</th>
-                                <th className="text-left">No. HP</th>
-                                <th className="text-left">Deskripsi</th>
-                                <th className="text-right">Harga</th>
-                                <th className="text-left">Tanggal</th>
-                                <th className="text-center">Status</th>
-                                <th className="text-center">Aksi</th>
+                                <th className="text-right-header">No</th>
+                                <th className="text-left-header">Nama</th>
+                                <th className="text-left-header">Keterangan</th>
+                                <th className="text-left-header">NISN</th>
+                                <th className="text-left-header">No. HP</th>
+                                <th className="text-left-header">Deskripsi</th>
+                                <th className="text-right-header">Harga</th>
+                                <th className="text-center-header">Tanggal</th>
+                                <th className="text-center-header">Status</th>
+                                <th className="text-center-header">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredData.length > 0 ? (
-                                filteredData.map((item) => (
-                                    <tr key={item.no}>
-                                        <td className="text-right">{item.no}</td>
-                                        <td className="text-left">{item.nama}</td>
-                                        <td className="text-left">{item.keterangan}</td>
-                                        <td className="text-left">{item.nisn}</td>
-                                        <td className="text-left">{item.noHp}</td>
-                                        <td className="text-left">{item.deskripsi}</td>
-                                        <td className="text-right">{formatRupiah(item.harga)}</td>
-                                        {/* Tanggal dd/mm/yyyy */}
-                                        <td className="text-left">{item.tanggal}</td> 
-                                        <td className={`text-center status-badge status-${item.status.toLowerCase().replace(' ', '-')}`}>
-                                            {item.status}
-                                        </td>
-                                        <td className="text-center aksi-buttons">
-                                            {/*✏️ */}
-                                            <button 
-                                                className="" 
-                                                onClick={() => handleEdit(item)} 
-                                                title="Edit"
-                                            >
-                                                
-                                            </button>
-                                            {/* Icon Hapus 🗑️ */}
-                                            <button 
-                                                className="" 
-                                                onClick={() => handleDelete(item.no)} 
-                                                title="Hapus"
-                                            >
-                                                <FaTrashAlt />
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))
-                            ) : (
+                            {filteredData.map((item, index) => (
+                                <tr key={item.id}>
+                                    <td className="text-right-data">{index + 1}</td>
+                                    <td className="text-left-data">{item.nama}</td>
+                                    <td className="text-left-data">{item.keterangan}</td>
+                                    <td className="text-left-data">{item.nisn}</td>
+                                    <td className="text-left-data">{item.noHp}</td>
+                                    <td className="text-left-data">{item.deskripsi}</td>
+                                    <td className="text-right-data">{formatRupiah(item.harga)}</td>
+                                    <td className="text-center-data">{item.tanggal}</td>
+                                    {/* PERBAIKAN: Bungkus className dalam template literal dengan backticks */}
+                                    <td className={`text-center-data status-cell status-${item.status.replace(/\s/g, '').toLowerCase()}`}>{item.status}</td>
+                                    <td className="text-center-data aksi-cell">
+                                        <button onClick={() => handleEdit(item.id)} className="action-btn edit-btn" title="Edit"> ✏️ </button>
+                                        <button onClick={() => handleDelete(item.id)} className="action-btn delete-btn" title="Hapus"> 🗑️ </button>
+                                    </td>
+                                </tr>
+                            ))}
+                            {filteredData.length === 0 && (
                                 <tr>
-                                    <td colSpan="10" className="text-center no-data">Data tagihan tidak ditemukan.</td>
+                                    <td colSpan="10" className="text-center-data no-data">Tidak ada data tagihan yang ditemukan.</td>
                                 </tr>
                             )}
                         </tbody>
                     </table>
                 </div>
+            </>
+        );
+    };
+
+    return (
+        <div className="tagihan-page-container">
+            <Sidebar />
+            <div className="main-content">
+                {renderContent()}
             </div>
         </div>
     );

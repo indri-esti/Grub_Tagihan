@@ -159,7 +159,7 @@ const Dashboard = () => {
                   </td>
                   <td className="left-align">
                     <input
-                      type="text"
+                      type="number"
                       name="nohp"
                       value={formData.nohp}
                       onChange={handleChange}
@@ -173,7 +173,7 @@ const Dashboard = () => {
                       onChange={handleChange}
                     />
                   </td>
-                  <td className="right-align">
+                  <td className="left-align">
                     <input
                       type="number"
                       name="harga"

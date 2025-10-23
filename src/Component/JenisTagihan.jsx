@@ -1,202 +1,204 @@
-import React, { useState } from 'react';
-import Sidebar from './Sidebar'; // Asumsi path Sidebar; sesuaikan jika berbeda
-import Swal from 'sweetalert2';
-import './JenisTagihan.css'; // Import CSS
+import React, { useState, useMemo } from "react";
+import Swal from "sweetalert2";
+import Sidebar from "./Sidebar"; // Asumsi lokasi Sidebar
+import "./JenisTagihan.css"; // Import CSS
+
+// Data dummy untuk contoh
+const initialData = [
+  { id: 1, jenisTagihan: 'SPP', deskripsi: 'SPP Bulan Oktober 2025', aksi: '' },
+  { id: 2, jenisTagihan: 'Seragam', deskripsi: 'Pembayaran Seragam Sekolah', aksi: '' },
+  { id: 3, jenisTagihan: 'Uang Gedung', deskripsi: 'Pembayaran Pembangunan Gedung ', aksi: '' },
+  { id: 4, jenisTagihan: 'SPP', deskripsi: 'SPP Bulan Agustus 2025', aksi: '' },
+];
 
 const JenisTagihan = () => {
-  const [activeTab, setActiveTab] = useState('SPP'); // Default tab: SPP
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [editData, setEditData] = useState(null);
-  const [formData, setFormData] = useState({ no: '', deskripsi: '' });
- 
+  const [dataTagihan, setDataTagihan] = useState(initialData);
+  const [filter, setFilter] = useState('Semua');
 
-  // Dummy data untuk masing-masing tab
-  const [dataSPP, setDataSPP] = useState([
-    { id: 1, no: 1, deskripsi: 'Biaya sekolah bulanan' }
-  ]);
-  const [dataSeragam, setDataSeragam] = useState([
-    { id: 1, no: 1, deskripsi: 'Pembelian seragam' }
-  ]);
-  const [dataUangGedung, setDataUangGedung] = useState([
-    { id: 1, no: 1, deskripsi: 'Biaya pembangunan gedung' }
-  ]);
+  // --- Fungsi Tambah Data (Simulasi Halaman Baru dengan SweetAlert) ---
+  const handleTambahData = async () => {
+    const { value: formValues } = await Swal.fire({
+      title: 'Tambah Jenis Tagihan Baru',
+      html:
+        '<input id="swal-input-jenis" class="swal2-input" placeholder="Jenis Tagihan (Contoh: SPP)" style="margin-bottom: 10px;">' +
+        '<textarea id="swal-input-deskripsi" class="swal2-textarea" placeholder="Deskripsi (Contoh: SPP Bulanan Reguler)"></textarea>',
+      focusConfirm: false,
+      showCancelButton: true,
+      confirmButtonText: 'Simpan Data',
+      cancelButtonText: 'Batal',
+      preConfirm: () => {
+        const jenis = document.getElementById('swal-input-jenis').value.trim();
+        const deskripsi = document.getElementById('swal-input-deskripsi').value.trim();
+        if (!jenis || !deskripsi) {
+             Swal.showValidationMessage('Jenis Tagihan dan Deskripsi tidak boleh kosong.');
+             return false;
+        }
+        return [jenis, deskripsi];
+      }
+    });
 
-  const getCurrentData = () => {
-    switch (activeTab) {
-      case 'SPP': return { data: dataSPP, setter: setDataSPP };
-      case 'Seragam': return { data: dataSeragam, setter: setDataSeragam };
-      case 'Uang Gedung': return { data: dataUangGedung, setter: setDataUangGedung };
-      default: return { data: [], setter: () => {} };
+    if (formValues) {
+      const newId = Math.max(...dataTagihan.map(d => d.id), 0) + 1;
+      const newData = {
+        id: newId,
+        jenisTagihan: formValues[0],
+        deskripsi: formValues[1],
+        aksi: ''
+      };
+      setDataTagihan([...dataTagihan, newData]);
+      Swal.fire('Berhasil!', 'Data jenis tagihan berhasil ditambahkan.', 'success');
     }
   };
 
-  const handleAddData = () => {
-    const { data, setter } = getCurrentData();
-    const newItem = { id: Date.now(), no: parseInt(formData.no), deskripsi: formData.deskripsi };
-    setter([...data, newItem]);
-    setShowAddModal(false);
-    setFormData({ no: '', deskripsi: '' });
-    Swal.fire('Sukses', 'Data berhasil ditambahkan!', 'success');
+  // --- Fungsi Edit Data (Simulasi Halaman Baru dengan SweetAlert) ---
+  const handleEdit = async (item) => {
+    const { value: formValues } = await Swal.fire({
+      title: `Edit Jenis Tagihan: ${item.jenisTagihan}`,
+      html:
+        '<input id="swal-input-jenis" class="swal2-input" placeholder="Jenis Tagihan" style="margin-bottom: 10px;">' +
+        '<textarea id="swal-input-deskripsi" class="swal2-textarea" placeholder="Deskripsi"></textarea>',
+      focusConfirm: false,
+      showCancelButton: true,
+      confirmButtonText: 'Simpan Perubahan',
+      cancelButtonText: 'Batal',
+      didOpen: () => {
+        // Set nilai awal setelah dialog terbuka
+        document.getElementById('swal-input-jenis').value = item.jenisTagihan;
+        document.getElementById('swal-input-deskripsi').value = item.deskripsi;
+      },
+      preConfirm: () => {
+        const jenis = document.getElementById('swal-input-jenis').value.trim();
+        const deskripsi = document.getElementById('swal-input-deskripsi').value.trim();
+        if (!jenis || !deskripsi) {
+             Swal.showValidationMessage('Jenis Tagihan dan Deskripsi tidak boleh kosong.');
+             return false;
+        }
+        return [jenis, deskripsi];
+      }
+    });
+
+    if (formValues) {
+      const updatedData = dataTagihan.map(d =>
+        d.id === item.id ? { ...d, jenisTagihan: formValues[0], deskripsi: formValues[1] } : d
+      );
+      setDataTagihan(updatedData);
+      Swal.fire('Berhasil!', 'Data jenis tagihan berhasil diperbarui.', 'success');
+    }
   };
 
-  const handleEditData = (item) => {
-    setEditData(item);
-    setFormData({ no: item.no, deskripsi: item.deskripsi });
-    setShowEditModal(true);
-  };
-
-  const handleUpdateData = () => {
-    const { data, setter } = getCurrentData();
-    const updatedData = data.map(item => 
-      item.id === editData.id ? { ...item, no: parseInt(formData.no), deskripsi: formData.deskripsi } : item
-    );
-    setter(updatedData);
-    setShowEditModal(false);
-    setEditData(null);
-    setFormData({ no: '', deskripsi: '' });
-    Swal.fire('Sukses', 'Data berhasil diupdate!', 'success');
-  };
-
-  const handleDeleteData = (id) => {
+  // --- Fungsi Hapus Data ---
+  const handleDelete = (id) => {
     Swal.fire({
-      title: 'Apakah anda yakin ingin menghapus?',
-      text: 'Data ini tidak bisa dikembalikan!',
+      title: 'Apakah Anda yakin?',
+      text: "Data ini akan dihapus permanen!",
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonText: 'Hapus',
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Ya, Hapus!',
       cancelButtonText: 'Batal'
     }).then((result) => {
       if (result.isConfirmed) {
-        const { data, setter } = getCurrentData();
-        const filteredData = data.filter(item => item.id !== id);
-        setter(filteredData);
-        Swal.fire('Terhapus!', 'Data berhasil dihapus.', 'success');
+        setDataTagihan(dataTagihan.filter(item => item.id !== id));
+        Swal.fire(
+          'Terhapus!',
+          'Data jenis tagihan berhasil dihapus.',
+          'success'
+        );
       }
     });
   };
 
-  const handleInputChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  // --- Logika Filter Data ---
+  const filteredData = useMemo(() => {
+    if (filter === 'Semua') {
+      return dataTagihan;
+    }
+    return dataTagihan.filter(item => item.jenisTagihan === filter);
+  }, [dataTagihan, filter]);
 
   return (
     <div className="jenis-tagihan-container">
-      <Sidebar /> {/* Sidebar di kiri, sejajar dengan content */}
+      {/* Asumsi komponen Sidebar */}
+      <Sidebar /> 
       
-      <div className="content">
-        <h1>Halaman Jenis Tagihan</h1>
-        
-        {/* Tombol tabs dengan panah di bawah judul */}
-        <div className="tabs-container">
-          <button 
-            className={activeTab === 'SPP' ? 'tab active' : 'tab'}
-            onClick={() => setActiveTab('SPP')}
+      <div className="content-area">
+        <h1 className="main-title">Jenis Tagihan</h1>
+
+        {/* --- Filter Section --- */}
+        <div className="filter-section">
+          <label htmlFor="jenis-filter">Pilih jenis:</label>
+          <select
+            id="jenis-filter"
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
           >
-            SPP ▼
-          </button>
-          <button 
-            className={activeTab === 'Seragam' ? 'tab active' : 'tab'}
-            onClick={() => setActiveTab('Seragam')}
-          >
-            Seragam ▼
-          </button>
-          <button 
-            className={activeTab === 'Uang Gedung' ? 'tab active' : 'tab'}
-            onClick={() => setActiveTab('Uang Gedung')}
-          >
-            Uang Gedung ▼
-          </button>
+            <option value="Semua">Semua Jenis Tagihan</option>
+            <option value="SPP">SPP</option>
+            <option value="Seragam">Seragam</option>
+            <option value="Uang Gedung">Uang Gedung</option>
+            {/* Anda bisa menambahkan opsi lain di sini sesuai kebutuhan */}
+          </select>
         </div>
 
-        {/* Tombol Tambah Data di kanan atas */}
-        <div className="header-actions">
-          <button className="btn-tambah" onClick={() => setShowAddModal(true)}>
-            + Tambah Data
-          </button>
-        </div>
-
-        {/* Tabel */}
+        {/* --- Table Section --- */}
         <div className="table-container">
+          <h2>Daftar Jenis Tagihan ({filter})</h2>
           <table>
             <thead>
               <tr>
-                <th className="no-col">No</th>
-                <th className="deskripsi-col">Deskripsi</th>
-                <th className="aksi-col">Aksi</th>
+                 <th className="right-align">No</th>
+                <th className="center-align">Jenis Tagihan</th>
+                <th className="center-align">Deskripsi</th>
+                <th className="center-align">Aksi</th>
               </tr>
             </thead>
             <tbody>
-              {getCurrentData().data.map((item) => (
-                <tr key={item.id}>
-                  <td className="no-cell">{item.no}</td>
-                  <td className="deskripsi-cell">{item.deskripsi}</td>
-                  <td className="aksi-cell">
-                    <button className="" onClick={() => handleEditData(item)}>✏️</button>
-                    <button className="" onClick={() => handleDeleteData(item.id)}>🗑️</button>
+              {filteredData.length > 0 ? (
+                filteredData.map((item, index) => (
+                  <tr key={item.id}>
+                    <td className="right-align">{index + 1}</td>
+                    <td>{item.jenisTagihan}</td>
+                    <td>{item.deskripsi}</td>
+                    <td className="action-buttons">
+                      <button 
+                        className="btn-edit-icon" 
+                        onClick={() => handleEdit(item)}
+                        title="Edit Data"
+                      >
+                        ✏️ 
+                      </button>
+                      <button 
+                        className="btn-hapus-icon" 
+                        onClick={() => handleDelete(item.id)}
+                        title="Hapus Data"
+                      >
+                        🗑️ 
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="4" style={{textAlign: 'center'}}>
+                    Tidak ada data jenis tagihan untuk kategori *{filter}*.
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
+
+        {/* --- Tombol Tambah Data --- */}
+        <button className="btn-tambah-data" onClick={handleTambahData}>
+          + Tambah Data
+        </button>
       </div>
 
-      {/* Modal Tambah Data */}
-      {showAddModal && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <h2>Tambah Data</h2>
-            <input 
-              type="number" 
-              name="no" 
-              placeholder="No" 
-              value={formData.no} 
-              onChange={handleInputChange} 
-            />
-            <input 
-              type="text" 
-              name="deskripsi" 
-              placeholder="Deskripsi" 
-              value={formData.deskripsi} 
-              onChange={handleInputChange} 
-            />
-            <div className="modal-buttons">
-              <button onClick={handleAddData}>Simpan</button>
-              <button onClick={() => setShowAddModal(false)}>Batal</button>
-            </div>
-          </div>
-        </div>
-      )}
 
-      {/* Modal Edit Data */}
-      {showEditModal && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <h2>Edit Data</h2>
-            <input 
-              type="number" 
-              name="no" 
-              placeholder="No" 
-              value={formData.no} 
-              onChange={handleInputChange} 
-            />
-            <input 
-              type="text" 
-              name="deskripsi" 
-              placeholder="Deskripsi" 
-              value={formData.deskripsi} 
-              onChange={handleInputChange} 
-            />
-            <div className="modal-buttons">
-              <button onClick={handleUpdateData}>Update</button>
-              <button onClick={() => setShowEditModal(false)}>Batal</button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
 
 export default JenisTagihan;
+

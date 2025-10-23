@@ -4,7 +4,7 @@
   height: 100vh; /* Tinggi penuh layar */
   background-color: #333; /* Latar belakang gelap */
   color: white; /* Warna teks putih */
-  padding: 20px; /* Padding di dalam sidebar */
+  padding: 10px; /* Padding di dalam sidebar */
   box-sizing: border-box; /* Agar padding tidak menambah lebar total */
   transition: width 0.3s; /* Efek transisi untuk responsif */
 }
