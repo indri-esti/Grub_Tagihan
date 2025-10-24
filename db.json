@@ -1,0 +1,108 @@
+{
+  "users": [
+    {
+      "id": "aadb",
+      "name": "indri esti",
+      "email": "",
+      "password": "",
+      "jurusan": "yghn",
+      "angkatan": "3536",
+      "status": "243546"
+    },
+    {
+      "id": "7842",
+      "name": "indri esti",
+      "email": "",
+      "password": "",
+      "jurusan": "yghn",
+      "angkatan": "3536",
+      "status": "243546"
+    },
+    {
+      "id": "de07",
+      "name": "indri esti",
+      "keterangan": "yiyi",
+      "nisn": "iyh67687686",
+      "nohp": "6868678",
+      "deskripsi": "ggf",
+      "harga": "400",
+      "tanggal": "2025-20-23",
+      "status": "Belum Lunas"
+    },
+    {
+      "id": "3261",
+      "name": "indri esti",
+      "keterangan": "yiyi",
+      "nisn": "4675",
+      "nohp": "808070779",
+      "deskripsi": "ggf",
+      "harga": "400",
+      "tanggal": "2025-20-23",
+      "status": "Sudah Lunas"
+    },
+    {
+      "id": "4619",
+      "name": "indri esti",
+      "keterangan": "yiyi",
+      "nisn": "4675",
+      "nohp": "6868678",
+      "deskripsi": "ggf",
+      "harga": "500",
+      "tanggal": "2025-20-23",
+      "status": "Sudah Lunas"
+    }
+  ],
+  "tagihan": [
+    [
+      {
+        "id": "",
+        "nama": "",
+        "keterangan": "",
+        "nisn": "",
+        "nohp": "",
+        "deskripsi": "",
+        "harga": "",
+        "tanggal": "",
+        "status": "",
+        "aksi": ""
+      }
+    ],
+    {
+      "id": "3445",
+      "nama": "yyttyt",
+      "keterangan": "yiyi",
+      "nisn": "ggjg",
+      "nohp": "6868678",
+      "deskripsi": "ggf",
+      "harga": "400",
+      "tanggal": "3456-02-23",
+      "status": "Belum Lunas"
+    },
+    {
+      "id": "50b5",
+      "nama": "indri esti",
+      "keterangan": "SPP",
+      "nisn": "12346578",
+      "nohp": "085701519080",
+      "deskripsi": "Membayar SPP Bulan Oktober",
+      "harga": "200.000",
+      "tanggal": "2025-04-03",
+      "status": "Belum Lunas"
+    }
+  ],
+  "jenis_tagihan": [
+    {},
+    {
+      "id": "df77",
+      "nama": "SPP"
+    },
+    {
+      "id": "d87d",
+      "nama": "SPP"
+    },
+    {
+      "id": "7dcb",
+      "nama": "Uang gedung"
+    }
+  ]
+}

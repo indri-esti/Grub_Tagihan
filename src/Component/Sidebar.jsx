@@ -1,46 +1,76 @@
-import React from 'react';
-import { Link } from 'react-router-dom'; // Untuk navigasi ke halaman lain
-import Swal from 'sweetalert2'; // Untuk konfirmasi logout
-import './sidebar.css'; // Import CSS untuk styling
+// ✅ SidebarT.jsx (biarkan tetap seperti ini)
+import React from "react";
+import { Link, useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
-const Sidebar = () => {
-  // Fungsi untuk handle logout
+export default function SidebarT() {
+  const navigate = useNavigate();
+
   const handleLogout = () => {
     Swal.fire({
-      title: 'Apakah anda ingin keluar?',
-      icon: 'warning',
+      title: "Yakin ingin keluar?",
+      text: "Anda akan logout dari aplikasi.",
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonText: 'Ya',
-      cancelButtonText: 'Tidak',
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Ya, Logout",
+      cancelButtonText: "Batal",
     }).then((result) => {
       if (result.isConfirmed) {
-        // Lakukan proses logout (contoh: hapus token dari localStorage)
-        localStorage.removeItem('token'); // Hapus token (sesuaikan dengan sistem Anda)
-        window.location.href = '/login'; // Redirect ke halaman login
-        Swal.fire('Keluar!', 'Anda telah logout.', 'success'); // Muncul pesan sukses
+        localStorage.removeItem("token");
+        Swal.fire({
+          icon: "success",
+          title: "Berhasil Logout!",
+          text: "Anda akan diarahkan ke halaman login.",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+        navigate("/login");
       }
     });
   };
 
   return (
-    <div className="sidebar">
-      <h2>Menu Keuangan</h2> {/* Judul sidebar */}
-      
-      <ul>
-        <li>
-          <Link to="/dashboard">Dashboard</Link> {/* Link ke halaman dashboard */}
-        </li>
-        <li>
-          <Link to="/tagihan">Tagihan</Link> {/* Link ke halaman tagihan */}
-        </li>
-        <li>
-          <Link to="/jenis-tagihan">Jenis Tagihan</Link> {/* Link ke halaman jenis tagihan */}
-        </li>
-      </ul>
-      
-      <button onClick={handleLogout}>Logout</button> {/* Tombol logout */}
+    <div className="flex">
+      {/* Sidebar */}
+      <div className="fixed top-0 left-0 h-full w-60 bg-gray-800 text-white p-4 flex flex-col justify-between shadow-lg">
+        <div>
+          <div className="text-2xl font-bold mb-8 text-center">
+            Menu Keuangan
+          </div>
+
+          <nav className="space-y-3">
+            <Link
+              to="/dashboard"
+              className="block py-2 px-3 rounded hover:bg-blue-600 transition-colors"
+            >
+              Dashboard
+            </Link>
+
+            <Link
+              to="/tagihan"
+              className="block py-2 px-3 rounded hover:bg-blue-600 transition-colors"
+            >
+              Tagihan
+            </Link>
+
+            <Link
+              to="/jenistagihan"
+              className="block py-2 px-3 rounded hover:bg-blue-600 transition-colors"
+            >
+              Jenis Tagihan
+            </Link>
+          </nav>
+        </div>
+
+        <div
+          onClick={handleLogout}
+          className="block py-2 px-3 rounded hover:bg-red-600 cursor-pointer text-center"
+        >
+          Logout
+        </div>
+      </div>
     </div>
   );
-};
-
-export default Sidebar;
+}

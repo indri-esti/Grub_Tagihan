@@ -30,7 +30,7 @@ const Login = () => {
   return (
     <div className="login-container">
       <div className="login-form">
-        <h2>Login</h2>
+        <h2 style={{marginBottom:"20px"}}>Login</h2>
         <form onSubmit={handleSubmit}>
           {/* Input Email */}
           <div className="input-group">
@@ -57,7 +57,6 @@ const Login = () => {
               onClick={() => setShowPassword((prev) => !prev)}
               title={showPassword ? "Sembunyikan Password" : "Tampilkan Password"}
             >
-              {/* jika showPassword = true → tampilkan FaEyeSlash (artinya mata tertutup) */}
               {showPassword ? <FaEye /> : <FaEyeSlash />}
             </span>
           </div>
@@ -68,7 +67,7 @@ const Login = () => {
         </form>
 
         <p>
-          Belum punya akun? <Link to="/Register">Daftar</Link>
+          Belum punya akun? <Link className="test1" to="/Register">Masuk</Link>
         </p>
       </div>
     </div>

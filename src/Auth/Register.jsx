@@ -32,7 +32,7 @@ const Register = () => {
   return (
     <div className="register-container">
       <div className="register-form">
-        <h2>Masuk</h2>
+        <h2 style={{marginBottom:"30px"}}>Register</h2>
         <form onSubmit={handleSubmit}>
           <div className="input-group">
             <input
@@ -53,7 +53,7 @@ const Register = () => {
               required
             />
           </div>
-          <div className="input-group">
+          <div className="input-group password-wrapper">
             <input
               type={showPassword ? 'text' : 'password'}
               placeholder="Password"
@@ -69,7 +69,7 @@ const Register = () => {
           <button type="submit" className="register-btn">Masuk</button>
         </form>
         <p>
-          Sudah punya akun? <Link to="/login">Login</Link>
+          Sudah punya akun? <Link className="test" to="/login">Login</Link>
         </p>
       </div>
     </div>
