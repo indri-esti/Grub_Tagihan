@@ -13,8 +13,9 @@ const Tagihan = () => {
   // Ambil data dari API
   const fetchData = async () => {
     try {
+      setLoading(true); // ✅ Saat mulai ambil data
       const res = await axios.get("http://localhost:5000/tagihan");
-      setData(res.data);
+      setData(res.data); // ✅ Simpan hasil ke state
     } catch (err) {
       console.error("Gagal mengambil data:", err);
       Swal.fire({
@@ -23,7 +24,7 @@ const Tagihan = () => {
         text: "Gagal mengambil data dari server.",
       });
     } finally {
-      setLoading(false);
+      setLoading(false); // ✅ Setelah selesai (berhasil/gagal)
     }
   };
 
@@ -111,7 +112,7 @@ const Tagihan = () => {
           ) : (
             <div className="overflow-x-auto shadow-md rounded-lg">
               <table className="table-auto border border-gray-300 w-full text-sm">
-                <thead className="bg-gray-700 text-white">
+                <thead className="bg-blue-700 text-white">
                   <tr>
                     <th className="px-4 py-2">No</th>
                     <th className="px-4 py-2">Nama</th>
@@ -132,15 +133,25 @@ const Tagihan = () => {
                         key={item.id}
                         className="border-t hover:bg-gray-50 text-center"
                       >
-                        <td className="px-4 py-2">{index + 1}</td>
-                        <td className="px-4 py-2">{item.nama}</td>
-                        <td className="px-4 py-2">{item.keterangan}</td>
+                        <td className="px-4 py-2 text-right">{index + 1}</td>
+                        <td className="px-4 py-2 text-left">{item.nama}</td>
+                        <td className="px-4 py-2 text-left">{item.keterangan}</td>
                         <td className="px-4 py-2">{item.nisn}</td>
                         <td className="px-4 py-2">{item.nohp}</td>
-                        <td className="px-4 py-2">{item.deskripsi}</td>
-                        <td className="px-4 py-2">{item.harga}</td>
-                        <td className="px-4 py-2">{item.tanggal}</td>
-                        <td className="px-4 py-2">{item.status}</td>
+                        <td className="px-4 py-2 text-left">{item.deskripsi}</td>
+                        <td className="py-2 px-4 text-right">
+                      Rp {parseInt(item.harga || 0).toLocaleString("id-ID")}
+                    </td>
+                        <td className="px-4 py-2 text-center">{item.tanggal}</td>
+                        <td
+                      className={`py-2 px-4 font-semibold text-center ${
+                        item.status === "Lunas"
+                          ? "text-green-600"
+                          : "text-red-500"
+                      }`}
+                    >
+                      {item.status}
+                    </td>
                         <td className="px-4 py-2 flex justify-center gap-2">
                           <button
                             onClick={() => navigate(`/editdata/${item.id}`)}

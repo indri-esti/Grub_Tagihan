@@ -6,7 +6,8 @@ import { useNavigate } from "react-router-dom";
 const TambahData = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    namajenistagihan: "",
+    nama: "",
+    status: "Aktif", // default status
   });
 
   // Saat input berubah
@@ -25,7 +26,7 @@ const TambahData = () => {
       Swal.fire({
         icon: "success",
         title: "Berhasil!",
-        text: "Data tagihan berhasil ditambahkan!",
+        text: "Data jenis tagihan berhasil ditambahkan!",
         showConfirmButton: false,
         timer: 2000,
       });
@@ -48,20 +49,37 @@ const TambahData = () => {
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Input Nama */}
+          <label className="text-gray-700 text-sm mb-1 block">Nama Jenis Tagihan</label>
           <input
             type="text"
-            name="namajenistagihan"
-            placeholder="NamaJenisTagihan"
-            value={formData.namajenistagihan}
+            name="nama"
+            placeholder="Nama Jenis Tagihan"
+            value={formData.nama}
             onChange={handleChange}
             required
             className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
           />
 
+          {/* Dropdown Status */}
+          <div>
+            <label className="text-gray-700 text-sm mb-1 block">Status</label>
+            <select
+              name="status"
+              value={formData.status}
+              onChange={handleChange}
+              className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
+            >
+              <option value="Aktif">Aktif</option>
+              <option value="Nonaktif">Nonaktif</option>
+            </select>
+          </div>
+
+          {/* Tombol Aksi */}
           <div className="flex justify-between mt-6">
             <button
               type="button"
-              onClick={() => navigate("/tagihan")}
+              onClick={() => navigate("/jenistagihan")}
               className="bg-gray-400 text-white px-4 py-2 rounded-md hover:bg-gray-500 w-[48%]"
             >
               Batal

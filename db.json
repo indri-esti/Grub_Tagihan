@@ -53,56 +53,77 @@
     }
   ],
   "tagihan": [
-    [
-      {
-        "id": "",
-        "nama": "",
-        "keterangan": "",
-        "nisn": "",
-        "nohp": "",
-        "deskripsi": "",
-        "harga": "",
-        "tanggal": "",
-        "status": "",
-        "aksi": ""
-      }
-    ],
     {
-      "id": "3445",
-      "nama": "yyttyt",
-      "keterangan": "yiyi",
-      "nisn": "ggjg",
-      "nohp": "6868678",
-      "deskripsi": "ggf",
-      "harga": "400",
-      "tanggal": "3456-02-23",
+      "id": "97de",
+      "nama": "Nita",
+      "keterangan": "Seragam",
+      "nisn": "22355899",
+      "nohp": "08671557682",
+      "deskripsi": "Membayar Seragam Bulan September",
+      "harga": "200000",
+      "tanggal": "27/10/2025",
       "status": "Belum Lunas"
     },
     {
-      "id": "50b5",
+      "id": "f96c",
       "nama": "indri esti",
       "keterangan": "SPP",
-      "nisn": "12346578",
+      "nisn": "124656765767",
       "nohp": "085701519080",
       "deskripsi": "Membayar SPP Bulan Oktober",
-      "harga": "200.000",
-      "tanggal": "2025-04-03",
-      "status": "Belum Lunas"
+      "harga": "500000",
+      "tanggal": "22/10/2025",
+      "status": "Lunas"
+    },
+    {
+      "id": "3c76",
+      "nama": "ixia",
+      "keterangan": "Uang gedung",
+      "nisn": "12346578",
+      "nohp": "085701519080",
+      "deskripsi": "Membayar uang gedung Bulan September",
+      "harga": "600000",
+      "tanggal": "27/02/2025",
+      "status": "Lunas"
+    },
+    {
+      "id": "c4dd",
+      "nama": "dayu",
+      "keterangan": "Seragam",
+      "nisn": "12346578",
+      "nohp": "085701519088",
+      "deskripsi": "Membayar Seragam Bulan September",
+      "harga": "1000000",
+      "tanggal": "23/10/2025",
+      "status": "Lunas"
+    },
+    {
+      "id": "bdcb",
+      "nama": "Miya",
+      "keterangan": "tést",
+      "nisn": "01845113485",
+      "nohp": "08544139",
+      "deskripsi": "tést",
+      "harga": "1000000",
+      "tanggal": "02/02/2025",
+      "status": "Lunas"
     }
   ],
   "jenis_tagihan": [
-    {},
     {
-      "id": "df77",
-      "nama": "SPP"
+      "id": "d89a",
+      "nama": "tést",
+      "status": "Aktif"
     },
     {
-      "id": "d87d",
-      "nama": "SPP"
+      "id": "dd89",
+      "nama": "SPP",
+      "status": "Aktif"
     },
     {
-      "id": "7dcb",
-      "nama": "Uang gedung"
+      "id": "81c4",
+      "nama": "Seragam",
+      "status": "Aktif"
     }
   ]
 }

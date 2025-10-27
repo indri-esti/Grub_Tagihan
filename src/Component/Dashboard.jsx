@@ -1,243 +1,161 @@
-import React, { useState } from "react";
-import Sidebar from "./Sidebar"; // Sesuaikan path jika perlu
-import "./Dashboard.css";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import SidebarT from "./Sidebar";
+import { FaEdit, FaTrash } from "react-icons/fa";
 
-const initialData = [
-  {
-    id: 1,
-    nama: "John Doe",
-    keterangan: "SPP",
-    nisn: "1234567890",
-    nohp: "08123456789",
-    deskripsi: "Membayar SPP",
-    harga: 200000,
-    tanggal: "10/10/2025",
-    status: "Lunas",
-  },
-  {
-    id: 2,
-    nama: "Jane Smith",
-    keterangan: "Uang Gedung",
-    nisn: "0987654321",
-    nohp: "08987654321",
-    deskripsi: "Membayar Uang Gedung",
-    harga: 500000,
-    tanggal: "13/10/2025",
-    status: "Belum Lunas",
-  },
-  {
-    id: 3,
-    nama: "Bob Johnson",
-    keterangan: "Seragam",
-    nisn: "1122334455",
-    nohp: "08765432109",
-    deskripsi: "Membayar Seragam",
-    harga: 900000,
-    tanggal: "20/10/2025",
-    status: "Lunas",
-  },
-];
-
-const Dashboard = () => {
-  const [data, setData] = useState(initialData);
-  const [editIndex, setEditIndex] = useState(null);
-  const [formData, setFormData] = useState({
-    nama: "",
-    keterangan: "",
-    nisn: "",
-    nohp: "",
-    deskripsi: "",
-    harga: "",
-    tanggal: "",
-    status: "",
+export default function Dashboard() {
+  const [tagihan, setTagihan] = useState([]);
+  const [stats, setStats] = useState({
+    totalMember: 0,
+    totalTagihan: 0,
+    dibayar: 0,
+    belumDibayar: 0,
+    nominalLunas: 0,
+    nominalBelumLunas: 0,
   });
 
-  // Hitung total pendaftar, total tagihan, total dibayarkan
-  const TotalMember = data.length;
-  const totalTagihan = data.reduce((acc, item) => acc + item.harga, 0);
-  const totalDibayar = data.filter((item) => item.status === "Lunas").length;
-  const TotalBelumDibayar = data.filter((item) => item.status === "Belum Lunas").length;
+  useEffect(() => {
+    axios
+      .get("http://localhost:5000/tagihan")
+      .then((res) => {
+        const data = res.data;
+        setTagihan(data);
 
-  // Handle input change form edit
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
+        const totalMember = data.length;
+        const totalTagihan = data.reduce(
+          (acc, cur) => acc + (parseInt(cur.harga) || 0),
+          0
+        );
+        const dibayarData = data.filter((item) => item.status === "Lunas");
+        const belumDibayarData = data.filter(
+          (item) => item.status === "Belum Lunas"
+        );
 
-  // Simpan perubahan edit
-  const handleSaveEdit = () => {
-    let newData = [...data];
-    newData[editIndex] = {
-      id: newData[editIndex].id,
-      ...formData,
-      harga: parseInt(formData.harga, 10) || 0,
-    };
-    setData(newData);
-    setEditIndex(null);
-  };
+        const dibayar = dibayarData.length;
+        const belumDibayar = belumDibayarData.length;
+        const nominalLunas = dibayarData.reduce(
+          (acc, cur) => acc + (parseInt(cur.harga) || 0),
+          0
+        );
+        const nominalBelumLunas = belumDibayarData.reduce(
+          (acc, cur) => acc + (parseInt(cur.harga) || 0),
+          0
+        );
 
-  // Cancel edit
-  const handleCancelEdit = () => {
-    setEditIndex(null);
-  };
-
-
+        setStats({
+          totalMember,
+          totalTagihan,
+          dibayar,
+          belumDibayar,
+          nominalLunas,
+          nominalBelumLunas,
+        });
+      })
+      .catch((err) => console.error("Gagal ambil data:", err));
+  }, []);
 
   return (
-    <div className="dashboard-container">
-      <Sidebar />
-      <div className="dashboard-content">
-        <h1 className="dashboard-title">Dashboard</h1>
+    <div className="pl-[calc(15rem+1%)] pr-[5%] pt-[5%] md:pt-10 transition-all duration-300">
+      <SidebarT />
 
-        <div className="dashboard-cards">
-          <div className="card">
-            <div className="card-title">Total Member</div>
-            <div className="card-value">{TotalMember}</div>
+      <div className="flex-1 p-8 bg-gray-100 min-h-screen">
+        <h1 className="text-3xl font-bold mb-8 text-gray-800 text-center">
+          Dashboard
+        </h1>
+
+        {/* Grid Statistik 3x2 */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+          <div className="bg-white border rounded-xl p-6 shadow-sm text-center">
+            <h2 className="text-gray-600 text-sm">Total Member</h2>
+            <p className="text-2xl font-bold text-gray-800">
+              {stats.totalMember}
+            </p>
           </div>
-          <div className="card">
-            <div className="card-title">Total Tagihan</div>
-            <div className="card-value">
-              Rp {totalTagihan.toLocaleString("id-ID")}
-            </div>
+          <div className="bg-white border rounded-xl p-6 shadow-sm text-center">
+            <h2 className="text-gray-600 text-sm">Total Tagihan</h2>
+            <p className="text-2xl font-bold text-blue-600">
+              Rp {stats.totalTagihan.toLocaleString("id-ID")}
+            </p>
           </div>
-          <div className="card">
-            <div className="card-title">Dibayarkan</div>
-            <div className="card-value">{totalDibayar}</div>
+          <div className="bg-white border rounded-xl p-6 shadow-sm text-center">
+            <h2 className="text-gray-600 text-sm">Dibayar</h2>
+            <p className="text-2xl font-bold text-green-600">{stats.dibayar}</p>
           </div>
-          <div className="card">
-            <div className="card-title">Belum Dibayar</div>
-            <div className="card-value">{TotalBelumDibayar}</div>
+          <div className="bg-white border rounded-xl p-6 shadow-sm text-center">
+            <h2 className="text-gray-600 text-sm">Belum Dibayar</h2>
+            <p className="text-2xl font-bold text-red-500">
+              {stats.belumDibayar}
+            </p>
+          </div>
+          <div className="bg-white border rounded-xl p-6 shadow-sm text-center">
+            <h2 className="text-gray-600 text-sm">Nominal Sudah Lunas</h2>
+            <p className="text-2xl font-bold text-green-700">
+              Rp {stats.nominalLunas.toLocaleString("id-ID")}
+            </p>
+          </div>
+          <div className="bg-white border rounded-xl p-6 shadow-sm text-center">
+            <h2 className="text-gray-600 text-sm">Nominal Belum Lunas</h2>
+            <p className="text-2xl font-bold text-red-600">
+              Rp {stats.nominalBelumLunas.toLocaleString("id-ID")}
+            </p>
           </div>
         </div>
 
-        {/* Tabel Data */}
-        <table className="dashboard-table">
-          <thead>
-            <tr>
-              <th className="right-align">No</th>
-              <th className="center-align">Nama</th>
-              <th className="center-align">Keterangan</th>
-              <th className="center-align">NISN</th>
-              <th className="center-align">No. HP</th>
-              <th className="center-align">Deskripsi</th>
-              <th className="center-align">Harga</th>
-              <th className="center-align">Tanggal</th>
-              <th className="center-align">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((item, index) =>
-              editIndex === index ? (
-                <tr key={item.id} className="editing-row">
-                  <td className="right-align">{index + 1}</td>
-                  <td className="left-align">
-                    <input
-                      type="text"
-                      name="nama"
-                      value={formData.nama}
-                      onChange={handleChange}
-                    />
-                  </td>
-                  <td className="left-align">
-                    <input
-                      type="text"
-                      name="keterangan"
-                      value={formData.keterangan}
-                      onChange={handleChange}
-                    />
-                  </td>
-                  <td className="left-align">
-                    <input
-                      type="text"
-                      name="nisn"
-                      value={formData.nisn}
-                      onChange={handleChange}
-                    />
-                  </td>
-                  <td className="left-align">
-                    <input
-                      type="number"
-                      name="nohp"
-                      value={formData.nohp}
-                      onChange={handleChange}
-                    />
-                  </td>
-                  <td className="left-align">
-                    <input
-                      type="text"
-                      name="deskripsi"
-                      value={formData.deskripsi}
-                      onChange={handleChange}
-                    />
-                  </td>
-                  <td className="left-align">
-                    <input
-                      type="number"
-                      name="harga"
-                      value={formData.harga}
-                      onChange={handleChange}
-                    />
-                  </td>
-                  <td className="center-align">
-                    <input
-                      type="text"
-                      name="tanggal"
-                      placeholder="dd/mm/yyyy"
-                      value={formData.tanggal}
-                      onChange={handleChange}
-                    />
-                  </td>
-                  <td className="center-align">
-                    <select
-                      name="status"
-                      value={formData.status}
-                      onChange={handleChange}
+        {/* Tabel Tagihan */}
+        <div className="bg-white shadow-lg rounded-lg overflow-hidden border">
+          <table className="min-w-full text-sm text-gray-700 border-collapse">
+            <thead className="bg-blue-700 text-white">
+              <tr>
+                <th className="py-3 px-4 text-center">No</th>
+                <th className="py-3 px-4 text-center">Nama</th>
+                <th className="py-3 px-4 text-center">Keterangan</th>
+                <th className="py-3 px-4 text-center">NISN</th>
+                <th className="py-3 px-4 text-center">No. HP</th>
+                <th className="py-3 px-4 text-center">Deskripsi</th>
+                <th className="py-3 px-4 text-center">Harga</th>
+                <th className="py-3 px-4 text-center">Tanggal</th>
+                <th className="py-3 px-4 text-center">Status</th> 
+              </tr>
+            </thead>
+            <tbody>
+              {tagihan.length > 0 ? (
+                tagihan.map((item, index) => (
+                  <tr
+                    key={item.id}
+                    className="border-t hover:bg-gray-50 text-center"
+                  >
+                    <td className="px-4 py-2 text-right">{index + 1}</td>
+                    <td className="px-4 py-2 text-left">{item.nama}</td>
+                    <td className="px-4 py-2 text-left">{item.keterangan}</td>
+                    <td className="px-4 py-2">{item.nisn}</td>
+                    <td className="px-4 py-2">{item.nohp}</td>
+                    <td className="px-4 py-2 text-left">{item.deskripsi}</td>
+                    <td className="px-4 py-2 text-right">
+                      Rp {parseInt(item.harga || 0).toLocaleString("id-ID")}
+                    </td>
+                    <td className="px-4 py-2 text-center">{item.tanggal}</td>
+                    <td
+                      className={`px-4 py-2 text-center font-semibold ${
+                        item.status === "Lunas"
+                          ? "text-green-600"
+                          : "text-red-500"
+                      }`}
                     >
-                      <option value="Dibayar">Dibayar</option>
-                      <option value="Belum Dibayar">Belum Dibayar</option>
-                    </select>
-                  </td>
-                  <td className="center-align">
-                    <button
-                      className="save-btn"
-                      onClick={handleSaveEdit}
-                      title="Simpan"
-                    >
-                      💾
-                    </button>
-                    <button
-                      className="cancel-btn"
-                      onClick={handleCancelEdit}
-                      title="Batal"
-                    >
-                      ❌
-                    </button>
-                  </td>
-                </tr>
+                      {item.status}
+                    </td> 
+                  </tr>
+                ))
               ) : (
-                <tr key={item.id}>
-                  <td className="right-align">{index + 1}</td>
-                  <td className="left-align">{item.nama}</td>
-                  <td className="left-align">{item.keterangan}</td>
-                  <td className="left-align">{item.nisn}</td>
-                  <td className="left-align">{item.nohp}</td>
-                  <td className="left-align">{item.deskripsi}</td>
-                  <td className="right-align">
-                    Rp {item.harga.toLocaleString("id-ID")}
+                <tr>
+                  <td colSpan="10" className="py-4 text-center text-gray-500">
+                    Tidak ada data tagihan.
                   </td>
-                  <td className="center-align">{item.tanggal}</td>
-                  <td className="center-align">{item.status}</td>
                 </tr>
-              )
-            )}
-          </tbody>
-        </table>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
-};
-
-export default Dashboard;
+}

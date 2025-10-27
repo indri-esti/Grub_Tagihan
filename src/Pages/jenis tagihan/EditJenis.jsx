@@ -8,6 +8,7 @@ const EditData = () => {
   const { id } = useParams(); // ambil ID dari URL
   const [formData, setFormData] = useState({
     nama: "",
+    status: "", // tambahkan field status
   });
 
   // ambil data lama berdasarkan ID
@@ -44,15 +45,15 @@ const EditData = () => {
       Swal.fire({
         icon: "success",
         title: "Berhasil!",
-        text: "Data tagihan berhasil diperbarui!",
+        text: "Data jenis tagihan berhasil diperbarui!",
         showConfirmButton: false,
         timer: 2000,
       });
       navigate("/jenistagihan");
     } catch (error) {
-      console.error("Berhasil mengupdate data:", error);
+      console.error("Gagal mengupdate data:", error);
       Swal.fire({
-        icon: "true",
+        icon: "error",
         title: "Gagal!",
         text: "Terjadi kesalahan saat mengupdate data.",
       });
@@ -67,15 +68,32 @@ const EditData = () => {
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Input Nama */}
           <input
             type="text"
             name="nama"
-            placeholder="NamaJenistagihan"
+            placeholder="Nama Jenis Tagihan"
             value={formData.nama}
             onChange={handleChange}
             className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
           />
 
+          {/* Dropdown Status */}
+          <div>
+            <label className="text-gray-700 text-sm mb-1 block">Status</label>
+            <select
+              name="status"
+              value={formData.status}
+              onChange={handleChange}
+              className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
+            >
+              <option value="">-- Pilih Status --</option>
+              <option value="Aktif">Aktif</option>
+              <option value="Nonaktif">Nonaktif</option>
+            </select>
+          </div>
+
+          {/* Tombol Aksi */}
           <div className="flex justify-between mt-6">
             <button
               type="button"

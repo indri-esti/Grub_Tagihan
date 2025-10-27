@@ -112,10 +112,11 @@ const Tagihan = () => {
           ) : (
             <div className="overflow-x-auto shadow-md rounded-lg">
               <table className="table-auto border border-gray-300 w-full text-sm">
-                <thead className="bg-gray-700 text-white">
+                <thead className="bg-blue-700 text-white">
                   <tr>
                     <th className="px-2 py-2">No</th>
-                    <th className="px-3 py-2">Nama Jenis Tagihan</th>
+                    <th className="px-2 py-2">Nama Jenis Tagihan</th>
+                    <th className="px-2 py-2">Status</th>
                     <th className="px-2 py-2">Aksi</th>
                   </tr>
                 </thead>
@@ -124,10 +125,11 @@ const Tagihan = () => {
                     filteredData.map((item, index) => (
                       <tr
                         key={item.id}
-                        className="border-t hover:bg-gray-50 text-center"
+                        className="border-t hover:bg-gray-50 "
                       >
-                        <td className="px-4 py-2">{index + 1}</td>
-                        <td className="px-4 py-2">{item.nama}</td>
+                        <td className="px-4 py-2 text-right">{index + 1}</td>
+                        <td className="px-4 py-2 text-left">{item.nama}</td>
+                        <td className="px-4 py-2">{item.status}</td>
 
                         <td className="px-4 py-2 flex justify-center gap-2">
                           <button

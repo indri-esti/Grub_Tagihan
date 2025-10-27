@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
@@ -7,28 +7,65 @@ const TambahData = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     nama: "",
-    keterangan: "",
+    keterangan: "", // jenis tagihan
     nisn: "",
     nohp: "",
     deskripsi: "",
     harga: "",
     tanggal: "",
-    status: "",
+    status: "Belum Lunas", // default otomatis
   });
+
+  const [jenisTagihan, setJenisTagihan] = useState([]);
+
+  // Ambil data jenis tagihan dari API
+  useEffect(() => {
+    axios
+      .get("http://localhost:5000/jenis_tagihan")
+      .then((res) => {
+        // 🔹 Filter hanya yang statusnya "Aktif"
+        const aktifOnly = res.data.filter(
+          (item) => item.status?.toLowerCase() === "aktif"
+        );
+        setJenisTagihan(aktifOnly);
+      })
+      .catch((err) => {
+        console.error("Gagal mengambil jenis tagihan:", err);
+      });
+  }, []);
+
+  // Format tanggal ke dd/mm/yyyy
+  const formatTanggal = (dateString) => {
+    if (!dateString) return "";
+    const [year, month, day] = dateString.split("-");
+    return `${day}/${month}/${year}`;
+  };
 
   // Saat input berubah
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+
+    if (name === "tanggal") {
+      const formatted = formatTanggal(value);
+      setFormData({
+        ...formData,
+        [name]: formatted,
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    }
   };
 
   // Saat form disubmit
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:5000/tagihan", formData);
+      const dataToSend = { ...formData, status: "Belum Lunas" }; // default
+      await axios.post("http://localhost:5000/tagihan", dataToSend);
+
       Swal.fire({
         icon: "success",
         title: "Berhasil!",
@@ -55,86 +92,64 @@ const TambahData = () => {
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="text"
-            name="nama"
-            placeholder="Nama"
-            value={formData.nama}
-            onChange={handleChange}
-            required
-            className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
-          />
+          {/* Input Nama, NISN, No HP, Deskripsi, Harga */}
+          {[
+            { name: "nama", placeholder: "Nama" },
+            { name: "nisn", placeholder: "NISN" },
+            { name: "nohp", placeholder: "No HP" },
+            { name: "deskripsi", placeholder: "Deskripsi" },
+            { name: "harga", placeholder: "Harga", type: "number" },
+          ].map((input) => (
+            <input
+              key={input.name}
+              type={input.type || "text"}
+              name={input.name}
+              placeholder={input.placeholder}
+              value={formData[input.name]}
+              onChange={handleChange}
+              required
+              className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
+            />
+          ))}
 
-          <input
-            type="text"
-            name="keterangan"
-            placeholder="Keterangan"
-            value={formData.keterangan}
-            onChange={handleChange}
-            required
-            className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
-          />
+          {/* Dropdown Jenis Tagihan */}
+          <div>
+            <label className="text-gray-700 text-sm mb-1 block">
+              Jenis Tagihan
+            </label>
+            <select
+              name="keterangan"
+              value={formData.keterangan}
+              onChange={handleChange}
+              required
+              className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
+            >
+              <option value="">-- Pilih Jenis Tagihan (Aktif) --</option>
+              {jenisTagihan.length > 0 ? (
+                jenisTagihan.map((item) => (
+                  <option key={item.id} value={item.nama}>
+                    {item.nama}
+                  </option>
+                ))
+              ) : (
+                <option disabled>Tidak ada jenis tagihan aktif</option>
+              )}
+            </select>
+          </div>
 
-          <input
-            type="text"
-            name="nisn"
-            placeholder="NISN"
-            value={formData.nisn}
-            onChange={handleChange}
-            required
-            className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
-          />
+          {/* Input Tanggal */}
+          <div>
+            <label className="text-gray-700 text-sm">Tanggal (dd/mm/yyyy)</label>
+            <input
+              type="date"
+              name="tanggal"
+              onChange={handleChange}
+              className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none mt-1"
+              required
+            />
+          </div>
 
-          <input
-            type="text"
-            name="nohp"
-            placeholder="No HP"
-            value={formData.nohp}
-            onChange={handleChange}
-            required
-            className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
-          />
-
-          <input
-            type="text"
-            name="deskripsi"
-            placeholder="Deskripsi"
-            value={formData.deskripsi}
-            onChange={handleChange}
-            className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
-          />
-
-          <input
-            type="number"
-            name="harga"
-            placeholder="Harga"
-            value={formData.harga}
-            onChange={handleChange}
-            required
-            className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
-          />
-
-          <input
-            type="date"
-            name="tanggal"
-            value={formData.tanggal}
-            onChange={handleChange}
-            required
-            className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
-          />
-
-          <select
-            name="status"
-            value={formData.status}
-            onChange={handleChange}
-            required
-            className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
-          >
-            <option value="">-- Pilih Status --</option>
-            <option value="Belum Lunas">Belum Lunas</option>
-            <option value="Lunas">Lunas</option>
-          </select>
-
+          {/* Tombol Aksi */}
           <div className="flex justify-between mt-6">
             <button
               type="button"
