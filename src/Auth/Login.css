@@ -1,87 +1,102 @@
-/* 
-body {
-  font-family: "Arial", sans-serif;
-  min-height: 100vh;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-} */
-
 .login-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100%;
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 20px;
+  background: linear-gradient(135deg, #6a82fb, #8e44ad);
+  font-family: "Poppins", sans-serif;
 }
 
 .login-form {
-  background: rgba(252, 251, 251, 0.95); /* Background semi-transparan */
-  padding: 40px;
-  border-radius: 20px;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  background: #ffffff;
+  padding: 45px 40px;
+  border-radius: 16px;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.15);
   width: 100%;
-  max-width: 400px;
-  text-align: center; /* Center text di dalam form */
-  backdrop-filter: blur(10px); /* Efek blur untuk modern look */
-  border: 1px solid rgba(13, 74, 85, 0.2);
+  max-width: 380px;
 }
 
-.form-title {
-  color: #221818;
+.login-title {
+  text-align: center;
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: #2c3e50;
   margin-bottom: 30px;
-  font-size: 28px;
-  font-weight: bold;
+  letter-spacing: 1px;
 }
 
+/* Input Group */
 .input-group {
-  position: relative;
-  margin-bottom: 20px;
+  margin-bottom: 22px;
+  text-align: left;
 }
 
+.input-label {
+  display: block;
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 0.95rem;
+  margin-bottom: 6px;
+}
+
+/* Input Box */
 .input-group input {
   width: 100%;
-  padding: 15px;
-  /* border: 2px solid #83ebc8; */
-  border-radius: 10px;
-
-  font-size: 16px;
-  transition: border-color 0.3s ease;
+  padding: 12px;
+  border: 2px solid #a8e6cf;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: 0.3s ease;
 }
 
 .input-group input:focus {
+  border-color: #6a82fb;
   outline: none;
-  border-color: #3a5aec;
+  box-shadow: 0 0 6px rgba(106, 130, 251, 0.4);
 }
 
-.password-group {
+/* Password Box (Input + Icon) */
+.password-box {
+  position: relative; /* penting agar icon bisa posisinya relatif ke box */
   display: flex;
   align-items: center;
 }
 
-.password-group input {
-  flex: 1;
-  border-radius: 10px 0 0 10px;
-  border-right: none;
+.password-box input {
+  width: 100%;
+  padding: 12px 45px 12px 12px; /* ruang di kanan untuk icon mata */
+  border: 2px solid #a8e6cf;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: 0.3s ease;
 }
 
-.password-toggle {
+.password-toggle-login {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%); /* kunci agar benar-benar tengah */
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 10px;
-  border: 0px solid #ffffff;
-  border-left: none;
-  border-radius: 0 10px 10px 0;
+  color: white;
+  border-radius: 6px;
+  padding: 6px;
   cursor: pointer;
-
   font-size: 18px;
-  transition: background 0.3s ease;
-  user-select: none;
+  line-height: 1; /* penting biar icon tidak turun */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.password-toggle:hover {
+  background: #d9d9f0;
+  color: #6a82fb;
 }
 
 
+
+/* Button */
 .login-btn {
   width: 100%;
   padding: 15px;
@@ -89,7 +104,6 @@ body {
   color: black;
   border: none;
   border-radius: 10px;
-
   font-size: 18px;
   font-weight: bold;
   cursor: pointer;
@@ -98,68 +112,24 @@ body {
 }
 
 .login-btn:hover {
-  transform: translateY(-2px);
+  transform: scale(1.03);
+  background: linear-gradient(135deg, #5a72f7, #7d3cb8);
 }
 
-.logout-btn {
-  width: 100%;
-  padding: 10px;
-  background: #ff6b6b;
-  color: rgb(126, 118, 118);
-  border: none;
-  border-radius: 10px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background 0.3s ease;
-  margin-bottom: 20px;
-}
-
-.logout-btn:hover {
-  background: #ff5252;
-}
-
-.register-link {
-  color: #666;
-  font-size: 14px;
-}
-
-.link-text {
-  color: #667eea;
-  cursor: pointer;
-  text-decoration: underline;
-  font-weight: bold;
-}
-
-.link-text:hover {
-  color: #38e0ca;
-}
-
-.password-wrapper {
-  display: flex;
-  align-items: center;
-  position: relative;
-}
-
-.password-toggle {
-  position: absolute;
-  right: 12px; 
-  font-size: 18px;
-  cursor: pointer; 
-}
- 
-
-/* Responsive untuk mobile */
-@media (max-width: 480px) {
-  .login-form {
-    padding: 30px 20px;
-    margin: 10px;
-  }
-
-  .form-title {
-    font-size: 24px;
-  }
+/* Register Text */
+.register-text {
+  margin-top: 20px;
+  text-align: center;
+  color: #444;
+  font-size: 0.9rem;
 }
 
 .test1 {
-  color: blue;
+  color: #6a82fb;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.test1:hover {
+  text-decoration: underline;
 }

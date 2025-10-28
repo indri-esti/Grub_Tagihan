@@ -13,41 +13,39 @@ const Login = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (email && password) {
+    const storedUsers = JSON.parse(localStorage.getItem("users")) || [];
+    const matchedUser = storedUsers.find(
+      (user) => user.email === email && user.password === password
+    );
+
+    if (matchedUser) {
       Swal.fire({
         title: "Login Berhasil!",
-        text: "Selamat, Login Berhasil.",
+        text: `Selamat datang, ${matchedUser.fullName}!`,
         icon: "success",
         confirmButtonText: "OK",
       }).then(() => {
+        localStorage.setItem("loggedInUser", JSON.stringify(matchedUser));
         navigate("/dashboard");
       });
     } else {
-      Swal.fire("Error", "Mohon isi semua field", "error");
+      Swal.fire("Error", "Email atau password salah!", "error");
     }
   };
 
   return (
     <div className="login-container">
       <div className="login-form">
-        {/* Judul Login */}
-        <h2
-          style={{
-            marginBottom: "30px",
-            fontSize: "2.2rem",
-            fontWeight: "700",
-            color: "#2c3e50",
-            textAlign: "center",
-            letterSpacing: "1px",
-          }}
-        >
-          Login
-        </h2>
+        <h2 className="login-title">Login</h2>
 
         <form onSubmit={handleSubmit}>
           {/* Input Email */}
           <div className="input-group">
+            <label htmlFor="email" className="input-label">
+              Akun Email
+            </label>
             <input
+              id="email"
               type="email"
               placeholder="Masukkan email"
               value={email}
@@ -56,22 +54,29 @@ const Login = () => {
             />
           </div>
 
-          {/* Input Password + Icon Mata */}
+          {/* Input Password */}
           <div className="input-group password-wrapper">
-            <input
-              type={showPassword ? "text" : "password"}
-              placeholder="Masukkan password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-            <span
-              className="password-toggle"
-              onClick={() => setShowPassword((prev) => !prev)}
-              title={showPassword ? "Sembunyikan Password" : "Tampilkan Password"}
-            >
-              {showPassword ? <FaEye /> : <FaEyeSlash />}
-            </span>
+            <label htmlFor="password" className="input-label">
+              Password
+            </label>
+            <div className="password-box">
+              <input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                placeholder="Masukkan password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <button
+                type="button"
+                className="password-toggle-login"
+                onClick={() => setShowPassword((prev) => !prev)}
+                title={showPassword ? "Sembunyikan Password" : "Tampilkan Password"}
+              >
+                {showPassword ? <FaEye /> : <FaEyeSlash />}
+              </button>
+            </div>
           </div>
 
           <button type="submit" className="login-btn">
@@ -79,7 +84,7 @@ const Login = () => {
           </button>
         </form>
 
-        <p style={{ marginTop: "20px", textAlign: "center" }}>
+        <p className="register-text">
           Belum punya akun?{" "}
           <Link className="test1" to="/Register">
             Daftar Dulu !

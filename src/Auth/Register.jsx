@@ -15,14 +15,35 @@ const Register = () => {
     e.preventDefault();
 
     if (fullName && email && password) {
+      // Ambil akun lama dari localStorage
+      const storedUsers = JSON.parse(localStorage.getItem("users")) || [];
+
+      // Cek apakah email sudah digunakan
+      const isEmailUsed = storedUsers.some((user) => user.email === email);
+
+      if (isEmailUsed) {
+        Swal.fire("Error", "Email sudah terdaftar, silakan login.", "error");
+        return;
+      }
+
+      // Tambah akun baru
+      const newUser = { fullName, email, password };
+      storedUsers.push(newUser);
+      localStorage.setItem("users", JSON.stringify(storedUsers));
+
       Swal.fire({
         title: "Akun anda telah dibuat!",
-        text: "Selamat, akun berhasil dibuat.",
+        text: "Silakan login dengan akun baru Anda.",
         icon: "success",
         confirmButtonText: "OK",
       }).then(() => {
-        navigate("/dashboard");
+        navigate("/login");
       });
+
+      // Reset form
+      setFullName("");
+      setEmail("");
+      setPassword("");
     } else {
       Swal.fire("Error", "Mohon isi semua field", "error");
     }
@@ -31,7 +52,6 @@ const Register = () => {
   return (
     <div className="register-container">
       <div className="register-form">
-        {/* Judul Register */}
         <h2
           style={{
             marginBottom: "30px",
@@ -47,6 +67,9 @@ const Register = () => {
 
         <form onSubmit={handleSubmit}>
           <div className="input-group">
+             <label htmlFor="email" className="input-label">
+              Nama Lengkap
+            </label>
             <input
               type="text"
               placeholder="Nama Lengkap"
@@ -57,6 +80,9 @@ const Register = () => {
           </div>
 
           <div className="input-group">
+            <label htmlFor="email" className="input-label">
+             Akun Email
+            </label>
             <input
               type="email"
               placeholder="Masukkan email"
@@ -67,6 +93,9 @@ const Register = () => {
           </div>
 
           <div className="input-group password-wrapper">
+            <label htmlFor="email" className="input-label">
+             Password
+            </label>
             <input
               type={showPassword ? "text" : "password"}
               placeholder="Password"

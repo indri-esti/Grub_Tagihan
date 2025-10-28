@@ -5,7 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 const EditData = () => {
   const navigate = useNavigate();
-  const { id } = useParams(); // ambil id dari URL
+  const { id } = useParams();
 
   const [formData, setFormData] = useState({
     nama: "",
@@ -15,12 +15,11 @@ const EditData = () => {
     deskripsi: "",
     harga: "",
     tanggal: "",
-    status: "", // akan diisi dari data db.json
+    status: "",
   });
 
   const [jenisTagihan, setJenisTagihan] = useState([]);
 
-  // Ambil data tagihan berdasarkan ID
   useEffect(() => {
     axios
       .get(`http://localhost:5000/tagihan/${id}`)
@@ -38,45 +37,30 @@ const EditData = () => {
       });
   }, [id, navigate]);
 
-  // Ambil jenis tagihan untuk dropdown
   useEffect(() => {
     axios
       .get("http://localhost:5000/jenis_tagihan")
-      .then((res) => {
-        setJenisTagihan(res.data);
-      })
-      .catch((err) => {
-        console.error("Gagal mengambil jenis tagihan:", err);
-      });
+      .then((res) => setJenisTagihan(res.data))
+      .catch((err) => console.error("Gagal mengambil jenis tagihan:", err));
   }, []);
 
-  // Ubah format tanggal ke yyyy-mm-dd untuk input date
   const formatTanggalInput = (tanggal) => {
     if (!tanggal) return "";
     const [day, month, year] = tanggal.split("/");
     return `${year}-${month}-${day}`;
   };
 
-  // Saat input berubah
   const handleChange = (e) => {
     const { name, value } = e.target;
 
     if (name === "tanggal") {
-      // format ke dd/mm/yyyy
       const [year, month, day] = value.split("-");
-      setFormData({
-        ...formData,
-        [name]: `${day}/${month}/${year}`,
-      });
+      setFormData({ ...formData, [name]: `${day}/${month}/${year}` });
     } else {
-      setFormData({
-        ...formData,
-        [name]: value,
-      });
+      setFormData({ ...formData, [name]: value });
     }
   };
 
-  // Submit update
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -99,102 +83,148 @@ const EditData = () => {
     }
   };
 
-  return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
-      <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
-        <h2 className="text-2xl font-semibold text-center mb-6">
-          Edit Data Tagihan
-        </h2>
+return (
+  <div className="flex justify-center items-center min-h-screen bg-gray-100">
+    <div className="bg-white shadow-lg rounded-xl p-6 w-full max-w-sm">
+      <h2 className="text-xl font-semibold text-center mb-5">
+        Edit Data Tagihan
+      </h2>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Input Nama, NISN, No HP, Deskripsi, Harga */}
-          {[
-            { name: "nama", placeholder: "Nama" },
-            { name: "nisn", placeholder: "NISN" },
-            { name: "nohp", placeholder: "No HP" },
-            { name: "deskripsi", placeholder: "Deskripsi" },
-            { name: "harga", placeholder: "Harga", type: "number" },
-          ].map((input) => (
-            <input
-              key={input.name}
-              type={input.type || "text"}
-              name={input.name}
-              placeholder={input.placeholder}
-              value={formData[input.name] || ""}
-              onChange={handleChange}
-              required
-              className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
-            />
-          ))}
+      <form onSubmit={handleSubmit} className="space-y-3">
+        {/* Nama */}
+        <div>
+          <label className="text-gray-700 text-sm mb-1 block">Nama</label>
+          <input
+            type="text"
+            name="nama"
+            value={formData.nama || ""}
+            onChange={handleChange}
+            required
+            className="w-full border border-gray-300 rounded-md p-2 text-base focus:ring-2 focus:ring-blue-400 outline-none"
+          />
+        </div>
 
-          {/* Dropdown Jenis Tagihan */}
-          <div>
-            <label className="text-gray-700 text-sm mb-1 block">
-              Jenis Tagihan
-            </label>
-            <select
-              name="keterangan"
-              value={formData.keterangan || ""}
-              onChange={handleChange}
-              required
-              className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
-            >
-              <option value="">-- Pilih Jenis Tagihan --</option>
-              {jenisTagihan.map((item) => (
-                <option key={item.id} value={item.nama}>
-                  {item.nama}
-                </option>
-              ))}
-            </select>
-          </div>
+        {/* NISN */}
+        <div>
+          <label className="text-gray-700 text-sm mb-1 block">NISN</label>
+          <input
+            type="text"
+            name="nisn"
+            value={formData.nisn || ""}
+            onChange={handleChange}
+            required
+            className="w-full border border-gray-300 rounded-md p-2 text-base focus:ring-2 focus:ring-blue-400 outline-none"
+          />
+        </div>
 
-          {/* Input Tanggal */}
-          <div>
-            <label className="text-gray-700 text-sm">Tanggal (dd/mm/yyyy)</label>
-            <input
-              type="date"
-              name="tanggal"
-              value={formatTanggalInput(formData.tanggal)}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none mt-1"
-              required
-            />
-          </div>
+        {/* No HP */}
+        <div>
+          <label className="text-gray-700 text-sm mb-1 block">No. HP</label>
+          <input
+            type="text"
+            name="nohp"
+            value={formData.nohp || ""}
+            onChange={handleChange}
+            required
+            className="w-full border border-gray-300 rounded-md p-2 text-base focus:ring-2 focus:ring-blue-400 outline-none"
+          />
+        </div>
 
-          {/* Dropdown Status */}
-          <div>
-            <label className="text-gray-700 text-sm mb-1 block">Status</label>
-            <select
-              name="status"
-              value={formData.status}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
-            >
-              <option value="Belum Lunas">Belum Lunas</option>
-              <option value="Lunas">Lunas</option>
-            </select>
-          </div>
+        {/* Deskripsi */}
+        <div>
+          <label className="text-gray-700 text-sm mb-1 block">Deskripsi</label>
+          <input
+            type="text"
+            name="deskripsi"
+            value={formData.deskripsi || ""}
+            onChange={handleChange}
+            required
+            className="w-full border border-gray-300 rounded-md p-2 text-base focus:ring-2 focus:ring-blue-400 outline-none"
+          />
+        </div>
 
-          {/* Tombol Aksi */}
-          <div className="flex justify-between mt-6">
-            <button
-              type="button"
-              onClick={() => navigate("/tagihan")}
-              className="bg-gray-400 text-white px-4 py-2 rounded-md hover:bg-gray-500 w-[48%]"
-            >
-              Batal
-            </button>
-            <button
-              type="submit"
-              className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 w-[48%]"
-            >
-              Simpan
-            </button>
-          </div>
-        </form>
-      </div>
+        {/* Harga */}
+        <div>
+          <label className="text-gray-700 text-sm mb-1 block">Harga</label>
+          <input
+            type="number"
+            name="harga"
+            value={formData.harga || ""}
+            onChange={handleChange}
+            required
+            className="w-full border border-gray-300 rounded-md p-2 text-base focus:ring-2 focus:ring-blue-400 outline-none"
+          />
+        </div>
+
+        {/* Jenis Tagihan */}
+        <div>
+          <label className="text-gray-700 text-sm mb-1 block">
+            Jenis Tagihan
+          </label>
+          <select
+            name="keterangan"
+            value={formData.keterangan || ""}
+            onChange={handleChange}
+            required
+            className="w-full border border-gray-300 rounded-md p-2 text-base focus:ring-2 focus:ring-blue-400 outline-none"
+          >
+            <option value="">-- Pilih Jenis Tagihan --</option>
+            {jenisTagihan.map((item) => (
+              <option key={item.id} value={item.nama}>
+                {item.nama}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Tanggal */}
+        <div>
+          <label className="text-gray-700 text-sm mb-1 block">
+            Tanggal (dd/mm/yyyy)
+          </label>
+          <input
+            type="date"
+            name="tanggal"
+            value={formatTanggalInput(formData.tanggal)}
+            onChange={handleChange}
+            required
+            className="w-full border border-gray-300 rounded-md p-2 text-base focus:ring-2 focus:ring-blue-400 outline-none"
+          />
+        </div>
+
+        {/* Status */}
+        <div>
+          <label className="text-gray-700 text-sm mb-1 block">Status</label>
+          <select
+            name="status"
+            value={formData.status}
+            onChange={handleChange}
+            className="w-full border border-gray-300 rounded-md p-2 text-base focus:ring-2 focus:ring-blue-400 outline-none"
+          >
+            <option value="Belum Lunas">Belum Lunas</option>
+            <option value="Lunas">Lunas</option>
+          </select>
+        </div>
+
+        {/* Tombol */}
+        <div className="flex justify-between mt-5">
+          <button
+            type="button"
+            onClick={() => navigate("/tagihan")}
+            className="bg-gray-400 text-white text-sm px-4 py-2 rounded-md hover:bg-gray-500 w-[48%]"
+          >
+            Batal
+          </button>
+          <button
+            type="submit"
+            className="bg-blue-500 text-white text-sm px-4 py-2 rounded-md hover:bg-blue-600 w-[48%]"
+          >
+            Simpan
+          </button>
+        </div>
+      </form>
     </div>
-  );
+  </div>
+);
 };
-
 export default EditData;

@@ -1,141 +1,143 @@
+/* Background Gradient */
 .register-container {
+  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100%;
-  min-height: 100vh;
-  padding: 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #6a82fb, #8e44ad);
+  font-family: "Poppins", sans-serif;
 }
 
+/* Box Register */
 .register-form {
-  background: rgba(253, 251, 251, 0.95); /* Background semi-transparan */
-  padding: 40px;
-  border-radius: 20px;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 400px;
-  text-align: center; /* Center text di dalam form */
-  backdrop-filter: blur(10px); /* Efek blur untuk modern look */
-  border: 1px solid rgba(13, 74, 85, 0.2);
+  background: white;
+  padding: 40px 35px;
+  border-radius: 15px;
+  width: 360px;
+  box-shadow: 0px 8px 25px rgba(0, 0, 0, 0.15);
 }
 
-.form-title {
-  color: #221818;
-  margin-bottom: 30px;
-  font-size: 28px;
-  font-weight: bold;
+.register-form h2 {
+  text-align: center;
+  color: #2c3e50;
+  font-size: 1.9rem;
+  font-weight: 700;
+  margin-bottom: 25px;
 }
 
+/* Input Group */
 .input-group {
+  margin-bottom: 18px;
   position: relative;
-  margin-bottom: 20px;
+}
+
+.input-group label {
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+  display: block;
 }
 
 .input-group input {
   width: 100%;
-  padding: 15px;
-  border: 2px solid #83ebc8;
-  border-radius: 10px;
-
-  font-size: 16px;
-  transition: border-color 0.3s ease;
+  padding: 10px 40px 10px 12px;
+  border: 1.5px solid #b2f2bb;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  outline: none;
+  transition: 0.3s;
 }
 
 .input-group input:focus {
-  outline: none;
-  border-color: #667eea;
+  border-color: #6a82fb;
+  box-shadow: 0 0 5px rgba(106, 130, 251, 0.5);
 }
 
-.password-group {
+/* Password wrapper */
+.password-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+/* Input password */
+.password-wrapper input {
+  width: 100%;
+  padding-right: 40px; /* beri ruang untuk ikon mata */
+  height: 42px;
+  font-size: 15px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  padding-left: 12px;
+  box-sizing: border-box;
+}
+
+.password-container {
+  position: relative;
+  width: 100%;
+}
+
+.password-container input {
+  width: 100%;
+  padding-right: 45px; /* beri ruang untuk ikon agar tidak menutupi teks */
+  box-sizing: border-box;
+}
+
+/* Icon Mata di Tengah */
+.password-toggle {
+  position: absolute;
+  top: 60%;
+  right: 10px;
+  transform: translateY(-30%);
   display: flex;
   align-items: center;
-}
-
-.password-group input {
-  flex: 1;
-  border-radius: 10px 0 0 10px;
-  border-right: none;
-}
-
-.password-toggle {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 10px;
-  border: 0px solid #ffffff;
-  border-left: none;
-  border-radius: 0 10px 10px 0;
+  justify-content: center;
+  width: 35px;
+  height: 35px;
   cursor: pointer;
 
-  font-size: 18px;
-  transition: background 0.3s ease;
+  background: linear-gradient(135deg, #6a82fb 0%, #b06ab3 100%);
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 16px;
+
+  transition: background 0.3s ease, color 0.3s ease;
   user-select: none;
 }
 
+.password-toggle:hover {
+  background: #d9d9f0;
+  color: #6a82fb;
+}
+
+/* Tombol */
 .register-btn {
   width: 100%;
-  padding: 15px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-
-  color: black;
-  border: none;
-  border-radius: 10px;
-
-  font-size: 18px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: transform 0.3s ease;
-  margin-bottom: 15px;
-}
-
-.submit-btn:hover {
-  transform: translateY(-2px);
-}
-
-.logout-btn {
-  width: 100%;
   padding: 10px;
-  background: #ff6b6b;
-  color: rgb(126, 118, 118);
+  background: linear-gradient(90deg, #6a82fb, #8e44ad);
+  color: black;
+  font-size: 1rem;
+  font-weight: 600;
   border: none;
-  border-radius: 10px;
-  font-size: 16px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background 0.3s ease;
-  margin-bottom: 20px;
+  transition: 0.3s;
+  margin-top: 10px;
 }
 
-.logout-btn:hover {
-  background: #ff5252;
+.register-btn:hover {
+  background: linear-gradient(90deg, #5a72f7, #7d3cb8);
+  transform: scale(1.02);
 }
 
-.login-link {
-  color: #666;
-  font-size: 14px;
-}
-
-.link-text {
-  color: #667eea;
-  cursor: pointer;
-  text-decoration: underline;
-  font-weight: bold;
-}
-
-.link-text:hover {
-  color: #764ba2;
-}
-
-/* Responsive untuk mobile */
-@media (max-width: 480px) {
-  .register-form {
-    padding: 30px 20px;
-    margin: 10px;
-  }
-
-  .form-title {
-    font-size: 24px;
-  }
-}
-
+/* Link ke Login */
 .test {
-  color: blue;
+  color: #6a82fb;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.test:hover {
+  text-decoration: underline;
 }

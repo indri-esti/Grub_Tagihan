@@ -54,17 +54,6 @@
   ],
   "tagihan": [
     {
-      "id": "97de",
-      "nama": "Nita",
-      "keterangan": "Seragam",
-      "nisn": "22355899",
-      "nohp": "08671557682",
-      "deskripsi": "Membayar Seragam Bulan September",
-      "harga": "200000",
-      "tanggal": "27/10/2025",
-      "status": "Belum Lunas"
-    },
-    {
       "id": "f96c",
       "nama": "indri esti",
       "keterangan": "SPP",
@@ -100,10 +89,10 @@
     {
       "id": "bdcb",
       "nama": "Miya",
-      "keterangan": "tést",
+      "keterangan": "Piknik Sekolah",
       "nisn": "01845113485",
       "nohp": "08544139",
-      "deskripsi": "tést",
+      "deskripsi": "Membayar Study Tour",
       "harga": "1000000",
       "tanggal": "02/02/2025",
       "status": "Lunas"
@@ -112,7 +101,7 @@
   "jenis_tagihan": [
     {
       "id": "d89a",
-      "nama": "tést",
+      "nama": "Piknik Sekolah",
       "status": "Aktif"
     },
     {
@@ -123,6 +112,11 @@
     {
       "id": "81c4",
       "nama": "Seragam",
+      "status": "Aktif"
+    },
+    {
+      "id": "b9d9",
+      "nama": "Uang gedung",
       "status": "Aktif"
     }
   ]

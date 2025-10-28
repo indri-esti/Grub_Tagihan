@@ -7,23 +7,21 @@ const TambahData = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     nama: "",
-    keterangan: "", // jenis tagihan
+    keterangan: "",
     nisn: "",
     nohp: "",
     deskripsi: "",
     harga: "",
     tanggal: "",
-    status: "Belum Lunas", // default otomatis
+    status: "Belum Lunas",
   });
 
   const [jenisTagihan, setJenisTagihan] = useState([]);
 
-  // Ambil data jenis tagihan dari API
   useEffect(() => {
     axios
       .get("http://localhost:5000/jenis_tagihan")
       .then((res) => {
-        // 🔹 Filter hanya yang statusnya "Aktif"
         const aktifOnly = res.data.filter(
           (item) => item.status?.toLowerCase() === "aktif"
         );
@@ -34,17 +32,14 @@ const TambahData = () => {
       });
   }, []);
 
-  // Format tanggal ke dd/mm/yyyy
   const formatTanggal = (dateString) => {
     if (!dateString) return "";
     const [year, month, day] = dateString.split("-");
     return `${day}/${month}/${year}`;
   };
 
-  // Saat input berubah
   const handleChange = (e) => {
     const { name, value } = e.target;
-
     if (name === "tanggal") {
       const formatted = formatTanggal(value);
       setFormData({
@@ -59,11 +54,10 @@ const TambahData = () => {
     }
   };
 
-  // Saat form disubmit
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const dataToSend = { ...formData, status: "Belum Lunas" }; // default
+      const dataToSend = { ...formData, status: "Belum Lunas" };
       await axios.post("http://localhost:5000/tagihan", dataToSend);
 
       Swal.fire({
@@ -92,27 +86,72 @@ const TambahData = () => {
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Input Nama, NISN, No HP, Deskripsi, Harga */}
-          {[
-            { name: "nama", placeholder: "Nama" },
-            { name: "nisn", placeholder: "NISN" },
-            { name: "nohp", placeholder: "No HP" },
-            { name: "deskripsi", placeholder: "Deskripsi" },
-            { name: "harga", placeholder: "Harga", type: "number" },
-          ].map((input) => (
+          {/* Nama */}
+          <div>
+            <label className="text-gray-700 text-sm mb-1 block">Nama</label>
             <input
-              key={input.name}
-              type={input.type || "text"}
-              name={input.name}
-              placeholder={input.placeholder}
-              value={formData[input.name]}
+              type="text"
+              name="nama"
+              value={formData.nama}
               onChange={handleChange}
               required
               className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
             />
-          ))}
+          </div>
 
-          {/* Dropdown Jenis Tagihan */}
+          {/* NISN */}
+          <div>
+            <label className="text-gray-700 text-sm mb-1 block">NISN</label>
+            <input
+              type="text"
+              name="nisn"
+              value={formData.nisn}
+              onChange={handleChange}
+              required
+              className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
+            />
+          </div>
+
+          {/* No HP */}
+          <div>
+            <label className="text-gray-700 text-sm mb-1 block">No HP</label>
+            <input
+              type="text"
+              name="nohp"
+              value={formData.nohp}
+              onChange={handleChange}
+              required
+              className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
+            />
+          </div>
+
+          {/* Deskripsi */}
+          <div>
+            <label className="text-gray-700 text-sm mb-1 block">Deskripsi</label>
+            <input
+              type="text"
+              name="deskripsi"
+              value={formData.deskripsi}
+              onChange={handleChange}
+              required
+              className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
+            />
+          </div>
+
+          {/* Harga */}
+          <div>
+            <label className="text-gray-700 text-sm mb-1 block">Harga</label>
+            <input
+              type="number"
+              name="harga"
+              value={formData.harga}
+              onChange={handleChange}
+              required
+              className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
+            />
+          </div>
+
+          {/* Jenis Tagihan */}
           <div>
             <label className="text-gray-700 text-sm mb-1 block">
               Jenis Tagihan
@@ -137,9 +176,11 @@ const TambahData = () => {
             </select>
           </div>
 
-          {/* Input Tanggal */}
+          {/* Tanggal */}
           <div>
-            <label className="text-gray-700 text-sm">Tanggal (dd/mm/yyyy)</label>
+            <label className="text-gray-700 text-sm">
+              Tanggal (dd/mm/yyyy)
+            </label>
             <input
               type="date"
               name="tanggal"

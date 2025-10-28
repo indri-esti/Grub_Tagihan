@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import axios from "axios";
 import SidebarT from "../../Component/Sidebar";
+import { FaMoneyBillWave } from "react-icons/fa"; 
 
 const Tagihan = () => {
   const [data, setData] = useState([]);
@@ -84,9 +85,10 @@ const Tagihan = () => {
         <div className="flex-1 flex flex-col gap-3 md:ml-6 bg-white shadow-lg rounded-lg p-6">
           {/* Header */}
           <div className="flex justify-between items-center mb-3">
-            <h2 className="text-2xl font-semibold text-gray-800">
-              Tabel Tagihan
-            </h2>
+            <h2 className="text-2xl font-semibold text-gray-800 flex items-center gap-2">
+  <FaMoneyBillWave className="text-green-600 text-3xl" /> {/* 🟢 Ikon uang */}
+  Tabel Tagihan
+</h2>
             <button
               onClick={() => navigate("/tambahdata")}
               className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition"
