@@ -42,7 +42,7 @@ const Login = () => {
           {/* Input Email */}
           <div className="input-group">
             <label htmlFor="email" className="input-label">
-              Akun Email
+            Email
             </label>
             <input
               id="email"

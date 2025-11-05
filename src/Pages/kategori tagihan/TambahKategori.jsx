@@ -56,7 +56,7 @@ const TambahData = () => {
           <input
             type="text"
             name="nama"
-            placeholder="Contoh: Uang Gedung / SPP"
+            placeholder="Contoh Kategori: SPP"
             value={formData.nama}
             onChange={handleChange}
             required

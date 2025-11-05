@@ -3,20 +3,21 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import axios from "axios";
 import SidebarT from "../../Component/Sidebar";
-import { FaMoneyBillWave } from "react-icons/fa"; 
+import { FaMoneyBillWave } from "react-icons/fa";
 
 const Tagihan = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedKategori, setSelectedKategori] = useState(""); // ✅ Tambahan filter kategori
   const navigate = useNavigate();
 
   // Ambil data dari API
   const fetchData = async () => {
     try {
-      setLoading(true); // ✅ Saat mulai ambil data
+      setLoading(true);
       const res = await axios.get("http://localhost:5000/tagihan");
-      setData(res.data); // ✅ Simpan hasil ke state
+      setData(res.data);
     } catch (err) {
       console.error("Gagal mengambil data:", err);
       Swal.fire({
@@ -25,7 +26,7 @@ const Tagihan = () => {
         text: "Gagal mengambil data dari server.",
       });
     } finally {
-      setLoading(false); // ✅ Setelah selesai (berhasil/gagal)
+      setLoading(false);
     }
   };
 
@@ -68,27 +69,28 @@ const Tagihan = () => {
     });
   };
 
-  // Filter pencarian
-  const filteredData = data.filter(
-    (item) =>
-      item.nama?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.keterangan?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Filter data berdasarkan kategori dan pencarian
+  const filteredData = data.filter((item) => {
+    const cocokKategori =
+      selectedKategori === "" ||
+      item.keterangan?.toLowerCase() === selectedKategori.toLowerCase();
+    const cocokCari = item.keterangan
+      ?.toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    return cocokKategori && cocokCari;
+  });
 
   return (
     <div className="pl-[calc(15rem+1%)] pr-[5%] pt-[5%] md:pt-10 transition-all duration-300">
       <div className="flex flex-col gap-6">
-        {/* Sidebar */}
         <SidebarT />
 
-        {/* Konten utama */}
         <div className="flex-1 flex flex-col gap-3 md:ml-6 bg-white shadow-lg rounded-lg p-6">
-          {/* Header */}
           <div className="flex justify-between items-center mb-3">
             <h2 className="text-2xl font-semibold text-gray-800 flex items-center gap-2">
-  <FaMoneyBillWave className="text-green-600 text-3xl" /> {/* 🟢 Ikon uang */}
-  Tabel Tagihan
-</h2>
+              <FaMoneyBillWave className="text-green-600 text-3xl" />
+              Tabel Tagihan
+            </h2>
             <button
               onClick={() => navigate("/tambahdata")}
               className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition"
@@ -97,11 +99,23 @@ const Tagihan = () => {
             </button>
           </div>
 
-          {/* Pencarian */}
-          <div className="flex justify-between items-center mb-4">
+          {/* Filter dan Pencarian */}
+          <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-3">
+            <select
+              value={selectedKategori}
+              onChange={(e) => setSelectedKategori(e.target.value)}
+              className="border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+            >
+              <option value="">-- Semua Kategori --</option>
+              <option value="SPP">SPP</option>
+              <option value="Uang Gedung">Uang Gedung</option>
+              <option value="Piknik Sekolah">Piknik Sekolah</option>
+              <option value="Seragam">Seragam</option>
+            </select>
+
             <input
               type="text"
-              placeholder="Cari berdasarkan nama atau keterangan..."
+              placeholder="Cari berdasarkan keterangan..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="border border-gray-300 px-3 py-2 rounded-md w-full max-w-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
@@ -117,7 +131,6 @@ const Tagihan = () => {
                 <thead className="bg-blue-700 text-white">
                   <tr>
                     <th className="px-4 py-2">No</th>
-                    <th className="px-4 py-2">Nama</th>
                     <th className="px-4 py-2">Keterangan</th>
                     <th className="px-4 py-2">NISN</th>
                     <th className="px-4 py-2">No. HP</th>
@@ -135,25 +148,24 @@ const Tagihan = () => {
                         key={item.id}
                         className="border-t hover:bg-gray-50 text-center"
                       >
-                        <td className="px-4 py-2 text-right">{index + 1}</td>
-                        <td className="px-4 py-2 text-left">{item.nama}</td>
-                        <td className="px-4 py-2 text-left">{item.keterangan}</td>
+                        <td className="px-4 py-2">{index + 1}</td>
+                        <td className="px-4 py-2">{item.keterangan}</td>
                         <td className="px-4 py-2">{item.nisn}</td>
                         <td className="px-4 py-2">{item.nohp}</td>
-                        <td className="px-4 py-2 text-left">{item.deskripsi}</td>
-                        <td className="py-2 px-4 text-right">
-                      Rp {parseInt(item.harga || 0).toLocaleString("id-ID")}
-                    </td>
-                        <td className="px-4 py-2 text-center">{item.tanggal}</td>
+                        <td className="px-4 py-2">{item.deskripsi}</td>
+                        <td className="px-4 py-2 text-right">
+                          Rp {parseInt(item.harga || 0).toLocaleString("id-ID")}
+                        </td>
+                        <td className="px-4 py-2">{item.tanggal}</td>
                         <td
-                      className={`py-2 px-4 font-semibold text-center ${
-                        item.status === "Lunas"
-                          ? "text-green-600"
-                          : "text-red-500"
-                      }`}
-                    >
-                      {item.status}
-                    </td>
+                          className={`font-semibold ${
+                            item.status === "Lunas"
+                              ? "text-green-600"
+                              : "text-red-500"
+                          }`}
+                        >
+                          {item.status}
+                        </td>
                         <td className="px-4 py-2 flex justify-center gap-2">
                           <button
                             onClick={() => navigate(`/editdata/${item.id}`)}
@@ -174,7 +186,7 @@ const Tagihan = () => {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="10" className="text-center py-4">
+                      <td colSpan="9" className="text-center py-4">
                         Tidak ada data ditemukan.
                       </td>
                     </tr>

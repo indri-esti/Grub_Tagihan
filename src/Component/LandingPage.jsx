@@ -3,16 +3,24 @@ import React from "react";
 function LandingPage() {
   const programKeahlianData = [
     {
-      jurusan: "Rekayasa Perangkat Lunak (RPL)",
-      img: "/src/assets/Jurusan-Rekayasa-Perangkat-Lunak-anak-SMK.webp",
+      jurusan: "Desain Produksi Busana (DPB)",
+      img: "https://sis.binusasmg.sch.id/assets/dist/img/binusa/tabus.jpg",
     },
     {
       jurusan: "Teknik Komputer & Jaringan (TKJ)",
-      img: "/src/assets/images.jpeg",
+      img: "https://sis.binusasmg.sch.id/assets/dist/img/binusa/networking/networking6.jpg",
     },
     {
       jurusan: "Desain Komunikasi Visual (DKV)",
-      img: "/src/assets/DKV-min.webp",
+      img: "https://sis.binusasmg.sch.id/assets/dist/img/binusa/dkv/dkv1.jpg",
+    },
+    {
+      jurusan: "Akutansi Dan Keuangan Lembaga (AKL)",
+      img: "https://sis.binusasmg.sch.id/assets/dist/img/binusa/akl/akl3.jpg",
+    },
+    {
+      jurusan: "Teknik Sepeda Motor (TSM)",
+      img: "https://sis.binusasmg.sch.id/assets/dist/img/binusa/tbsm/tbsm1.jpg",
     },
   ];
   return (
@@ -118,7 +126,7 @@ function LandingPage() {
         <footer className="bg-indigo-700 text-white py-6 text-center">
           <p>© 2025 SMK BINANUSANTARA SEMARANG</p>
           <p className="text-sm">
-            Jl. Pendidikan No. 123, Semarang | Telp: (024) 1234567
+            Jl. Kemantren Raya No. 10 Wonosari Ngaliyan - Kota Semarang| Telp: (024) 1234567
           </p>
         </footer>
       </div>{" "}

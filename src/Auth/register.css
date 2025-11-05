@@ -111,12 +111,14 @@
   color: #6a82fb;
 }
 
+
+
 /* Tombol */
 .register-btn {
   width: 100%;
   padding: 10px;
   background: linear-gradient(90deg, #6a82fb, #8e44ad);
-  color: black;
+  color: rgb(255, 254, 254);
   font-size: 1rem;
   font-weight: 600;
   border: none;

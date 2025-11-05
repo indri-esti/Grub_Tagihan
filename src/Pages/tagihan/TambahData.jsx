@@ -20,7 +20,7 @@ const TambahData = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/jenis_tagihan")
+      .get("http://localhost:5000/kategori_tagihan")
       .then((res) => {
         const aktifOnly = res.data.filter(
           (item) => item.status?.toLowerCase() === "aktif"
@@ -32,11 +32,14 @@ const TambahData = () => {
       });
   }, []);
 
-  const formatTanggal = (dateString) => {
+
+ const formatTanggal = (dateString) => {
     if (!dateString) return "";
     const [year, month, day] = dateString.split("-");
     return `${day}/${month}/${year}`;
   };
+
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -95,6 +98,7 @@ const TambahData = () => {
               value={formData.nama}
               onChange={handleChange}
               required
+              placeholder="Contoh: Indri Esti"
               className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
             />
           </div>
@@ -108,6 +112,7 @@ const TambahData = () => {
               value={formData.nisn}
               onChange={handleChange}
               required
+              placeholder="Contoh: 123464688907"
               className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
             />
           </div>
@@ -121,6 +126,7 @@ const TambahData = () => {
               value={formData.nohp}
               onChange={handleChange}
               required
+              placeholder="Contoh: 081234567890"
               className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
             />
           </div>
@@ -134,6 +140,7 @@ const TambahData = () => {
               value={formData.deskripsi}
               onChange={handleChange}
               required
+              placeholder="Contoh: Membayar SPP"
               className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
             />
           </div>
@@ -147,6 +154,7 @@ const TambahData = () => {
               value={formData.harga}
               onChange={handleChange}
               required
+              placeholder="Contoh: 500000"
               className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
             />
           </div>
@@ -177,7 +185,7 @@ const TambahData = () => {
           </div>
 
           {/* Tanggal */}
-          <div>
+           <div>
             <label className="text-gray-700 text-sm">
               Tanggal (dd/mm/yyyy)
             </label>

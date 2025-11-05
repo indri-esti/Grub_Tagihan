@@ -69,10 +69,11 @@ const EditData = () => {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Input Nama */}
+          <label className="text-gray-700 text-sm mb-1 block">Nama Jenis Tagihan</label>
           <input
             type="text"
             name="nama"
-            placeholder="Nama Jenis Tagihan"
+            placeholder="Contoh: Uang Gedung"
             value={formData.nama}
             onChange={handleChange}
             className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"

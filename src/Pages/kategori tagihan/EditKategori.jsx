@@ -1,16 +1,35 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-const TambahData = () => {
+const EditData = () => {
   const navigate = useNavigate();
+  const { id } = useParams(); // ambil ID dari URL
   const [formData, setFormData] = useState({
     nama: "",
-    status: "Aktif", // default status
+    status: "",
   });
 
-  // Saat input berubah
+  // Ambil data lama berdasarkan ID
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await axios.get(`http://localhost:5000/kategori_tagihan/${id}`);
+        setFormData(res.data);
+      } catch (error) {
+        console.error("Gagal mengambil data:", error);
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Gagal mengambil data dari server.",
+        });
+      }
+    };
+    fetchData();
+  }, [id]);
+
+  // Ubah data ketika user mengetik
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -18,25 +37,25 @@ const TambahData = () => {
     });
   };
 
-  // Saat form disubmit
+  // Kirim data update ke API
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:5000/kategori_tagihan", formData);
+      await axios.put(`http://localhost:5000/kategori_tagihan/${id}`, formData);
       Swal.fire({
         icon: "success",
         title: "Berhasil!",
-        text: "Data kategori tagihan berhasil ditambahkan!",
+        text: "Data kategori tagihan berhasil diperbarui!",
         showConfirmButton: false,
         timer: 2000,
       });
       navigate("/kategoritagihan");
     } catch (error) {
-      console.error("Gagal menambahkan data:", error);
+      console.error("Gagal mengupdate data:", error);
       Swal.fire({
         icon: "error",
         title: "Gagal!",
-        text: "Terjadi kesalahan saat menambahkan data.",
+        text: "Terjadi kesalahan saat mengupdate data.",
       });
     }
   };
@@ -45,7 +64,7 @@ const TambahData = () => {
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
         <h2 className="text-2xl font-semibold text-center mb-6">
-          Tambah Kategori Tagihan
+          Edit Kategori Tagihan
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -56,10 +75,9 @@ const TambahData = () => {
           <input
             type="text"
             name="nama"
-            placeholder="Contoh: Uang Gedung / SPP"
+            placeholder="Contoh: Kategori SPP"
             value={formData.nama}
             onChange={handleChange}
-            required
             className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
           />
 
@@ -72,6 +90,7 @@ const TambahData = () => {
               onChange={handleChange}
               className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
             >
+              <option value="">-- Pilih Status --</option>
               <option value="Aktif">Aktif</option>
               <option value="Nonaktif">Nonaktif</option>
             </select>
@@ -90,7 +109,7 @@ const TambahData = () => {
               type="submit"
               className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 w-[48%]"
             >
-              Simpan
+              Simpan Perubahan
             </button>
           </div>
         </form>
@@ -99,4 +118,4 @@ const TambahData = () => {
   );
 };
 
-export default TambahData;
+export default EditData;

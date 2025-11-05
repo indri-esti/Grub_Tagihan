@@ -9,12 +9,16 @@ import {
   FaTimesCircle,
   FaExclamationCircle,
   FaChartBar,
+  FaChalkboardTeacher,
+  FaUserTie,
 } from "react-icons/fa";
 
 export default function Dashboard() {
   const [tagihan, setTagihan] = useState([]);
   const [stats, setStats] = useState({
-    totalMember: 0,
+    totalSiswa: 0,
+    totalGuru: 0,
+    totalKaryawan: 0,
     totalTagihan: 0,
     dibayar: 0,
     belumDibayar: 0,
@@ -23,24 +27,31 @@ export default function Dashboard() {
   });
 
   useEffect(() => {
-    axios
-      .get("http://localhost:5000/tagihan")
-      .then((res) => {
-        const data = res.data;
-        setTagihan(data);
+    // Ambil semua data (jika backend sudah siap)
+    const fetchData = async () => {
+      try {
+        const [siswaRes, guruRes, karyawanRes, tagihanRes] = await Promise.all([
+          axios.get("http://localhost:5000/siswa").catch(() => ({ data: [] })),
+          axios.get("http://localhost:5000/guru").catch(() => ({ data: [] })),
+          axios
+            .get("http://localhost:5000/karyawan")
+            .catch(() => ({ data: [] })),
+          axios.get("http://localhost:5000/tagihan").catch(() => ({ data: [] })),
+        ]);
 
-        const totalMember = data.length;
-        const totalTagihan = data.reduce(
+        const dataTagihan = tagihanRes.data || [];
+
+        const totalTagihan = dataTagihan.reduce(
           (acc, cur) => acc + (parseInt(cur.harga) || 0),
           0
         );
-        const dibayarData = data.filter((item) => item.status === "Lunas");
-        const belumDibayarData = data.filter(
+        const dibayarData = dataTagihan.filter(
+          (item) => item.status === "Lunas"
+        );
+        const belumDibayarData = dataTagihan.filter(
           (item) => item.status === "Belum Lunas"
         );
 
-        const dibayar = dibayarData.length;
-        const belumDibayar = belumDibayarData.length;
         const nominalLunas = dibayarData.reduce(
           (acc, cur) => acc + (parseInt(cur.harga) || 0),
           0
@@ -51,24 +62,44 @@ export default function Dashboard() {
         );
 
         setStats({
-          totalMember,
+          totalSiswa: siswaRes.data.length,
+          totalGuru: guruRes.data.length,
+          totalKaryawan: karyawanRes.data.length,
           totalTagihan,
-          dibayar,
-          belumDibayar,
+          dibayar: dibayarData.length,
+          belumDibayar: belumDibayarData.length,
           nominalLunas,
           nominalBelumLunas,
         });
-      })
-      .catch((err) => console.error("Gagal ambil data:", err));
+
+        setTagihan(dataTagihan);
+      } catch (err) {
+        console.error("Gagal memuat data:", err);
+      }
+    };
+
+    fetchData();
   }, []);
 
-  // Data kartu dengan warna & ikon
+  // Kartu statistik (kategori + tagihan)
   const cards = [
     {
-      title: "Total Member",
-      value: stats.totalMember,
+      title: "Total Siswa",
+      value: stats.totalSiswa,
       icon: <FaUsers className="text-blue-500 text-2xl" />,
       bg: "bg-blue-100 border-blue-300",
+    },
+    {
+      title: "Total Guru",
+      value: stats.totalGuru,
+      icon: <FaChalkboardTeacher className="text-indigo-500 text-2xl" />,
+      bg: "bg-indigo-100 border-indigo-300",
+    },
+    {
+      title: "Total Karyawan",
+      value: stats.totalKaryawan,
+      icon: <FaUserTie className="text-yellow-600 text-2xl" />,
+      bg: "bg-yellow-100 border-yellow-300",
     },
     {
       title: "Total Tagihan",
@@ -89,7 +120,7 @@ export default function Dashboard() {
       bg: "bg-red-100 border-red-300",
     },
     {
-      title: "Nominal Sudah Lunas",
+      title: "Nominal Lunas",
       value: `Rp ${stats.nominalLunas.toLocaleString("id-ID")}`,
       icon: <FaWallet className="text-green-700 text-2xl" />,
       bg: "bg-teal-100 border-teal-300",
@@ -113,7 +144,7 @@ export default function Dashboard() {
         </h1>
 
         {/* Grid Statistik */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
           {cards.map((card, i) => (
             <div
               key={i}
@@ -182,10 +213,7 @@ export default function Dashboard() {
                 ))
               ) : (
                 <tr>
-                  <td
-                    colSpan="10"
-                    className="py-4 text-center text-gray-500"
-                  >
+                  <td colSpan="9" className="py-4 text-center text-gray-500">
                     Tidak ada data tagihan.
                   </td>
                 </tr>

@@ -81,7 +81,7 @@ const Register = () => {
 
           <div className="input-group">
             <label htmlFor="email" className="input-label">
-             Akun Email
+             Email
             </label>
             <input
               type="email"
@@ -99,6 +99,26 @@ const Register = () => {
             <input
               type={showPassword ? "text" : "password"}
               placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <span
+              className="password-toggle"
+              onClick={() => setShowPassword(!showPassword)}
+              title={showPassword ? "Sembunyikan Password" : "Tampilkan Password"}
+            >
+              {showPassword ? <FaEye /> : <FaEyeSlash />}
+            </span>
+          </div>
+
+           <div className="input-group password-wrapper">
+            <label htmlFor="email" className="input-label">
+            Konfirmasi Password 
+            </label>
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Konfirmasi Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required

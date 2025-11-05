@@ -3,10 +3,10 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import axios from "axios";
 import SidebarT from "../../Component/Sidebar";
-import { FaChartPie } from "react-icons/fa";
+import { FaListAlt } from "react-icons/fa";
 
-const Tagihan = () => {
-  const [data, setData] = useState([]);
+const KategoriTagihan = () => {
+  const [kategori, setKategori] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
@@ -14,8 +14,8 @@ const Tagihan = () => {
   // Ambil data dari API
   const fetchData = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/jenis_tagihan");
-      setData(res.data);
+      const res = await axios.get("http://localhost:5000/kategori_tagihan");
+      setKategori(res.data);
     } catch (err) {
       console.error("Gagal mengambil data:", err);
       Swal.fire({
@@ -46,8 +46,8 @@ const Tagihan = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.delete(`http://localhost:5000/jenis_tagihan/${id}`);
-          setData(data.filter((item) => item.id !== id));
+          await axios.delete(`http://localhost:5000/kategori_tagihan${id}`);
+          setKategori(kategori.filter((item) => item.id !== id));
           Swal.fire({
             icon: "success",
             title: "Berhasil!",
@@ -68,10 +68,8 @@ const Tagihan = () => {
   };
 
   // Filter pencarian
-  const filteredData = data.filter(
-    (item) =>
-      item.nama?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.keterangan?.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredData = kategori.filter((item) =>
+    item.nama?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -85,11 +83,11 @@ const Tagihan = () => {
           {/* Header */}
           <div className="flex justify-between items-center mb-3">
             <h2 className="text-2xl font-semibold text-gray-800 flex items-center gap-2">
-              <FaChartPie className="text-pink-600 text-3xl" />
-              Tabel Jenis Tagihan
+              <FaListAlt className="text-blue-600 text-3xl" />
+              Tabel Kategori Tagihan
             </h2>
             <button
-              onClick={() => navigate("/tambahjenis")}
+              onClick={() => navigate("/tambahkategori")}
               className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition"
             >
               Tambah Data
@@ -100,7 +98,7 @@ const Tagihan = () => {
           <div className="flex justify-between items-center mb-4">
             <input
               type="text"
-              placeholder="Cari berdasarkan nama atau keterangan..."
+              placeholder="Cari berdasarkan nama kategori..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="border border-gray-300 px-3 py-2 rounded-md w-full max-w-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
@@ -116,7 +114,7 @@ const Tagihan = () => {
                 <thead className="bg-blue-700 text-white">
                   <tr>
                     <th className="px-2 py-2">No</th>
-                    <th className="px-2 py-2">Nama Jenis Tagihan</th>
+                    <th className="px-2 py-2">Nama Kategori</th>
                     <th className="px-2 py-2">Status</th>
                     <th className="px-2 py-2">Aksi</th>
                   </tr>
@@ -128,7 +126,7 @@ const Tagihan = () => {
                         <td className="px-4 py-2 text-right">{index + 1}</td>
                         <td className="px-4 py-2 text-left">{item.nama}</td>
 
-                        {/* STATUS BADGE */}
+                        {/* STATUS */}
                         <td className="px-4 py-2 text-center">
                           <span
                             className={`px-3 py-1 rounded-full font-semibold text-sm ${
@@ -144,7 +142,9 @@ const Tagihan = () => {
                         {/* AKSI */}
                         <td className="px-4 py-2 flex justify-center gap-2">
                           <button
-                            onClick={() => navigate(`/editjenis/${item.id}`)}
+                            onClick={() =>
+                              navigate(`/editkategori/${item.id}`)
+                            }
                             className="bg-gray-700 text-white px-3 py-2 rounded-md hover:bg-gray-600 transition"
                             title="Edit Data"
                           >
@@ -162,8 +162,8 @@ const Tagihan = () => {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="10" className="text-center py-4">
-                        Tidak ada data ditemukan.
+                      <td colSpan="4" className="text-center py-4">
+                        Tidak ada data kategori ditemukan.
                       </td>
                     </tr>
                   )}
@@ -177,4 +177,4 @@ const Tagihan = () => {
   );
 };
 
-export default Tagihan;
+export default KategoriTagihan;
