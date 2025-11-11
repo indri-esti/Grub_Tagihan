@@ -8,9 +8,6 @@ const TambahData = () => {
   const [formData, setFormData] = useState({
     nama: "",
     keterangan: "",
-    nisn: "",
-    nohp: "",
-    deskripsi: "",
     harga: "",
     tanggal: "",
     status: "Belum Lunas",
@@ -18,6 +15,7 @@ const TambahData = () => {
 
   const [jenisTagihan, setJenisTagihan] = useState([]);
 
+  // Ambil data kategori tagihan aktif dari backend
   useEffect(() => {
     axios
       .get("http://localhost:5000/kategori_tagihan")
@@ -32,36 +30,20 @@ const TambahData = () => {
       });
   }, []);
 
-
- const formatTanggal = (dateString) => {
-    if (!dateString) return "";
-    const [year, month, day] = dateString.split("-");
-    return `${day}/${month}/${year}`;
-  };
-
-
-
+  // Handle input perubahan
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name === "tanggal") {
-      const formatted = formatTanggal(value);
-      setFormData({
-        ...formData,
-        [name]: formatted,
-      });
-    } else {
-      setFormData({
-        ...formData,
-        [name]: value,
-      });
-    }
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
   };
 
+  // Simpan data ke backend
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const dataToSend = { ...formData, status: "Belum Lunas" };
-      await axios.post("http://localhost:5000/tagihan", dataToSend);
+      await axios.post("http://localhost:5000/tagihan", formData);
 
       Swal.fire({
         icon: "success",
@@ -103,62 +85,6 @@ const TambahData = () => {
             />
           </div>
 
-          {/* NISN */}
-          <div>
-            <label className="text-gray-700 text-sm mb-1 block">NISN</label>
-            <input
-              type="text"
-              name="nisn"
-              value={formData.nisn}
-              onChange={handleChange}
-              required
-              placeholder="Contoh: 123464688907"
-              className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
-            />
-          </div>
-
-          {/* No HP */}
-          <div>
-            <label className="text-gray-700 text-sm mb-1 block">No HP</label>
-            <input
-              type="text"
-              name="nohp"
-              value={formData.nohp}
-              onChange={handleChange}
-              required
-              placeholder="Contoh: 081234567890"
-              className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
-            />
-          </div>
-
-          {/* Deskripsi */}
-          <div>
-            <label className="text-gray-700 text-sm mb-1 block">Deskripsi</label>
-            <input
-              type="text"
-              name="deskripsi"
-              value={formData.deskripsi}
-              onChange={handleChange}
-              required
-              placeholder="Contoh: Membayar SPP"
-              className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
-            />
-          </div>
-
-          {/* Harga */}
-          <div>
-            <label className="text-gray-700 text-sm mb-1 block">Harga</label>
-            <input
-              type="number"
-              name="harga"
-              value={formData.harga}
-              onChange={handleChange}
-              required
-              placeholder="Contoh: 500000"
-              className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
-            />
-          </div>
-
           {/* Jenis Tagihan */}
           <div>
             <label className="text-gray-700 text-sm mb-1 block">
@@ -184,18 +110,48 @@ const TambahData = () => {
             </select>
           </div>
 
-          {/* Tanggal */}
-           <div>
-            <label className="text-gray-700 text-sm">
+          {/* Harga */}
+          <div>
+            <label className="text-gray-700 text-sm mb-1 block">Harga</label>
+            <input
+              type="number"
+              name="harga"
+              value={formData.harga}
+              onChange={handleChange}
+              required
+              placeholder="Contoh: 500000"
+              className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
+            />
+          </div>
+
+          {/* Tanggal (manual input) */}
+          <div>
+            <label className="text-gray-700 text-sm mb-1 block">
               Tanggal (dd/mm/yyyy)
             </label>
             <input
-              type="date"
+              type="text"
               name="tanggal"
+              value={formData.tanggal}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none mt-1"
               required
+              placeholder="dd/mm/yyyy"
+              className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
             />
+          </div>
+
+          {/* Status */}
+          <div>
+            <label className="text-gray-700 text-sm mb-1 block">Status</label>
+            <select
+              name="status"
+              value={formData.status}
+              onChange={handleChange}
+              className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
+            >
+              <option value="Belum Lunas">Belum Lunas</option>
+              <option value="Lunas">Lunas</option>
+            </select>
           </div>
 
           {/* Tombol Aksi */}

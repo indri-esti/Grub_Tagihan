@@ -8,45 +8,56 @@ const Register = () => {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (fullName && email && password) {
-      // Ambil akun lama dari localStorage
-      const storedUsers = JSON.parse(localStorage.getItem("users")) || [];
-
-      // Cek apakah email sudah digunakan
-      const isEmailUsed = storedUsers.some((user) => user.email === email);
-
-      if (isEmailUsed) {
-        Swal.fire("Error", "Email sudah terdaftar, silakan login.", "error");
-        return;
-      }
-
-      // Tambah akun baru
-      const newUser = { fullName, email, password };
-      storedUsers.push(newUser);
-      localStorage.setItem("users", JSON.stringify(storedUsers));
-
-      Swal.fire({
-        title: "Akun anda telah dibuat!",
-        text: "Silakan login dengan akun baru Anda.",
-        icon: "success",
-        confirmButtonText: "OK",
-      }).then(() => {
-        navigate("/login");
-      });
-
-      // Reset form
-      setFullName("");
-      setEmail("");
-      setPassword("");
-    } else {
+    if (!fullName || !email || !password || !confirmPassword) {
       Swal.fire("Error", "Mohon isi semua field", "error");
+      return;
     }
+
+    if (password !== confirmPassword) {
+      Swal.fire("Error", "Password dan konfirmasi password tidak cocok", "error");
+      return;
+    }
+
+    // Ambil akun lama dari localStorage
+    const storedUsers = JSON.parse(localStorage.getItem("users")) || [];
+
+    // Cek apakah email sudah digunakan
+    const isEmailUsed = storedUsers.some((user) => user.email === email);
+
+    if (isEmailUsed) {
+      Swal.fire("Error", "Email sudah terdaftar, silakan login.", "error");
+      return;
+    }
+
+    // Tambah akun baru
+    const newUser = { fullName, email, password };
+    storedUsers.push(newUser);
+    localStorage.setItem("users", JSON.stringify(storedUsers));
+
+    Swal.fire({
+      title: "Akun anda telah dibuat!",
+      text: "Silakan login dengan akun baru Anda.",
+      icon: "success",
+      confirmButtonText: "OK",
+    }).then(() => {
+      navigate("/login");
+    });
+
+    // Reset form
+    setFullName("");
+    setEmail("");
+    setPassword("");
+    setConfirmPassword("");
   };
 
   return (
@@ -67,9 +78,7 @@ const Register = () => {
 
         <form onSubmit={handleSubmit}>
           <div className="input-group">
-             <label htmlFor="email" className="input-label">
-              Nama Lengkap
-            </label>
+            <label className="input-label">Nama Lengkap</label>
             <input
               type="text"
               placeholder="Nama Lengkap"
@@ -80,9 +89,7 @@ const Register = () => {
           </div>
 
           <div className="input-group">
-            <label htmlFor="email" className="input-label">
-             Email
-            </label>
+            <label className="input-label">Email</label>
             <input
               type="email"
               placeholder="Masukkan email"
@@ -92,10 +99,9 @@ const Register = () => {
             />
           </div>
 
+          {/* PASSWORD */}
           <div className="input-group password-wrapper">
-            <label htmlFor="email" className="input-label">
-             Password
-            </label>
+            <label className="input-label">Password</label>
             <input
               type={showPassword ? "text" : "password"}
               placeholder="Password"
@@ -112,23 +118,22 @@ const Register = () => {
             </span>
           </div>
 
-           <div className="input-group password-wrapper">
-            <label htmlFor="email" className="input-label">
-            Konfirmasi Password 
-            </label>
+          {/* KONFIRMASI PASSWORD */}
+          <div className="input-group password-wrapper">
+            <label className="input-label">Konfirmasi Password</label>
             <input
-              type={showPassword ? "text" : "password"}
+              type={showConfirmPassword ? "text" : "password"}
               placeholder="Konfirmasi Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
               required
             />
             <span
               className="password-toggle"
-              onClick={() => setShowPassword(!showPassword)}
-              title={showPassword ? "Sembunyikan Password" : "Tampilkan Password"}
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              title={showConfirmPassword ? "Sembunyikan Password" : "Tampilkan Password"}
             >
-              {showPassword ? <FaEye /> : <FaEyeSlash />}
+              {showConfirmPassword ? <FaEye /> : <FaEyeSlash />}
             </span>
           </div>
 

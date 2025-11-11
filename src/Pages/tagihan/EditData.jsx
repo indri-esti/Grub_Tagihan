@@ -10,9 +10,6 @@ const EditData = () => {
   const [formData, setFormData] = useState({
     nama: "",
     keterangan: "",
-    nisn: "",
-    nohp: "",
-    deskripsi: "",
     harga: "",
     tanggal: "",
     status: "Belum Lunas",
@@ -20,7 +17,7 @@ const EditData = () => {
 
   const [jenisTagihan, setJenisTagihan] = useState([]);
 
-  // Ambil jenis tagihan aktif
+  // Ambil data kategori aktif
   useEffect(() => {
     axios
       .get("http://localhost:5000/kategori_tagihan")
@@ -30,70 +27,56 @@ const EditData = () => {
         );
         setJenisTagihan(aktifOnly);
       })
-      .catch((err) => {
-        console.error("Gagal mengambil jenis tagihan:", err);
-      });
+      .catch((err) => console.error("Gagal mengambil jenis tagihan:", err));
   }, []);
 
   // Ambil data tagihan berdasarkan ID
   useEffect(() => {
-    if (id) {
-      axios
-        .get(`http://localhost:5000/tagihan/${id}`)
-        .then((res) => {
-          const data = res.data;
-          // Pastikan tanggal sesuai format untuk input type="date"
-          const tanggalFormatted = convertToDateInputFormat(data.tanggal);
-          setFormData({ ...data, tanggal: tanggalFormatted });
-        })
-        .catch((err) => {
-          console.error("Gagal mengambil data tagihan:", err);
-          Swal.fire({
-            icon: "error",
-            title: "Gagal!",
-            text: "Data tidak ditemukan.",
-          });
-          navigate("/tagihan");
+    axios
+      .get(`http://localhost:5000/tagihan/${id}`)
+      .then((res) => {
+        const data = res.data;
+        setFormData({
+          nama: data.nama || "",
+          keterangan: data.keterangan || data.jenis || "",
+          harga: data.harga || "",
+          tanggal: data.tanggal || "",
+          status: data.status || "Belum Lunas",
         });
-    }
-  }, [id, navigate]);
+      })
+      .catch((err) => console.error("Gagal mengambil data tagihan:", err));
+  }, [id]);
 
-  // Ubah format dd/mm/yyyy → yyyy-mm-dd agar cocok untuk input date
-  const convertToDateInputFormat = (dateString) => {
-    if (!dateString) return "";
-    if (dateString.includes("/")) {
-      const [day, month, year] = dateString.split("/");
-      return `${year}-${month}-${day}`;
-    }
-    return dateString;
-  };
-
-  // Ubah format yyyy-mm-dd → dd/mm/yyyy untuk disimpan
-  const convertToDatabaseFormat = (dateString) => {
-    if (!dateString) return "";
-    const [year, month, day] = dateString.split("-");
-    return `${day}/${month}/${year}`;
-  };
-
+  // Handle perubahan input
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+
+    if (name === "tanggal") {
+      // Hanya izinkan angka dan "/" pada input tanggal
+      const cleanValue = value.replace(/[^0-9/]/g, "");
+      setFormData({ ...formData, [name]: cleanValue });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
+  // Simpan perubahan
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    try {
-      // Pastikan format tanggal sesuai untuk database
-      const dataToSend = {
-        ...formData,
-        tanggal: convertToDatabaseFormat(formData.tanggal),
-      };
+    // Validasi format tanggal manual (dd/mm/yyyy)
+    const tanggalPattern = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
+    if (!tanggalPattern.test(formData.tanggal)) {
+      Swal.fire({
+        icon: "warning",
+        title: "Format Tanggal Salah",
+        text: "Gunakan format tanggal dd/mm/yyyy, contoh: 11/11/2025",
+      });
+      return;
+    }
 
-      await axios.put(`http://localhost:5000/tagihan/${id}`, dataToSend);
+    try {
+      await axios.put(`http://localhost:5000/tagihan/${id}`, formData);
 
       Swal.fire({
         icon: "success",
@@ -102,21 +85,22 @@ const EditData = () => {
         showConfirmButton: false,
         timer: 2000,
       });
+
       navigate("/tagihan");
     } catch (error) {
-      console.error("Gagal memperbarui data:", error);
+      console.error("Gagal mengedit data:", error);
       Swal.fire({
         icon: "error",
         title: "Gagal!",
-        text: "Terjadi kesalahan saat memperbarui data.",
+        text: "Terjadi kesalahan saat mengedit data.",
       });
     }
   };
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
-      <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
-        <h2 className="text-2xl font-semibold text-center mb-6">
+      <div className="bg-white shadow-md rounded-lg p-8 w-full max-w-md">
+        <h2 className="text-2xl font-semibold text-center mb-6 text-gray-800">
           Edit Data Tagihan
         </h2>
 
@@ -130,64 +114,7 @@ const EditData = () => {
               value={formData.nama}
               onChange={handleChange}
               required
-              placeholder="Contoh: Indri Esti"
-              className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
-            />
-          </div>
-
-          {/* NISN */}
-          <div>
-            <label className="text-gray-700 text-sm mb-1 block">NISN</label>
-            <input
-              type="text"
-              name="nisn"
-              value={formData.nisn}
-              onChange={handleChange}
-              required
-              placeholder="Contoh: 123464688907"
-              className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
-            />
-          </div>
-
-          {/* No HP */}
-          <div>
-            <label className="text-gray-700 text-sm mb-1 block">No HP</label>
-            <input
-              type="text"
-              name="nohp"
-              value={formData.nohp}
-              onChange={handleChange}
-              required
-              placeholder="Contoh: 081234567890"
-              className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
-            />
-          </div>
-
-          {/* Deskripsi */}
-          <div>
-            <label className="text-gray-700 text-sm mb-1 block">Deskripsi</label>
-            <input
-              type="text"
-              name="deskripsi"
-              value={formData.deskripsi}
-              onChange={handleChange}
-              required
-              placeholder="Contoh: Membayar SPP"
-              className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
-            />
-          </div>
-
-          {/* Harga */}
-          <div>
-            <label className="text-gray-700 text-sm mb-1 block">Harga</label>
-            <input
-              type="number"
-              name="harga"
-              value={formData.harga}
-              onChange={handleChange}
-              required
-              placeholder="Contoh: 500000"
-              className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
+              className="w-full border border-gray-300 rounded-md p-2 outline-none focus:ring-2 focus:ring-blue-400"
             />
           </div>
 
@@ -201,8 +128,7 @@ const EditData = () => {
               value={formData.keterangan}
               onChange={handleChange}
               required
-              
-              className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
+              className="w-full border border-gray-300 rounded-md p-2 outline-none focus:ring-2 focus:ring-blue-400"
             >
               <option value="">-- Pilih Jenis Tagihan (Aktif) --</option>
               {jenisTagihan.length > 0 ? (
@@ -217,6 +143,35 @@ const EditData = () => {
             </select>
           </div>
 
+          {/* Harga */}
+          <div>
+            <label className="text-gray-700 text-sm mb-1 block">Harga</label>
+            <input
+              type="number"
+              name="harga"
+              value={formData.harga}
+              onChange={handleChange}
+              required
+              placeholder="Contoh: 500000"
+              className="w-full border border-gray-300 rounded-md p-2 outline-none focus:ring-2 focus:ring-blue-400"
+            />
+          </div>
+
+          {/* Tanggal (manual input) */}
+          <div>
+            <label className="text-gray-700 text-sm mb-1 block">Tanggal</label>
+            <input
+              type="text"
+              name="tanggal"
+              value={formData.tanggal}
+              onChange={handleChange}
+              required
+              placeholder="dd/mm/yyyy"
+              maxLength={10}
+              className="w-full border border-gray-300 rounded-md p-2 outline-none focus:ring-2 focus:ring-blue-400"
+            />
+          </div>
+
           {/* Status */}
           <div>
             <label className="text-gray-700 text-sm mb-1 block">Status</label>
@@ -224,24 +179,11 @@ const EditData = () => {
               name="status"
               value={formData.status}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
+              className="w-full border border-gray-300 rounded-md p-2 outline-none focus:ring-2 focus:ring-blue-400"
             >
               <option value="Belum Lunas">Belum Lunas</option>
               <option value="Lunas">Lunas</option>
             </select>
-          </div>
-
-          {/* Tanggal */}
-          <div>
-            <label className="text-gray-700 text-sm mb-1 block">Tanggal</label>
-            <input
-              type="date"
-              name="tanggal"
-              value={formData.tanggal}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
-              required
-            />
           </div>
 
           {/* Tombol Aksi */}
@@ -255,9 +197,9 @@ const EditData = () => {
             </button>
             <button
               type="submit"
-              className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 w-[48%]"
+              className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 w-[48%]"
             >
-              Simpan Perubahan
+              Update
             </button>
           </div>
         </form>

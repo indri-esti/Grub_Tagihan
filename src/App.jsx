@@ -12,11 +12,23 @@ import EditData from "./Pages/tagihan/EditData";
 import Tagihan from "./Pages/tagihan/Tagihan";
 import Editjenis from "./Pages/jenis tagihan/EditJenis";
 import TambahJenis from "./Pages/jenis tagihan/TambahJenis";
+
 import KategoriData from "./Pages/kategori data/KategoriData";
+import TambahKategoriData from "./Pages/kategori data/TambahKategoriData";
+import EditKategoriData from "./Pages/kategori data/EditKategoriData";
 
 import KategoriTagihan from "./Pages/kategori tagihan/KategoriTagihan";
 import TambahKategori from "./Pages/kategori tagihan/TambahKategori";
 import EditKategori from "./Pages/kategori tagihan/EditKategori";
+
+import DataKelas from "./Pages/Data Kelas/DataKelas";
+import TambahDataKelas from "./Pages/Data Kelas/TambahDataKelas";
+import EditDataKelas from "./Pages/Data Kelas/EditDataKelas";
+
+import MasterData from "./Pages/master data/MasterData";
+import RekapTagihan from "./Pages/rekap tagihan/RekapTagihan";
+import TambahDatamaster from "./Pages/master data/TambahMasterData";
+import EditMasterData from "./Pages/master data/EditMasterData";
 
 function App() {
   return ( 
@@ -33,10 +45,22 @@ function App() {
         <Route path="/editjenis/:id" element={<Editjenis />} />
         <Route path="/tambahjenis" element={<TambahJenis />} />
         <Route path="/kategoritagihan" element={<KategoriTagihan />} />
+        
         <Route path="/kategoridata" element={<KategoriData />} />
+        <Route path="/tambah_kategoridata" element={<TambahKategoriData />} />
+        <Route path="/edit_kategoridata/:id" element={<EditKategoriData />} />
+
+        <Route path="/datakelas" element={<DataKelas />} />
+        <Route path="/tambah_datakelas" element={<TambahDataKelas />} />
+        <Route path="/edit_datakelas/:id" element={<EditDataKelas />} />
+
         <Route path="/tambahkategori" element={<TambahKategori />} />
         <Route path="/editkategori/:id" element={<EditKategori />} />
         
+        <Route path="/masterdata" element={<MasterData />} />
+        <Route path="/tambahmasterdata" element={<TambahDatamaster />} />
+        <Route path="/editmasterdata/:id" element={<EditMasterData />} />
+        <Route path="/rekaptagihan" element={<RekapTagihan />}/>
        
       </Routes> 
   );

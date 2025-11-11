@@ -5,7 +5,7 @@ import {
   FaSignOutAlt,
   FaChartBar,
   FaFolderOpen,
-  FaChalkboardTeacher,
+  FaChalkboard,
   FaMoneyBillWave,
   FaChartPie,
   FaWallet,
@@ -64,8 +64,8 @@ export default function SidebarT() {
         },
         {
           name: "Kelas",
-          icon: <FaChalkboardTeacher className="text-orange-300 drop-shadow-md" />,
-          path: "/kelas",
+          icon: <FaChalkboard  className="text-orange-300 drop-shadow-md" />,
+          path: "/datakelas",
         },
         {
           name: "Master Data",

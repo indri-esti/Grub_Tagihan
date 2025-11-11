@@ -9,7 +9,6 @@ const Tagihan = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedKategori, setSelectedKategori] = useState(""); // ✅ Tambahan filter kategori
   const navigate = useNavigate();
 
   // Ambil data dari API
@@ -17,7 +16,7 @@ const Tagihan = () => {
     try {
       setLoading(true);
       const res = await axios.get("http://localhost:5000/tagihan");
-      setData(res.data);
+      setData(res.data || []);
     } catch (err) {
       console.error("Gagal mengambil data:", err);
       Swal.fire({
@@ -36,7 +35,7 @@ const Tagihan = () => {
 
   // Hapus data
   const handleDelete = async (id) => {
-    Swal.fire({
+    const result = await Swal.fire({
       title: "Yakin ingin menghapus?",
       text: "Data ini akan dihapus permanen!",
       icon: "warning",
@@ -45,39 +44,72 @@ const Tagihan = () => {
       cancelButtonColor: "#3085d6",
       confirmButtonText: "Ya, hapus!",
       cancelButtonText: "Batal",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          await axios.delete(`http://localhost:5000/tagihan/${id}`);
-          setData(data.filter((item) => item.id !== id));
-          Swal.fire({
-            icon: "success",
-            title: "Berhasil!",
-            text: "Data berhasil dihapus.",
-            timer: 1500,
-            showConfirmButton: false,
-          });
-        } catch (err) {
-          console.error("Gagal hapus data:", err);
-          Swal.fire({
-            icon: "error",
-            title: "Gagal!",
-            text: "Tidak dapat menghapus data.",
-          });
-        }
-      }
     });
+
+    if (result.isConfirmed) {
+      try {
+        await axios.delete(`http://localhost:5000/tagihan/${id}`);
+        setData((prev) => prev.filter((item) => item.id !== id));
+        Swal.fire({
+          icon: "success",
+          title: "Berhasil!",
+          text: "Data berhasil dihapus.",
+          timer: 1400,
+          showConfirmButton: false,
+        });
+      } catch (err) {
+        console.error("Gagal hapus data:", err);
+        Swal.fire({
+          icon: "error",
+          title: "Gagal!",
+          text: "Tidak dapat menghapus data.",
+        });
+      }
+    }
   };
 
-  // Filter data berdasarkan kategori dan pencarian
+  // Helper: aman ambil "jenis" (beberapa record pakai field keterangan)
+  const getJenis = (item) => {
+    return item.jenis || item.keterangan || "-";
+  };
+
+  // Format tanggal ke dd/mm/yyyy — aman untuk input dd/mm/yyyy atau yyyy-mm-dd
+  const formatTanggal = (tgl) => {
+    if (!tgl) return "-";
+
+    // sudah dd/mm/yyyy
+    if (typeof tgl === "string" && tgl.includes("/")) {
+      return tgl;
+    }
+
+    // yyyy-mm-dd -> dd/mm/yyyy
+    if (typeof tgl === "string" && tgl.includes("-")) {
+      const parts = tgl.split("-");
+      if (parts.length >= 3) {
+        const [year, month, day] = parts;
+        return `${day.padStart(2, "0")}/${month.padStart(2, "0")}/${year}`;
+      }
+    }
+
+    // fallback: coba parsing Date object
+    const d = new Date(tgl);
+    if (!isNaN(d)) {
+      const day = String(d.getDate()).padStart(2, "0");
+      const month = String(d.getMonth() + 1).padStart(2, "0");
+      const year = d.getFullYear();
+      return `${day}/${month}/${year}`;
+    }
+
+    return tgl;
+  };
+
+  // Filter pencarian: cari pada nama dan jenis/keterangan
   const filteredData = data.filter((item) => {
-    const cocokKategori =
-      selectedKategori === "" ||
-      item.keterangan?.toLowerCase() === selectedKategori.toLowerCase();
-    const cocokCari = item.keterangan
-      ?.toLowerCase()
-      .includes(searchTerm.toLowerCase());
-    return cocokKategori && cocokCari;
+    const q = searchTerm.trim().toLowerCase();
+    if (!q) return true;
+    const nama = (item.nama || "").toLowerCase();
+    const jenis = (getJenis(item) || "").toLowerCase();
+    return nama.includes(q) || jenis.includes(q);
   });
 
   return (
@@ -99,72 +131,56 @@ const Tagihan = () => {
             </button>
           </div>
 
-          {/* Filter dan Pencarian */}
-          <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-3">
-            <select
-              value={selectedKategori}
-              onChange={(e) => setSelectedKategori(e.target.value)}
-              className="border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-            >
-              <option value="">-- Semua Kategori --</option>
-              <option value="SPP">SPP</option>
-              <option value="Uang Gedung">Uang Gedung</option>
-              <option value="Piknik Sekolah">Piknik Sekolah</option>
-              <option value="Seragam">Seragam</option>
-            </select>
-
+          <div className="flex justify-between items-center mb-4">
             <input
               type="text"
-              placeholder="Cari berdasarkan keterangan..."
+              placeholder="Cari berdasarkan nama atau jenis..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="border border-gray-300 px-3 py-2 rounded-md w-full max-w-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
           </div>
 
-          {/* Tabel Data */}
           {loading ? (
             <p className="text-center">Memuat data...</p>
           ) : (
             <div className="overflow-x-auto shadow-md rounded-lg">
-              <table className="table-auto border border-gray-300 w-full text-sm">
+              <table className="table-auto w-full text-sm border-collapse">
                 <thead className="bg-blue-700 text-white">
                   <tr>
-                    <th className="px-4 py-2">No</th>
-                    <th className="px-4 py-2">Keterangan</th>
-                    <th className="px-4 py-2">NISN</th>
-                    <th className="px-4 py-2">No. HP</th>
-                    <th className="px-4 py-2">Deskripsi</th>
-                    <th className="px-4 py-2">Harga</th>
-                    <th className="px-4 py-2">Tanggal</th>
-                    <th className="px-4 py-2">Status</th>
-                    <th className="px-4 py-2">Aksi</th>
+                    <th className="px-4 py-2 text-center">No</th>
+                    <th className="px-4 py-2 text-center">Nama</th>
+                    <th className="px-4 py-2 text-center">Jenis</th>
+                    <th className="px-4 py-2 text-center">Harga</th>
+                    <th className="px-4 py-2 text-center">Tanggal</th>
+                    <th className="px-4 py-2 text-center">Status</th>
+                    <th className="px-4 py-2 text-center">Aksi</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredData.length > 0 ? (
                     filteredData.map((item, index) => (
                       <tr
-                        key={item.id}
-                        className="border-t hover:bg-gray-50 text-center"
+                        key={item.id || index}
+                        className="hover:bg-gray-50 transition-all border-b border-gray-100"
                       >
                         <td className="px-4 py-2">{index + 1}</td>
-                        <td className="px-4 py-2">{item.keterangan}</td>
-                        <td className="px-4 py-2">{item.nisn}</td>
-                        <td className="px-4 py-2">{item.nohp}</td>
-                        <td className="px-4 py-2">{item.deskripsi}</td>
-                        <td className="px-4 py-2 text-right">
+                        <td className="px-4 py-2">{item.nama || "-"}</td>
+                        <td className="px-4 py-2">{getJenis(item)}</td>
+                        <td className="py-2 px-4 text-right">
                           Rp {parseInt(item.harga || 0).toLocaleString("id-ID")}
                         </td>
-                        <td className="px-4 py-2">{item.tanggal}</td>
+                        <td className="px-4 py-2 text-center">
+                          {formatTanggal(item.tanggal)}
+                        </td>
                         <td
-                          className={`font-semibold ${
-                            item.status === "Lunas"
+                          className={`py-2 px-4 font-semibold text-center ${
+                            (item.status || "").toLowerCase() === "lunas"
                               ? "text-green-600"
                               : "text-red-500"
                           }`}
                         >
-                          {item.status}
+                          {item.status || "-"}
                         </td>
                         <td className="px-4 py-2 flex justify-center gap-2">
                           <button
@@ -186,7 +202,7 @@ const Tagihan = () => {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="9" className="text-center py-4">
+                      <td colSpan="7" className="text-center py-4 text-gray-500 italic">
                         Tidak ada data ditemukan.
                       </td>
                     </tr>

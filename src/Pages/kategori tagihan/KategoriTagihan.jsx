@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import axios from "axios";
 import SidebarT from "../../Component/Sidebar";
-import { FaListAlt } from "react-icons/fa";
+import { FaChartPie } from "react-icons/fa";
 
 const KategoriTagihan = () => {
   const [kategori, setKategori] = useState([]);
@@ -46,7 +46,7 @@ const KategoriTagihan = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.delete(`http://localhost:5000/kategori_tagihan${id}`);
+          await axios.delete(`http://localhost:5000/kategori_tagihan/${id}`);
           setKategori(kategori.filter((item) => item.id !== id));
           Swal.fire({
             icon: "success",
@@ -83,7 +83,7 @@ const KategoriTagihan = () => {
           {/* Header */}
           <div className="flex justify-between items-center mb-3">
             <h2 className="text-2xl font-semibold text-gray-800 flex items-center gap-2">
-              <FaListAlt className="text-blue-600 text-3xl" />
+              <FaChartPie className="text-purple-400 text-3xl" />
               Tabel Kategori Tagihan
             </h2>
             <button
@@ -110,26 +110,40 @@ const KategoriTagihan = () => {
             <p className="text-center">Memuat data...</p>
           ) : (
             <div className="overflow-x-auto shadow-md rounded-lg">
-              <table className="table-auto border border-gray-300 w-full text-sm">
-                <thead className="bg-blue-700 text-white">
-                  <tr>
-                    <th className="px-2 py-2">No</th>
-                    <th className="px-2 py-2">Nama Kategori</th>
-                    <th className="px-2 py-2">Status</th>
-                    <th className="px-2 py-2">Aksi</th>
+              <table className="min-w-full border-collapse text-sm">
+                <thead>
+                  <tr className="bg-blue-600 text-white">
+                    <th className="px-4 py-3 text-center font-semibold tracking-wide">
+                      No
+                    </th>
+                    <th className="px-4 py-3 text-center font-semibold tracking-wide">
+                      Nama Kategori
+                    </th>
+                    <th className="px-4 py-3 text-center font-semibold tracking-wide">
+                      Status
+                    </th>
+                    <th className="px-4 py-3 text-center font-semibold tracking-wide">
+                      Aksi
+                    </th>
                   </tr>
                 </thead>
-                <tbody>
+
+                <tbody className="bg-white divide-y divide-gray-200">
                   {filteredData.length > 0 ? (
                     filteredData.map((item, index) => (
-                      <tr key={item.id} className="border-t hover:bg-gray-50">
-                        <td className="px-4 py-2 text-right">{index + 1}</td>
-                        <td className="px-4 py-2 text-left">{item.nama}</td>
-
-                        {/* STATUS */}
-                        <td className="px-4 py-2 text-center">
+                      <tr
+                        key={item.id}
+                        className="hover:bg-blue-50 transition duration-150 ease-in-out"
+                      >
+                        <td className="px-4 py-3 text-gray-700 text-right">
+                          {index + 1}
+                        </td>
+                        <td className="px-4 py-3 text-gray-800 font-medium">
+                          {item.nama}
+                        </td>
+                        <td className="px-4 py-3 text-center">
                           <span
-                            className={`px-3 py-1 rounded-full font-semibold text-sm ${
+                            className={`px-3 py-1.5 rounded-full text-xs font-semibold ${
                               item.status === "Aktif"
                                 ? "bg-green-100 text-green-700"
                                 : "bg-red-100 text-red-700"
@@ -138,13 +152,9 @@ const KategoriTagihan = () => {
                             {item.status}
                           </span>
                         </td>
-
-                        {/* AKSI */}
-                        <td className="px-4 py-2 flex justify-center gap-2">
+                        <td className="px-4 py-3 text-center flex justify-center gap-2">
                           <button
-                            onClick={() =>
-                              navigate(`/editkategori/${item.id}`)
-                            }
+                            onClick={() => navigate(`/editkategori/${item.id}`)}
                             className="bg-gray-700 text-white px-3 py-2 rounded-md hover:bg-gray-600 transition"
                             title="Edit Data"
                           >
@@ -162,7 +172,10 @@ const KategoriTagihan = () => {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="4" className="text-center py-4">
+                      <td
+                        colSpan="4"
+                        className="text-center py-5 text-gray-500 italic bg-gray-50 rounded-b-lg"
+                      >
                         Tidak ada data kategori ditemukan.
                       </td>
                     </tr>

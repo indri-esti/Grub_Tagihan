@@ -1,137 +1,143 @@
-import React, { useState } from "react";
-import SidebarT from "../../Component/Sidebar";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
+import axios from "axios";
+import SidebarT from "../../Component/Sidebar";
+import { FaFolderOpen } from "react-icons/fa";
 
 const KategoriData = () => {
-  const Navigate = useNavigate();
-  const [kategoriList, setKategoriList] = useState([
-    { id: 1, nama: "Siswa" },
-    { id: 2, nama: "Guru" },
-    { id: 3, nama: "Karyawan" },
-  ]);
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
-  const [namaKategori, setNamaKategori] = useState("");
-  const [editId, setEditId] = useState(null);
-
-  // Fungsi tambah / edit kategori
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!namaKategori.trim()) {
-      alert("Nama kategori tidak boleh kosong!");
-      return;
-    }
-
-    if (editId) {
-      setKategoriList(
-        kategoriList.map((item) =>
-          item.id === editId ? { ...item, nama: namaKategori } : item
-        )
-      );
-      setEditId(null);
-    } else {
-      setKategoriList([...kategoriList, { id: Date.now(), nama: namaKategori }]);
-    }
-    setNamaKategori("");
-  };
-
-  // Fungsi edit kategori
-  const handleEdit = (id) => {
-    const selected = kategoriList.find((item) => item.id === id);
-    setNamaKategori(selected.nama);
-    setEditId(id);
-  };
-
-  // Fungsi hapus kategori
-  const handleDelete = (id) => {
-    if (window.confirm("Yakin ingin menghapus kategori ini?")) {
-      setKategoriList(kategoriList.filter((item) => item.id !== id));
+  // Ambil data dari API
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const res = await axios.get("http://localhost:5000/level");
+      setData(res.data || []);
+    } catch (err) {
+      console.error("Gagal mengambil data:", err);
+      Swal.fire({
+        icon: "error",
+        title: "Oops!",
+        text: "Gagal mengambil data dari server.",
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Fungsi menuju halaman tagihan
-  const handleLihatTagihan = () => {
-    window.location.href = "http://localhost:5000/tagihan";
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  // Hapus data
+  const handleDelete = async (id) => {
+    const result = await Swal.fire({
+      title: "Yakin ingin menghapus?",
+      text: "Data ini akan dihapus permanen!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Ya, hapus!",
+      cancelButtonText: "Batal",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await axios.delete(`http://localhost:5000/level/${id}`);
+        setData((prev) => prev.filter((item) => item.id !== id));
+        Swal.fire({
+          icon: "success",
+          title: "Berhasil!",
+          text: "Data berhasil dihapus.",
+          timer: 1400,
+          showConfirmButton: false,
+        });
+      } catch (err) {
+        console.error("Gagal hapus data:", err);
+        Swal.fire({
+          icon: "error",
+          title: "Gagal!",
+          text: "Tidak dapat menghapus data.",
+        });
+      }
+    }
   };
 
   return (
-   <div className="pl-[calc(15rem+1%)] pr-[5%] pt-[5%] md:pt-10 transition-all duration-300">
-      {/* Sidebar */}
-      <SidebarT />
+    <div className="pl-[calc(15rem+1%)] pr-[5%] pt-[5%] md:pt-10 transition-all duration-300">
+      <div className="flex flex-col gap-6">
+        <SidebarT />
 
-      {/* Konten utama */}
-      <div className="flex-1 p-8">
-        <h2 className="text-2xl font-bold mb-6 text-gray-800">🧍‍♂️ Kategori Data</h2>
+        <div className="flex-1 flex flex-col gap-3 md:ml-6 bg-white shadow-lg rounded-lg p-6">
+          {/* Judul */}
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl font-semibold text-gray-800 flex items-center gap-2">
+              <FaFolderOpen className="text-yellow-300 text-3xl" />
+              Kategori Data
+            </h2>
+            <button
+              onClick={() => navigate("/tambah_kategoridata")}
+              className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+            >
+              Tambah Data
+            </button>
+          </div>
 
-        {/* Form tambah / edit kategori */}
-        <form
-          onSubmit={handleSubmit}
-          className="flex gap-3 mb-6 bg-white p-4 rounded-lg shadow"
-        >
-          <input
-            type="text"
-            value={namaKategori}
-            onChange={(e) => setNamaKategori(e.target.value)}
-            placeholder="Masukkan kategori (misal: Siswa)"
-            className="border border-gray-300 rounded-md p-2 flex-1 focus:ring-2 focus:ring-blue-400 outline-none"
-          />
-          <button
-            type="submit"
-            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-          >
-            {editId ? "Simpan Perubahan" : "Tambah"}
-          </button>
-        </form>
-
-        {/* Tabel daftar kategori */}
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          <table className="w-full text-sm border-collapse">
-            <thead className="bg-gray-200 text-gray-700">
-              <tr>
-                <th className="border p-2 w-12">No</th>
-                <th className="border p-2">Nama Kategori</th>
-                <th className="border p-2 w-72">Aksi</th>
-              </tr>
-            </thead>
-            <tbody>
-              {kategoriList.map((item, index) => (
-                <tr key={item.id} className="hover:bg-gray-50">
-                  <td className="border p-2 text-center">{index + 1}</td>
-                  <td className="border p-2">{item.nama}</td>
-                  <td className="border p-2 text-center space-x-2">
-                    <button
-                      onClick={() => handleEdit(item.id)}
-                      className="bg-yellow-400 px-3 py-1 rounded hover:bg-yellow-500"
+          {/* Kondisi loading */}
+          {loading ? (
+            <p className="text-center py-4">Memuat data...</p>
+          ) : data.length === 0 ? (
+            <p className="text-center py-5 text-gray-500 italic bg-gray-50 rounded-md">
+              Data tidak ada
+            </p>
+          ) : (
+            <div className="overflow-x-auto rounded-lg bg-white">
+              <table className="min-w-full text-sm border-separate border-spacing-y-1">
+                <thead>
+                  <tr className="bg-blue-600 text-white rounded-lg">
+                    <th className="px-4 py-2 text-center font-semibold">No</th>
+                    <th className="px-4 py-2 text-center font-semibold">Level</th>
+                    <th className="px-4 py-2 text-center font-semibold">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.map((item, index) => (
+                    <tr
+                      key={item.id || index}
+                      className="bg-gray-50 hover:bg-gray-100 rounded-md"
                     >
-                      ✏️ Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(item.id)}
-                      className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
-                    >
-                      🗑️ Hapus
-                    </button>
-                    <button
-                      onClick={handleLihatTagihan}
-                      className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
-                    >
-                      🔗 Lihat Tagihan
-                    </button>
-                  </td>
-                </tr>
-              ))}
-
-              {kategoriList.length === 0 && (
-                <tr>
-                  <td
-                    colSpan="3"
-                    className="text-center text-gray-500 py-4 border"
-                  >
-                    Belum ada kategori data
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                      <td className="px-4 py-2 text-left">{index + 1}</td>
+                      <td className="px-4 py-2 text-center text-gray-700">
+                        {item.level || "-"}
+                      </td>
+                      <td className="px-4 py-3 text-left">
+                        <div className="flex justify-center gap-2">
+                          <button
+                            onClick={() =>
+                              navigate(`/edit_kategoridata/${item.id}`)
+                            }
+                            className="bg-gray-700 text-white px-3 py-2 rounded-md hover:bg-gray-600"
+                          >
+                            ✏
+                          </button>
+                          <button
+                            onClick={() => handleDelete(item.id)}
+                            className="bg-red-700 text-white px-3 py-2 rounded-md hover:bg-red-600"
+                          >
+                            🗑
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       </div>
     </div>

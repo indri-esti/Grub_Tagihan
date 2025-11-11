@@ -56,78 +56,34 @@
     {
       "nama": "indri esti",
       "keterangan": "SPP",
-      "nisn": "124656765767",
-      "nohp": "085701519080",
-      "deskripsi": "Membayar SPP Bulan Oktober",
-      "harga": 500000,
-      "tanggal": "14/10/2025",
+      "harga": "500000",
+      "tanggal": "06/11/2025",
       "status": "Lunas",
-      "id": "f96c"
+      "id": "01c4"
     },
     {
-      "id": "3c76",
       "nama": "ixia",
       "keterangan": "Uang gedung",
-      "nisn": "12346578",
-      "nohp": "085701519080",
-      "deskripsi": "Membayar uang gedung Bulan September",
       "harga": "600000",
-      "tanggal": "27/02/2025",
-      "status": "Lunas"
+      "tanggal": "07/11/2025",
+      "status": "Belum Lunas",
+      "id": "b7be"
     },
     {
-      "id": "bdcb",
-      "nama": "Miya",
+      "id": "5807",
+      "nama": "rasya",
       "keterangan": "Piknik Sekolah",
-      "nisn": "01845113485",
-      "nohp": "08544139",
-      "deskripsi": "Membayar Study Tour",
-      "harga": "1000000",
-      "tanggal": "02/02/2025",
+      "harga": "800000",
+      "tanggal": "11/11/2025",
       "status": "Lunas"
     },
     {
-      "id": "417f",
-      "nama": "Amel",
-      "keterangan": "Seragam",
-      "nisn": "2345670345",
-      "nohp": "0896712458",
-      "deskripsi": "Membayar Seragam Bulan November",
+      "nama": "rasya",
+      "keterangan": "Piknik Sekolah",
       "harga": "800000",
-      "tanggal": "01/11/2025",
-      "status": "Belum Lunas"
-    }
-  ],
-  "jenis_tagihan": [
-    {
-      "id": "d89a",
-      "nama": "Piknik Sekolah",
-      "status": "Aktif"
-    },
-    {
-      "id": "dd89",
-      "nama": "SPP",
-      "status": "Aktif"
-    },
-    {
-      "id": "81c4",
-      "nama": "Seragam",
-      "status": "Aktif"
-    },
-    {
-      "id": "b9d9",
-      "nama": "Uang gedung",
-      "status": "Aktif"
-    },
-    {
-      "id": "f5d4",
-      "nama": "Kas Siswa",
-      "status": "Nonaktif"
-    },
-    {
-      "id": "a9ea",
-      "nama": "Biaya Ekstrakulikuler",
-      "status": "Nonaktif"
+      "tanggal": "11/11/2025",
+      "status": "Lunas",
+      "id": "b41e"
     }
   ],
   "kategori_tagihan": [
@@ -160,6 +116,71 @@
       "id": "a9ea",
       "nama": "Biaya Ekstrakulikuler",
       "status": "Aktif"
+    }
+  ],
+  "kategori_data": [
+    {
+      "id": "f563",
+      "nama": "Layla",
+      "email": "Layla@gmail.com",
+      "kategori": "guru",
+      "jabatan_kelas": "Matematika"
+    },
+    {
+      "id": "50bb",
+      "nama": "indri esti",
+      "email": "indriesti4@gmail.com",
+      "kategori": "siswa",
+      "jabatan_kelas": "X TKJ"
+    },
+    {
+      "id": "1cd9",
+      "nama": "Dudung",
+      "email": "Dudung@gmail.com",
+      "kategori": "karyawan",
+      "jabatan_kelas": "TU"
+    },
+    {
+      "id": "0b88",
+      "nama": "Miya",
+      "email": "Miya@gmail.com",
+      "kategori": "siswa",
+      "jabatan_kelas": "XI AKL"
+    }
+  ],
+  "data_kelas": [
+    {
+      "kelas": "X",
+      "jurusan": "TKJ",
+      "id": "3f94"
+    },
+    {
+      "id": "71a6",
+      "kelas": "XII",
+      "jurusan": "RPL"
+    },
+    {
+      "id": "fb27",
+      "kelas": "XI",
+      "jurusan": "AKL"
+    }
+  ],
+  "level": [
+    {
+      "level": "siswa",
+      "id": "497c"
+    },
+    {
+      "id": "7075",
+      "level": "guru"
+    },
+    {
+      "id": "289d",
+      "level": "karyawan"
+    },
+    {
+      "id": "64f8",
+      "level": "Admin"
     }
   ]
 }
