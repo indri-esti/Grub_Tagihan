@@ -70,26 +70,42 @@
       "id": "b7be"
     },
     {
-      "id": "5807",
       "nama": "rasya",
-      "keterangan": "Piknik Sekolah",
+      "keterangan": "Seragam",
       "harga": "800000",
+      "tanggal": "08/11/2025",
+      "status": "Lunas",
+      "id": "5807"
+    },
+    {
+      "id": "5b58",
+      "nama": "Belerick",
+      "keterangan": "Biaya Ekstrakulikuler",
+      "harga": "900000",
       "tanggal": "11/11/2025",
       "status": "Lunas"
     },
     {
-      "nama": "rasya",
-      "keterangan": "Piknik Sekolah",
-      "harga": "800000",
-      "tanggal": "11/11/2025",
-      "status": "Lunas",
-      "id": "b41e"
+      "nama": "Lesley",
+      "keterangan": "Kas Siswa",
+      "harga": "700000",
+      "tanggal": "12/11/2025",
+      "status": "Belum Lunas",
+      "id": "9229"
+    },
+    {
+      "id": "2a3a",
+      "nama": "Joy",
+      "keterangan": "Study Tour",
+      "harga": "1000000",
+      "tanggal": "13/11/2025",
+      "status": "Lunas"
     }
   ],
   "kategori_tagihan": [
     {
       "id": "3261",
-      "nama": "Piknik Sekolah",
+      "nama": "Study Tour",
       "status": "Aktif"
     },
     {
@@ -110,12 +126,27 @@
     {
       "id": "f5d4",
       "nama": "Kas Siswa",
-      "status": "Nonaktif"
+      "status": "Aktif"
     },
     {
       "id": "a9ea",
       "nama": "Biaya Ekstrakulikuler",
       "status": "Aktif"
+    },
+    {
+      "id": "8374",
+      "nama": "Biaya Les",
+      "status": "Nonaktif"
+    },
+    {
+      "id": "a965",
+      "nama": "Uang Pendaftaran",
+      "status": "Nonaktif"
+    },
+    {
+      "id": "0ed3",
+      "nama": "Biaya UKT",
+      "status": "Nonaktif"
     }
   ],
   "kategori_data": [
@@ -141,11 +172,67 @@
       "jabatan_kelas": "TU"
     },
     {
-      "id": "0b88",
       "nama": "Miya",
       "email": "Miya@gmail.com",
       "kategori": "siswa",
-      "jabatan_kelas": "XI AKL"
+      "jabatan_kelas": "XI AKL 1",
+      "id": "0b88"
+    },
+    {
+      "id": "6e17",
+      "nama": "Fanny",
+      "email": "Fanny@gmail.com",
+      "kategori": "siswa",
+      "jabatan_kelas": "X TBSM"
+    },
+    {
+      "id": "7254",
+      "nama": "Gatot",
+      "email": "Gatot@gmail.com",
+      "kategori": "karyawan",
+      "jabatan_kelas": "Staff"
+    },
+    {
+      "id": "5346",
+      "nama": "Cantika",
+      "email": "Cantika@gmail.com",
+      "kategori": "guru",
+      "jabatan_kelas": "PPKN"
+    },
+    {
+      "id": "7ef5",
+      "nama": "Maria",
+      "email": "Maria@gmail.com",
+      "kategori": "guru",
+      "jabatan_kelas": "IPAS"
+    },
+    {
+      "nama": "Eudora",
+      "email": "Eudora@gmail.com",
+      "kategori": "siswa",
+      "jabatan_kelas": "XII TI",
+      "id": "3688"
+    },
+    {
+      "id": "564f",
+      "nama": "Chiko",
+      "email": "Chiko@gmail.com",
+      "kategori": "karyawan",
+      "jabatan_kelas": "Kebersihan"
+    },
+    {
+      "nama": "Denis",
+      "email": "Denis@gmail.com",
+      "kategori": "siswa",
+      "jabatan_kelas": "X  TKR 2",
+      "id": "0347"
+    },
+    {
+      "id": "802b",
+      "nama": "Doni",
+      "email": "Doni8@gmail.com",
+      "kategori": "guru",
+      "jabatan_kelas": "Agama Islam"
     }
   ],
   "data_kelas": [
@@ -155,14 +242,29 @@
       "id": "3f94"
     },
     {
-      "id": "71a6",
       "kelas": "XII",
-      "jurusan": "RPL"
+      "jurusan": "RPL 1",
+      "id": "71a6"
     },
     {
-      "id": "fb27",
       "kelas": "XI",
-      "jurusan": "AKL"
+      "jurusan": "AKL 1",
+      "id": "fb27"
+    },
+    {
+      "kelas": "X",
+      "jurusan": "TSM",
+      "id": "3ccd"
+    },
+    {
+      "kelas": "XII",
+      "jurusan": "TI",
+      "id": "f4b5"
+    },
+    {
+      "kelas": "X ",
+      "jurusan": "TKR 2",
+      "id": "5ded"
     }
   ],
   "level": [
@@ -177,10 +279,6 @@
     {
       "id": "289d",
       "level": "karyawan"
-    },
-    {
-      "id": "64f8",
-      "level": "Admin"
     }
   ]
 }

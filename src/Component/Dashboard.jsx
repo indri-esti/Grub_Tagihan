@@ -116,9 +116,9 @@ export default function Dashboard() {
     String(data.kategori || "").toLowerCase() === kategori.toLowerCase();
 
   return (
-    <div className="pl-[calc(15rem+1%)] pr-[5%] pt-[4%] bg-gray-100 min-h-screen">
+    <div className="pl-[calc(15rem+1%)] pr-[5%] pt-[5%] bg-gray-100 min-h-screen">
       <SidebarT />
-
+      
       <div className="p-8">
         <h1 className="text-3xl font-bold text-gray-800 text-center mb-10 flex items-center justify-center gap-2">
           <FaChartBar className="text-blue-600" /> Dashboard
@@ -208,11 +208,11 @@ export default function Dashboard() {
                   .slice(0, 5)
                   .map((g, i) => (
                     <tr key={i} className="hover:bg-gray-50">
-                      <td className="py-2 px-4 text-center">{i + 1}</td>
-                      <td className="py-2 px-4">{g.nama}</td>
-                      <td className="py-2 px-4 text-center">{g.email}</td>
-                      <td className="py-2 px-4 text-center">{g.kategori}</td>
-                      <td className="py-2 px-4 text-center">{g.jabatan_kelas}</td>
+                      <td className="py-2 px-4 text-left">{i + 1}</td>
+                      <td className="py-2 px-4 text-left">{g.nama}</td>
+                      <td className="py-2 px-4 text-left">{g.email}</td>
+                      <td className="py-2 px-4 text-left">{g.kategori}</td>
+                      <td className="py-2 px-4 text-left">{g.jabatan_kelas}</td>
                     </tr>
                   ))
               )}

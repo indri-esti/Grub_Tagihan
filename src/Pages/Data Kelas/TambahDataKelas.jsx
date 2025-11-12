@@ -75,7 +75,7 @@ const TambahDataKelas = () => {
               value={formData.jurusan}
               onChange={handleChange}
               required
-              placeholder="Contoh: Rekayasa Perangkat Lunak"
+              placeholder="Contoh: RPL"
               className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
             />
           </div>

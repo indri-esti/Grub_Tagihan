@@ -76,7 +76,7 @@ const EditMasterData = () => {
   const getDynamicLabel = () => {
     const k = (formData.kategori || "").toLowerCase();
     if (k === "siswa") return "Pilih Kelas & Jurusan";
-    if (k === "guru") return "Masukkan Mata Pelajaran";
+    if (k === "guru") return "Masukkan Mapel";
     if (k === "karyawan") return "Masukkan Jabatan";
     return "Isi Data Tambahan";
   };
@@ -100,7 +100,7 @@ const EditMasterData = () => {
       Swal.fire({
         icon: "warning",
         title: "Lengkapi Data!",
-        text: "Pilih Kelas & Jurusan untuk kategori Siswa.",
+        text: "Pilih Kelas & Jurusan untuk level Siswa.",
       });
       return;
     }
@@ -109,7 +109,7 @@ const EditMasterData = () => {
       Swal.fire({
         icon: "warning",
         title: "Lengkapi Data!",
-        text: "Masukkan Mata Pelajaran atau Jabatan.",
+        text: "Masukkan Mapel atau Jabatan.",
       });
       return;
     }
@@ -173,7 +173,7 @@ const EditMasterData = () => {
           {/* Kategori */}
           <div>
             <label className="text-gray-700 text-sm mb-1 block">
-              Pilih Level / Kategori
+              Pilih Level 
             </label>
             {loading ? (
               <p className="text-gray-500 text-sm">Memuat data...</p>
@@ -185,7 +185,7 @@ const EditMasterData = () => {
                 required
                 className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
               >
-                <option value="">-- Pilih Kategori --</option>
+                <option value="">-- Pilih Level --</option>
                 {levels.map((item) => (
                   <option key={item.id} value={item.level}>
                     {item.level}
@@ -227,7 +227,7 @@ const EditMasterData = () => {
                   name="jabatan_kelas"
                   placeholder={
                     (formData.kategori || "").toLowerCase() === "guru"
-                      ? "Masukkan Mata Pelajaran (mis. Matematika)"
+                      ? "Masukkan Mapel (mis. Matematika)"
                       : "Masukkan Jabatan (mis. Staff TU)"
                   }
                   value={formData.jabatan_kelas}
