@@ -135,7 +135,7 @@ const KategoriTagihan = () => {
                         key={item.id}
                         className="hover:bg-blue-50 transition duration-150 ease-in-out"
                       >
-                        <td className="px-4 py-3 text-gray-700 text-right">
+                        <td className="px-4 py-3 text-gray-700 text-left">
                           {index + 1}
                         </td>
                         <td className="px-4 py-3 text-gray-800 font-medium">

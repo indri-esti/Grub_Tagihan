@@ -59,6 +59,26 @@ const RekapTagihan = () => {
     return tgl; // fallback
   };
 
+  // 🔧 Baca tanggal dd/mm/yyyy atau format lain → Date object
+  const parseTanggal = (tgl) => {
+    if (!tgl) return null;
+
+    // Format dd/mm/yyyy
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(tgl)) {
+      const [d, m, y] = tgl.split("/");
+      return new Date(`${y}-${m}-${d}T00:00:00`);
+    }
+
+    // Format yyyy-mm-dd atau ISO
+    if (/^\d{4}-\d{2}-\d{2}/.test(tgl)) {
+      return new Date(tgl);
+    }
+
+    // Fallback
+    const dateObj = new Date(tgl);
+    return isNaN(dateObj) ? null : dateObj;
+  };
+
   // 🔹 Filter data
   useEffect(() => {
     let hasil = [...data];
@@ -72,11 +92,14 @@ const RekapTagihan = () => {
         (item) => (item.status || "").toLowerCase() !== "lunas"
       );
     } else if (filter === "bulanini") {
-      const bulanSekarang = new Date().getMonth();
-      const tahunSekarang = new Date().getFullYear();
+      const now = new Date();
+      const bulanSekarang = now.getMonth();
+      const tahunSekarang = now.getFullYear();
 
       hasil = hasil.filter((item) => {
-        const tgl = new Date(item.tanggal);
+        const tgl = parseTanggal(item.tanggal);
+        if (!tgl) return false;
+
         return (
           tgl.getMonth() === bulanSekarang &&
           tgl.getFullYear() === tahunSekarang
@@ -103,9 +126,7 @@ const RekapTagihan = () => {
 
           {/* Filter */}
           <div className="flex flex-col sm:flex-row gap-3 mb-5 items-start sm:items-center">
-            <label className="font-medium text-gray-700">
-              Filter Rekapan:
-            </label>
+            <label className="font-medium text-gray-700">Filter Rekapan:</label>
             <select
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
@@ -129,13 +150,13 @@ const RekapTagihan = () => {
                     <th className="px-4 py-3 text-center font-semibold border-b border-gray-200">
                       No
                     </th>
-                    <th className="px-4 py-3 text-left font-semibold border-b border-gray-200">
+                    <th className="px-4 py-3 text-center font-semibold border-b border-gray-200">
                       Nama
                     </th>
-                    <th className="px-4 py-3 text-left font-semibold border-b border-gray-200">
+                    <th className="px-4 py-3 text-center font-semibold border-b border-gray-200">
                       Jenis
                     </th>
-                    <th className="px-4 py-3 text-right font-semibold border-b border-gray-200">
+                    <th className="px-4 py-3 text-center font-semibold border-b border-gray-200">
                       Harga
                     </th>
                     <th className="px-4 py-3 text-center font-semibold border-b border-gray-200">
@@ -153,9 +174,9 @@ const RekapTagihan = () => {
                         key={item.id || i}
                         className="hover:bg-blue-50 transition-colors duration-150"
                       >
-                        <td className="px-4 py-3 text-center">{i + 1}</td>
-                        <td className="px-4 py-3">{item.nama || "-"}</td>
-                        <td className="px-4 py-3">
+                        <td className="px-4 py-3 text-left">{i + 1}</td>
+                        <td className="px-4 py-3 text-left">{item.nama || "-"}</td>
+                        <td className="px-4 py-3 text-left">
                           {item.jenis || item.keterangan || "-"}
                         </td>
                         <td className="px-4 py-3 text-right">

@@ -54,60 +54,71 @@
   ],
   "tagihan": [
     {
+      "id": "9dd7",
       "nama": "indri esti",
       "keterangan": "SPP",
-      "harga": "500000",
+      "harga": "600000",
       "tanggal": "06/11/2025",
-      "status": "Lunas",
-      "id": "01c4"
+      "status": "Lunas"
+    },
+    {
+      "id": "366d",
+      "nama": "Miya",
+      "keterangan": "Seragam",
+      "harga": "200000",
+      "tanggal": "07/11/2025",
+      "status": "Belum Lunas"
     },
     {
       "nama": "ixia",
       "keterangan": "Uang gedung",
-      "harga": "600000",
-      "tanggal": "07/11/2025",
-      "status": "Belum Lunas",
-      "id": "b7be"
-    },
-    {
-      "nama": "rasya",
-      "keterangan": "Seragam",
-      "harga": "800000",
+      "harga": "700000",
       "tanggal": "08/11/2025",
       "status": "Lunas",
-      "id": "5807"
+      "id": "072e"
     },
     {
-      "id": "5b58",
-      "nama": "Belerick",
+      "id": "125f",
+      "nama": "Zilong",
+      "keterangan": "Kas Siswa",
+      "harga": "800000",
+      "tanggal": "08/11/2025",
+      "status": "Belum Lunas"
+    },
+    {
+      "id": "b7d2",
+      "nama": "Amel",
       "keterangan": "Biaya Ekstrakulikuler",
       "harga": "900000",
+      "tanggal": "09/11/2025",
+      "status": "Lunas"
+    },
+    {
+      "id": "cf00",
+      "nama": "Joy",
+      "keterangan": "Biaya Les",
+      "harga": "400000",
+      "tanggal": "10/11/2025",
+      "status": "Belum Lunas"
+    },
+    {
+      "id": "077e",
+      "nama": "Digie",
+      "keterangan": "Uang Pendaftaran",
+      "harga": "2000000",
       "tanggal": "11/11/2025",
       "status": "Lunas"
     },
     {
-      "nama": "Lesley",
-      "keterangan": "Kas Siswa",
-      "harga": "700000",
-      "tanggal": "12/11/2025",
-      "status": "Belum Lunas",
-      "id": "9229"
-    },
-    {
-      "id": "2a3a",
-      "nama": "Joy",
-      "keterangan": "Study Tour",
-      "harga": "1000000",
-      "tanggal": "13/11/2025",
-      "status": "Lunas"
+      "id": "9511",
+      "nama": "Gaurih",
+      "keterangan": "Biaya UKT",
+      "harga": "600000",
+      "tanggal": "15/11/2025",
+      "status": "Belum Lunas"
     }
   ],
   "kategori_tagihan": [
-    {
-      "id": "3261",
-      "nama": "Study Tour",
-      "status": "Aktif"
-    },
     {
       "id": "dd89",
       "nama": "SPP",
@@ -136,17 +147,17 @@
     {
       "id": "8374",
       "nama": "Biaya Les",
-      "status": "Nonaktif"
+      "status": "Aktif"
     },
     {
       "id": "a965",
       "nama": "Uang Pendaftaran",
-      "status": "Nonaktif"
+      "status": "Aktif"
     },
     {
       "id": "0ed3",
       "nama": "Biaya UKT",
-      "status": "Nonaktif"
+      "status": "Aktif"
     }
   ],
   "kategori_data": [
@@ -275,10 +286,6 @@
     {
       "id": "7075",
       "level": "guru"
-    },
-    {
-      "id": "289d",
-      "level": "karyawan"
     }
   ]
 }
