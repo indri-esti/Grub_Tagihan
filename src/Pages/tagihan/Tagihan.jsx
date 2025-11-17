@@ -11,7 +11,6 @@ const Tagihan = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 
-  // Ambil data dari API
   const fetchData = async () => {
     try {
       setLoading(true);
@@ -33,7 +32,6 @@ const Tagihan = () => {
     fetchData();
   }, []);
 
-  // Hapus data
   const handleDelete = async (id) => {
     const result = await Swal.fire({
       title: "Yakin ingin menghapus?",
@@ -68,48 +66,79 @@ const Tagihan = () => {
     }
   };
 
-  // Helper: aman ambil "jenis" (beberapa record pakai field keterangan)
+  // 🔥 Fitur baru: ubah status (Belum Lunas ⇆ Lunas)
+  const handleStatusChange = async (item) => {
+    const statusBaru = item.status === "Lunas" ? "Belum Lunas" : "Lunas";
+
+    const konfirmasi = await Swal.fire({
+      title: "Ubah Status?",
+      text: `Ubah status dari "${item.status}" menjadi "${statusBaru}"?`,
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Ya, ubah",
+      cancelButtonText: "Batal",
+    });
+
+    if (!konfirmasi.isConfirmed) return;
+
+    try {
+      await axios.patch(`http://localhost:5000/tagihan/${item.id}`, {
+        status: statusBaru,
+      });
+
+      setData((prev) =>
+        prev.map((x) =>
+          x.id === item.id ? { ...x, status: statusBaru } : x
+        )
+      );
+
+      Swal.fire({
+        icon: "success",
+        title: "Berhasil!",
+        text: "Status berhasil diperbarui.",
+        timer: 1500,
+        showConfirmButton: false,
+      });
+    } catch (err) {
+      console.error("Gagal update status:", err);
+      Swal.fire({
+        icon: "error",
+        title: "Gagal!",
+        text: "Tidak dapat mengubah status.",
+      });
+    }
+  };
+
   const getJenis = (item) => {
     return item.jenis || item.keterangan || "-";
   };
 
-  // Format tanggal ke dd/mm/yyyy — aman untuk input dd/mm/yyyy atau yyyy-mm-dd
   const formatTanggal = (tgl) => {
     if (!tgl) return "-";
+    if (typeof tgl === "string" && tgl.includes("/")) return tgl;
 
-    // sudah dd/mm/yyyy
-    if (typeof tgl === "string" && tgl.includes("/")) {
-      return tgl;
-    }
-
-    // yyyy-mm-dd -> dd/mm/yyyy
     if (typeof tgl === "string" && tgl.includes("-")) {
-      const parts = tgl.split("-");
-      if (parts.length >= 3) {
-        const [year, month, day] = parts;
-        return `${day.padStart(2, "0")}/${month.padStart(2, "0")}/${year}`;
-      }
+      const [y, m, d] = tgl.split("-");
+      return `${d}/${m}/${y}`;
     }
 
-    // fallback: coba parsing Date object
     const d = new Date(tgl);
     if (!isNaN(d)) {
-      const day = String(d.getDate()).padStart(2, "0");
-      const month = String(d.getMonth() + 1).padStart(2, "0");
-      const year = d.getFullYear();
-      return `${day}/${month}/${year}`;
+      return `${String(d.getDate()).padStart(2, "0")}/${String(
+        d.getMonth() + 1
+      ).padStart(2, "0")}/${d.getFullYear()}`;
     }
 
     return tgl;
   };
 
-  // Filter pencarian: cari pada nama dan jenis/keterangan
   const filteredData = data.filter((item) => {
     const q = searchTerm.trim().toLowerCase();
     if (!q) return true;
-    const nama = (item.nama || "").toLowerCase();
-    const jenis = (getJenis(item) || "").toLowerCase();
-    return nama.includes(q) || jenis.includes(q);
+    return (
+      (item.nama || "").toLowerCase().includes(q) ||
+      (getJenis(item) || "").toLowerCase().includes(q)
+    );
   });
 
   return (
@@ -182,7 +211,11 @@ const Tagihan = () => {
                         >
                           {item.status || "-"}
                         </td>
+
+                        {/* 🔥 Aksi */}
                         <td className="px-4 py-2 flex justify-center gap-2">
+
+                          {/* Edit */}
                           <button
                             onClick={() => navigate(`/editdata/${item.id}`)}
                             className="bg-gray-700 text-white px-3 py-2 rounded-md hover:bg-gray-600 transition"
@@ -190,6 +223,8 @@ const Tagihan = () => {
                           >
                             ✏
                           </button>
+
+                          {/* Hapus */}
                           <button
                             onClick={() => handleDelete(item.id)}
                             className="bg-red-700 text-white px-3 py-2 rounded-md hover:bg-red-600 transition"
@@ -197,6 +232,19 @@ const Tagihan = () => {
                           >
                             🗑
                           </button>
+
+                          {/* 🔥 Tombol Ubah Status */}
+                          <button
+  onClick={() => handleStatusChange(item)}
+  className={`text-white px-4 py-1 rounded-md text-sm transition
+    ${item.status === "Lunas"
+      ? "bg-green-600 hover:bg-green-700"
+      : "bg-red-600 hover:bg-red-700"
+    }`}
+>
+  {item.status === "Lunas" ? "Belum Lunas" : "Lunas"}
+</button>
+
                         </td>
                       </tr>
                     ))

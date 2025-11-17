@@ -10,12 +10,13 @@ const TambahData = () => {
     keterangan: "",
     harga: "",
     tanggal: "",
-    status: "Belum Lunas",
+    status: "Belum Lunas", // 🔥 Default status
   });
 
   const [jenisTagihan, setJenisTagihan] = useState([]);
+  const [dataSiswa, setDataSiswa] = useState([]);
 
-  // Ambil data kategori tagihan aktif dari backend
+  // Ambil jenis tagihan aktif
   useEffect(() => {
     axios
       .get("http://localhost:5000/kategori_tagihan")
@@ -27,6 +28,21 @@ const TambahData = () => {
       })
       .catch((err) => {
         console.error("Gagal mengambil jenis tagihan:", err);
+      });
+  }, []);
+
+  // Ambil daftar siswa dari master data
+  useEffect(() => {
+    axios
+      .get("http://localhost:5000/kategori_data")
+      .then((res) => {
+        const siswaOnly = res.data.filter(
+          (item) => item.kategori?.toLowerCase() === "siswa"
+        );
+        setDataSiswa(siswaOnly);
+      })
+      .catch((err) => {
+        console.error("Gagal mengambil data siswa:", err);
       });
   }, []);
 
@@ -71,18 +87,27 @@ const TambahData = () => {
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Nama */}
+          {/* Nama Siswa */}
           <div>
             <label className="text-gray-700 text-sm mb-1 block">Nama</label>
-            <input
-              type="text"
+            <select
               name="nama"
               value={formData.nama}
               onChange={handleChange}
               required
-              placeholder="Contoh: Indri Esti"
               className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
-            />
+            >
+              <option value="">-- Pilih Siswa --</option>
+              {dataSiswa.length > 0 ? (
+                dataSiswa.map((item) => (
+                  <option key={item.id} value={item.nama}>
+                    {item.nama}
+                  </option>
+                ))
+              ) : (
+                <option disabled>Tidak ada data siswa</option>
+              )}
+            </select>
           </div>
 
           {/* Jenis Tagihan */}
@@ -124,7 +149,7 @@ const TambahData = () => {
             />
           </div>
 
-          {/* Tanggal (manual input) */}
+          {/* Tanggal */}
           <div>
             <label className="text-gray-700 text-sm mb-1 block">
               Tanggal (dd/mm/yyyy)
@@ -140,21 +165,10 @@ const TambahData = () => {
             />
           </div>
 
-          {/* Status */}
-          <div>
-            <label className="text-gray-700 text-sm mb-1 block">Status</label>
-            <select
-              name="status"
-              value={formData.status}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
-            >
-              <option value="Belum Lunas">Belum Lunas</option>
-              <option value="Lunas">Lunas</option>
-            </select>
-          </div>
+          {/* 🔥 Status otomatis Belum Lunas (hidden) */}
+          <input type="hidden" name="status" value="Belum Lunas" />
 
-          {/* Tombol Aksi */}
+          {/* Tombol */}
           <div className="flex justify-between mt-6">
             <button
               type="button"

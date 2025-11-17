@@ -64,7 +64,7 @@ const TambahDataKategori = () => {
               <input
                 type="text"
                 name="level"
-                placeholder="Contoh: Admin / Guru / Siswa"
+                placeholder="Contoh: Siswa / Guru / Karyawan"
                 value={level}
                 onChange={(e) => setLevel(e.target.value)}
                 required

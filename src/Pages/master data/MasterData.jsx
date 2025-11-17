@@ -12,7 +12,6 @@ const KategoriData = () => {
   const [filter, setFilter] = useState("Semua");
   const navigate = useNavigate();
 
-  // Ambil data dari API
   const fetchData = async () => {
     try {
       setLoading(true);
@@ -34,7 +33,6 @@ const KategoriData = () => {
     fetchData();
   }, []);
 
-  // Hapus data
   const handleDelete = async (id) => {
     const result = await Swal.fire({
       title: "Yakin ingin menghapus?",
@@ -69,7 +67,6 @@ const KategoriData = () => {
     }
   };
 
-  // Filter dan pencarian
   const filteredData = data.filter((item) => {
     const q = searchTerm.trim().toLowerCase();
     const matchSearch =
@@ -87,7 +84,6 @@ const KategoriData = () => {
         <SidebarT />
 
         <div className="flex-1 flex flex-col gap-3 md:ml-6 bg-white shadow-lg rounded-lg p-6">
-          {/* Judul */}
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-semibold text-gray-800 flex items-center gap-2">
               <FaArchive className="text-green-400 text-3xl" />
@@ -101,7 +97,6 @@ const KategoriData = () => {
             </button>
           </div>
 
-          {/* Filter & Pencarian */}
           <div className="flex flex-col md:flex-row justify-between items-center gap-3 mb-5">
             <div className="flex items-center gap-3 w-full md:w-auto">
               <select
@@ -125,7 +120,6 @@ const KategoriData = () => {
             </div>
           </div>
 
-          {/* Tabel */}
           {loading ? (
             <p className="text-center py-4">Memuat data...</p>
           ) : (
@@ -137,12 +131,23 @@ const KategoriData = () => {
                     <th className="px-4 py-2 text-center font-semibold">Nama</th>
                     <th className="px-4 py-2 text-center font-semibold">Email</th>
                     <th className="px-4 py-2 text-center font-semibold">Level</th>
+
+                    {/* ⬇️ BAGIAN YANG DIUBAH SESUAI PERMINTAAN */}
                     <th className="px-4 py-2 text-center font-semibold">
-                      Mapel / Kelas
+                      {filter === "Guru"
+                        ? "Mapel"
+                        : filter === "Siswa"
+                        ? "Kelas"
+                        : filter === "Karyawan"
+                        ? "Bagian"
+                        : "Mapel / Kelas"}
                     </th>
+                    {/* ⬆️ HANYA BAGIAN INI YANG SAYA UBAH */}
+
                     <th className="px-4 py-2 text-center font-semibold">Aksi</th>
                   </tr>
                 </thead>
+
                 <tbody>
                   {filteredData.length > 0 ? (
                     filteredData.map((item, index) => (

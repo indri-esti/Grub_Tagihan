@@ -23,7 +23,6 @@ export default function Dashboard() {
     totalBelumLunas: 0,
   });
 
-  // 🔹 Ambil data dari API
   useEffect(() => {
     const fetchAll = async () => {
       try {
@@ -33,7 +32,6 @@ export default function Dashboard() {
         const kategori = kategoriRes.data || [];
         const tagihanData = tagihanRes.data || [];
 
-        // Pastikan kategori tidak case-sensitive
         const normalize = (val) => (val ? val.toLowerCase() : "");
 
         const totalSiswa = kategori.filter(
@@ -111,25 +109,24 @@ export default function Dashboard() {
     },
   ];
 
-  // Fungsi bantu supaya tabel bisa tampil walaupun huruf beda (misal "siswa", "SISWA", "Siswa")
   const isKategori = (data, kategori) =>
     String(data.kategori || "").toLowerCase() === kategori.toLowerCase();
 
   return (
-    <div className="pl-[calc(15rem+1%)] pr-[5%] pt-[5%] bg-gray-100 min-h-screen">
+    <div className="pl-[calc(15rem+2%)] pr-[4%] pt-[4%] bg-gray-100 min-h-screen transition-all duration-300">
       <SidebarT />
-      
-      <div className="p-8">
+
+      <div className="p-6 md:p-10 max-w-10xl mx-auto">
         <h1 className="text-3xl font-bold text-gray-800 text-center mb-10 flex items-center justify-center gap-2">
           <FaChartBar className="text-blue-600" /> Dashboard
         </h1>
 
-        {/* ====== STATISTIK KARTU ====== */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-10">
+        {/* ==== KARTU STATISTIK ====================== */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-12">
           {cards.map((c, idx) => (
             <div
               key={idx}
-              className={`bg-gradient-to-br ${c.gradient} text-white rounded-xl shadow-lg p-6 flex items-center justify-between transition-transform transform hover:-translate-y-1 hover:shadow-xl`}
+              className={`bg-gradient-to-br ${c.gradient} text-white rounded-2xl shadow-lg p-6 flex items-center justify-between hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1`}
             >
               <div>
                 <div className="text-sm font-medium opacity-90">{c.title}</div>
@@ -140,19 +137,21 @@ export default function Dashboard() {
           ))}
         </div>
 
-        {/* ====================== DATA SISWA ====================== */}
-        <div className="bg-white shadow-md rounded-2xl overflow-hidden mb-8">
+        {/* ==== TABEL SISWA ========================== */}
+        <div className="bg-white shadow-md rounded-2xl overflow-hidden mb-10">
           <h2 className="bg-green-600 text-white p-4 flex items-center gap-2 text-lg font-semibold">
             <FaUsers /> Data Siswa
           </h2>
           <table className="min-w-full text-sm text-gray-700">
             <thead className="bg-gray-100">
               <tr>
-                <th className="py-3 px-4 text-center font-semibold">No</th>
-                <th className="py-3 px-4 text-center font-semibold">Nama</th>
-                <th className="py-3 px-4 text-center font-semibold">Email</th>
-                <th className="py-3 px-4 text-center font-semibold">Level</th>
-                <th className="py-3 px-4 text-center font-semibold">Kelas / Jurusan</th>
+                <th className="py-3 px-4 text-center">No</th>
+                <th className="py-3 px-4 text-center">Nama</th>
+                <th className="py-3 px-4 text-center">Email</th>
+                <th className="py-3 px-4 text-center">Level</th>
+                <th className="py-3 px-4 text-center">
+                  Kelas / Jurusan
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -180,19 +179,19 @@ export default function Dashboard() {
           </table>
         </div>
 
-        {/* ====================== DATA GURU ====================== */}
-        <div className="bg-white shadow-md rounded-2xl overflow-hidden mb-8">
+        {/* ==== TABEL GURU ========================== */}
+        <div className="bg-white shadow-md rounded-2xl overflow-hidden mb-10">
           <h2 className="bg-blue-600 text-white p-4 flex items-center gap-2 text-lg font-semibold">
             <FaChalkboardTeacher /> Data Guru
           </h2>
           <table className="min-w-full text-sm text-gray-700">
             <thead className="bg-gray-100">
               <tr>
-                <th className="py-3 px-4 text-center font-semibold">No</th>
-                <th className="py-3 px-4 text-center font-semibold">Nama</th>
-                <th className="py-3 px-4 text-center font-semibold">Email</th>
-                <th className="py-3 px-4 text-center font-semibold">Level</th>
-                <th className="py-3 px-4 text-center font-semibold">Mapel</th>
+                <th className="py-3 px-4 text-center">No</th>
+                <th className="py-3 px-4 text-center">Nama</th>
+                <th className="py-3 px-4 text-center">Email</th>
+                <th className="py-3 px-4 text-center">Level</th>
+                <th className="py-3 px-4 text-center">Mapel</th>
               </tr>
             </thead>
             <tbody>
@@ -220,19 +219,19 @@ export default function Dashboard() {
           </table>
         </div>
 
-        {/* ====================== DATA KARYAWAN ====================== */}
-        <div className="bg-white shadow-md rounded-2xl overflow-hidden mb-8">
+        {/* ==== TABEL KARYAWAN ========================== */}
+        <div className="bg-white shadow-md rounded-2xl overflow-hidden mb-10">
           <h2 className="bg-yellow-600 text-white p-4 flex items-center gap-2 text-lg font-semibold">
             <FaUserTie /> Data Karyawan
           </h2>
           <table className="min-w-full text-sm text-gray-700">
             <thead className="bg-gray-100">
               <tr>
-                <th className="py-3 px-4 text-center font-semibold">No</th>
-                <th className="py-3 px-4 text-center font-semibold">Nama</th>
-                <th className="py-3 px-4 text-center font-semibold">Email</th>
-                <th className="py-3 px-4 text-center font-semibold">Level</th>
-                <th className="py-3 px-4 text-center font-semibold">Jabatan</th>
+                <th className="py-3 px-4 text-center">No</th>
+                <th className="py-3 px-4 text-center">Nama</th>
+                <th className="py-3 px-4 text-center">Email</th>
+                <th className="py-3 px-4 text-center">Level</th>
+                <th className="py-3 px-4 text-center">Jabatan</th>
               </tr>
             </thead>
             <tbody>
@@ -260,7 +259,7 @@ export default function Dashboard() {
           </table>
         </div>
 
-        {/* ====================== DATA TAGIHAN ====================== */}
+        {/* ==== TABEL TAGIHAN ========================== */}
         <div className="bg-white shadow-md rounded-2xl overflow-hidden mb-10">
           <h2 className="bg-orange-600 text-white p-4 flex items-center gap-2 text-lg font-semibold">
             <FaMoneyBillWave /> Data Tagihan
@@ -268,22 +267,20 @@ export default function Dashboard() {
           <table className="min-w-full text-sm text-gray-700">
             <thead className="bg-gray-100">
               <tr>
-                <th className="py-3 px-4 text-center font-semibold">No</th>
-                <th className="py-3 px-4 text-center font-semibold">Nama</th>
-                <th className="py-3 px-4 text-center font-semibold">Jenis</th>
-                <th className="py-3 px-4 text-center font-semibold">Harga</th>
-                <th className="py-3 px-4 text-center font-semibold">Tanggal</th>
-                <th className="py-3 px-4 text-center font-semibold">Status</th>
+                <th className="py-3 px-4 text-center">No</th>
+                <th className="py-3 px-4 text-center">Nama</th>
+                <th className="py-3 px-4 text-center">Jenis</th>
+                <th className="py-3 px-4 text-center">Harga</th>
+                <th className="py-3 px-4 text-center">Tanggal</th>
+                <th className="py-3 px-4 text-center">Status</th>
               </tr>
             </thead>
             <tbody>
               {tagihan.slice(0, 5).map((t, i) => (
                 <tr key={i} className="hover:bg-gray-50">
                   <td className="py-2 px-4 text-left">{i + 1}</td>
-                  <td className="py-2 px-4 text-left">{t.nama}</td>
-                  <td className="py-2 px-4 text-left">
-                    {t.jenis || t.keterangan}
-                  </td>
+                  <td className="py-2 px-4">{t.nama}</td>
+                  <td className="py-2 px-4 text-left">{t.jenis || t.keterangan}</td>
                   <td className="py-2 px-4 text-right">
                     Rp {(parseInt(t.harga) || 0).toLocaleString("id-ID")}
                   </td>
@@ -302,6 +299,7 @@ export default function Dashboard() {
             </tbody>
           </table>
         </div>
+
       </div>
     </div>
   );

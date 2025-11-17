@@ -8,12 +8,39 @@ import {
   FaChalkboard,
   FaMoneyBillWave,
   FaChartPie,
-  FaWallet,
   FaArchive,
   FaClipboardList,
   FaMoon,
   FaSun,
 } from "react-icons/fa";
+
+// ==============================
+//  ICON SEKOLAH DIGITAL (MODERN)
+// ==============================
+const IconSekolahDigital = () => (
+  <div
+    style={{
+      width: "48px",
+      height: "48px",
+      background: "#1E40FB",
+      borderRadius: "18px",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      boxShadow: "0 4px 10px rgba(0,0,0,0.25)",
+    }}
+  >
+    <svg
+      width="26"
+      height="26"
+      viewBox="0 0 24 24"
+      fill="#FFD600"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M4 7C4 5.895 4.895 5 6 5H18C19.105 5 20 5.895 20 7V17C20 18.105 19.105 19 18 19H6C4.895 19 4 18.105 4 17V7ZM6 7V9H18V7H6ZM12 17C13.105 17 14 16.105 14 15C14 13.895 13.105 13 12 13C10.895 13 10 13.895 10 15C10 16.105 10.895 17 12 17Z" />
+    </svg>
+  </div>
+);
 
 export default function SidebarT() {
   const navigate = useNavigate();
@@ -126,8 +153,10 @@ export default function SidebarT() {
               darkMode ? "bg-gray-800" : "bg-blue-700"
             }`}
           >
-            <FaWallet className="text-4xl text-yellow-300" />
+            {/* ICON SUDAH DIPERBAIKI */}
+            <IconSekolahDigital />
           </div>
+
           <h1 className="text-xl font-bold tracking-wide text-center">
             Menu Keuangan
           </h1>
@@ -162,15 +191,18 @@ export default function SidebarT() {
           ))}
         </nav>
 
-        {/* Toggle dark mode without after:top issues */}
+        {/* Dark / Light Mode */}
         <div className="flex items-center justify-between mt-4 mb-4">
           <div className="flex items-center gap-2">
-            {darkMode ? (
+            {!darkMode ? (
               <FaSun className="text-yellow-300" />
             ) : (
               <FaMoon className="text-yellow-300" />
             )}
-            <span className="text-sm font-medium">{darkMode ? "Light" : "Dark"} Mode</span>
+
+            <span className="text-sm font-medium">
+              {!darkMode ? "Light Mode" : "Dark Mode"}
+            </span>
           </div>
 
           <label className="relative inline-flex items-center cursor-pointer">
@@ -180,9 +212,7 @@ export default function SidebarT() {
               checked={darkMode}
               onChange={handleDarkModeToggle}
             />
-            <div
-              className="w-11 h-6 bg-gray-400 rounded-full transition duration-300 flex items-center"
-            >
+            <div className="w-11 h-6 bg-gray-400 rounded-full transition duration-300 flex items-center">
               <div
                 className={`w-5 h-5 bg-white rounded-full shadow transform transition-all duration-300 ml-1 ${
                   darkMode ? "translate-x-5" : "translate-x-0"

@@ -59,7 +59,7 @@
       "keterangan": "SPP",
       "harga": "600000",
       "tanggal": "06/11/2025",
-      "status": "Lunas"
+      "status": "Belum Lunas"
     },
     {
       "id": "366d",
@@ -83,7 +83,7 @@
       "keterangan": "Kas Siswa",
       "harga": "800000",
       "tanggal": "08/11/2025",
-      "status": "Belum Lunas"
+      "status": "Lunas"
     },
     {
       "id": "b7d2",
@@ -102,20 +102,12 @@
       "status": "Belum Lunas"
     },
     {
-      "id": "077e",
-      "nama": "Digie",
-      "keterangan": "Uang Pendaftaran",
-      "harga": "2000000",
-      "tanggal": "11/11/2025",
-      "status": "Lunas"
-    },
-    {
-      "id": "9511",
-      "nama": "Gaurih",
+      "nama": "Gauri",
       "keterangan": "Biaya UKT",
       "harga": "600000",
       "tanggal": "15/11/2025",
-      "status": "Belum Lunas"
+      "status": "Lunas",
+      "id": "9511"
     }
   ],
   "kategori_tagihan": [
@@ -211,11 +203,11 @@
       "jabatan_kelas": "PPKN"
     },
     {
-      "id": "7ef5",
-      "nama": "Maria",
+      "nama": "Natalia",
       "email": "Maria@gmail.com",
       "kategori": "guru",
-      "jabatan_kelas": "IPAS"
+      "jabatan_kelas": "IPAS",
+      "id": "7ef5"
     },
     {
       "nama": "Eudora",
@@ -234,7 +226,7 @@
     {
       "nama": "Denis",
       "email": "Denis@gmail.com",
-      "kategori": "siswa",
+      "kategori": "Siswa",
       "jabatan_kelas": "X  TKR 2",
       "id": "0347"
     },
@@ -244,6 +236,41 @@
       "email": "Doni8@gmail.com",
       "kategori": "guru",
       "jabatan_kelas": "Agama Islam"
+    },
+    {
+      "nama": "Melisa",
+      "email": "Miska@gmail.com",
+      "kategori": "Guru",
+      "jabatan_kelas": "Bahasa indonesia",
+      "id": "7ac8"
+    },
+    {
+      "nama": "Alicia",
+      "email": "Alicia@gmail.com",
+      "kategori": "karyawan",
+      "jabatan_kelas": "Keuangan",
+      "id": "96c6"
+    },
+    {
+      "id": "7dd3",
+      "nama": "Rakha",
+      "email": "Rakha@gmail.com",
+      "kategori": "karyawan",
+      "jabatan_kelas": "Marketing"
+    },
+    {
+      "id": "828e",
+      "nama": "pijoy",
+      "email": "pijoy@gmail.com",
+      "kategori": "karyawan",
+      "jabatan_kelas": "buruh"
+    },
+    {
+      "id": "ebe2",
+      "nama": "Miya",
+      "email": "Miya@gmail.com",
+      "kategori": "Siswa",
+      "jabatan_kelas": "X DPB"
     }
   ],
   "data_kelas": [
@@ -269,23 +296,27 @@
     },
     {
       "kelas": "XII",
-      "jurusan": "TI",
+      "jurusan": "TKJ",
       "id": "f4b5"
     },
     {
-      "kelas": "X ",
-      "jurusan": "TKR 2",
-      "id": "5ded"
+      "id": "dc45",
+      "kelas": "X",
+      "jurusan": "DPB"
     }
   ],
   "level": [
     {
-      "level": "siswa",
+      "level": "Siswa",
       "id": "497c"
     },
     {
-      "id": "7075",
-      "level": "guru"
+      "level": "Guru",
+      "id": "7075"
+    },
+    {
+      "level": "Karyawan",
+      "id": "f2e2"
     }
   ]
 }
