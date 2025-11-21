@@ -67,7 +67,7 @@
       "keterangan": "Seragam",
       "harga": "200000",
       "tanggal": "07/11/2025",
-      "status": "Belum Lunas"
+      "status": "Lunas"
     },
     {
       "nama": "ixia",
@@ -91,7 +91,7 @@
       "keterangan": "Biaya Ekstrakulikuler",
       "harga": "900000",
       "tanggal": "09/11/2025",
-      "status": "Lunas"
+      "status": "Belum Lunas"
     },
     {
       "id": "cf00",

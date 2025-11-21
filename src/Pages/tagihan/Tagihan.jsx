@@ -238,8 +238,8 @@ const Tagihan = () => {
   onClick={() => handleStatusChange(item)}
   className={`text-white px-4 py-1 rounded-md text-sm transition
     ${item.status === "Lunas"
-      ? "bg-green-600 hover:bg-green-700"
-      : "bg-red-600 hover:bg-red-700"
+      ? "bg-red-700 hover:bg-red-700"
+      : "bg-green-600 hover:bg-green-600"
     }`}
 >
   {item.status === "Lunas" ? "Belum Lunas" : "Lunas"}

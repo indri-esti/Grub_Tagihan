@@ -119,7 +119,7 @@ export default function SidebarT() {
           <IconSekolahDigital darkMode={darkMode} />
 
           <h1 className="text-xl font-bold tracking-wide text-center mt-3">
-            Menu Keuangan
+            School Web
           </h1>
 
           <div className={`w-12 h-[3px] ${headerLineClass} rounded-full mt-2`}></div>
@@ -129,7 +129,7 @@ export default function SidebarT() {
         <nav className="space-y-4 mt-1 flex-1 overflow-y-auto pr-2">
           {sidebarMenu.map((group, gi) => (
             <div key={gi}>
-              <h3 className="text-sm uppercase tracking-wide text-gray-300 font-semibold mb-2">
+              <h3 className="text-sm uppercase tracking-wide text-ư-100 font-semibold mb-2 underline underline-offset-4">
                 {group.section}
               </h3>
 
@@ -158,7 +158,7 @@ export default function SidebarT() {
               {darkMode ? <FaMoon className="text-yellow-300" /> : <FaSun className="text-yellow-300" />}
             </div>
             <div>
-              <div className="text-sm font-medium">{darkMode ? "Dark Mode" : "Light Mode"}</div>
+              <div className="text-sm font-medium">{darkMode ? "Dark Mode" : "Bright Mode"}</div>
               <div className="text-xs text-gray-300">{darkMode ? "Gelap" : "Terang"}</div>
             </div>
           </div>
