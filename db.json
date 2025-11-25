@@ -144,7 +144,7 @@
     {
       "id": "a965",
       "nama": "Uang Pendaftaran",
-      "status": "Aktif"
+      "status": "Nonaktif"
     },
     {
       "id": "0ed3",
@@ -161,11 +161,11 @@
       "jabatan_kelas": "Matematika"
     },
     {
-      "id": "50bb",
       "nama": "indri esti",
       "email": "indriesti4@gmail.com",
-      "kategori": "siswa",
-      "jabatan_kelas": "X TKJ"
+      "kategori": "Siswa",
+      "jabatan_kelas": "X TKJ",
+      "id": "50bb"
     },
     {
       "id": "1cd9",
@@ -307,7 +307,7 @@
   ],
   "level": [
     {
-      "level": "Siswa",
+      "level": "siswa",
       "id": "497c"
     },
     {
