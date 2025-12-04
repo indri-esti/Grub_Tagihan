@@ -108,6 +108,14 @@
       "tanggal": "15/11/2025",
       "status": "Lunas",
       "id": "9511"
+    },
+    {
+      "id": "891b",
+      "nama": "indra ",
+      "keterangan": "Uang Pendaftaran",
+      "harga": "600000",
+      "tanggal": "01/12/2025",
+      "status": "Belum Lunas"
     }
   ],
   "kategori_tagihan": [
@@ -144,7 +152,7 @@
     {
       "id": "a965",
       "nama": "Uang Pendaftaran",
-      "status": "Nonaktif"
+      "status": "Aktif"
     },
     {
       "id": "0ed3",
@@ -154,123 +162,20 @@
   ],
   "kategori_data": [
     {
-      "id": "f563",
-      "nama": "Layla",
-      "email": "Layla@gmail.com",
-      "kategori": "guru",
-      "jabatan_kelas": "Matematika"
-    },
-    {
+      "id": "4a46",
       "nama": "indri esti",
       "email": "indriesti4@gmail.com",
+      "nomorUniqe": "23456789144",
       "kategori": "Siswa",
-      "jabatan_kelas": "X TKJ",
-      "id": "50bb"
+      "jabatan_kelas": "X TKJ"
     },
     {
-      "id": "1cd9",
-      "nama": "Dudung",
-      "email": "Dudung@gmail.com",
-      "kategori": "karyawan",
-      "jabatan_kelas": "TU"
-    },
-    {
-      "nama": "Miya",
-      "email": "Miya@gmail.com",
-      "kategori": "siswa",
-      "jabatan_kelas": "XI AKL 1",
-      "id": "0b88"
-    },
-    {
-      "id": "6e17",
-      "nama": "Fanny",
-      "email": "Fanny@gmail.com",
-      "kategori": "siswa",
-      "jabatan_kelas": "X TBSM"
-    },
-    {
-      "id": "7254",
-      "nama": "Gatot",
-      "email": "Gatot@gmail.com",
-      "kategori": "karyawan",
-      "jabatan_kelas": "Staff"
-    },
-    {
-      "id": "5346",
-      "nama": "Cantika",
-      "email": "Cantika@gmail.com",
-      "kategori": "guru",
-      "jabatan_kelas": "PPKN"
-    },
-    {
-      "nama": "Natalia",
-      "email": "Maria@gmail.com",
-      "kategori": "guru",
-      "jabatan_kelas": "IPAS",
-      "id": "7ef5"
-    },
-    {
-      "nama": "Eudora",
-      "email": "Eudora@gmail.com",
-      "kategori": "siswa",
-      "jabatan_kelas": "XII TI",
-      "id": "3688"
-    },
-    {
-      "id": "564f",
-      "nama": "Chiko",
-      "email": "Chiko@gmail.com",
-      "kategori": "karyawan",
-      "jabatan_kelas": "Kebersihan"
-    },
-    {
-      "nama": "Denis",
-      "email": "Denis@gmail.com",
-      "kategori": "Siswa",
-      "jabatan_kelas": "X  TKR 2",
-      "id": "0347"
-    },
-    {
-      "id": "802b",
-      "nama": "Doni",
-      "email": "Doni8@gmail.com",
-      "kategori": "guru",
-      "jabatan_kelas": "Agama Islam"
-    },
-    {
-      "nama": "Melisa",
-      "email": "Miska@gmail.com",
+      "id": "3830",
+      "nama": "ixia",
+      "email": "ixia@gmail.com",
+      "nomorUniqe": "5678244356",
       "kategori": "Guru",
-      "jabatan_kelas": "Bahasa indonesia",
-      "id": "7ac8"
-    },
-    {
-      "nama": "Alicia",
-      "email": "Alicia@gmail.com",
-      "kategori": "karyawan",
-      "jabatan_kelas": "Keuangan",
-      "id": "96c6"
-    },
-    {
-      "id": "7dd3",
-      "nama": "Rakha",
-      "email": "Rakha@gmail.com",
-      "kategori": "karyawan",
-      "jabatan_kelas": "Marketing"
-    },
-    {
-      "id": "828e",
-      "nama": "pijoy",
-      "email": "pijoy@gmail.com",
-      "kategori": "karyawan",
-      "jabatan_kelas": "buruh"
-    },
-    {
-      "id": "ebe2",
-      "nama": "Miya",
-      "email": "Miya@gmail.com",
-      "kategori": "Siswa",
-      "jabatan_kelas": "X DPB"
+      "jabatan_kelas": "Guru PPKN"
     }
   ],
   "data_kelas": [
@@ -303,11 +208,16 @@
       "id": "dc45",
       "kelas": "X",
       "jurusan": "DPB"
+    },
+    {
+      "id": "48ac",
+      "kelas": "X",
+      "jurusan": "AKL 2"
     }
   ],
   "level": [
     {
-      "level": "siswa",
+      "level": "Siswa",
       "id": "497c"
     },
     {
@@ -317,6 +227,120 @@
     {
       "level": "Karyawan",
       "id": "f2e2"
+    }
+  ],
+  "presensi": [
+    {
+      "id": 1,
+      "kategori": "",
+      "nama": "",
+      "nomorUnik": "",
+      "keterangan": "",
+      "jamMasuk": "",
+      "jamPulang": "",
+      "tanggal": "",
+      "status": ""
+    },
+    {
+      "id": "0cec",
+      "kategori": "siswa",
+      "nama": "indri esti",
+      "nomorUnik": "23456789144",
+      "keterangan": "sakit bree ",
+      "jamMasuk": "",
+      "jamPulang": "",
+      "tanggal": "2025-12-04",
+      "status": "izin"
+    }
+  ],
+  "izinpresensi": [
+    {
+      "id": "7961",
+      "kategori": "siswa",
+      "nama": "indri esti",
+      "nomorUnik": "23456789144",
+      "jenisIzin": "izin",
+      "keterangan": "cfhgh",
+      "alasan": "",
+      "tanggal": "2025-12-04",
+      "status": "izin",
+      "bukti": "beranda.png"
+    },
+    {
+      "id": "ab42",
+      "kategori": "siswa",
+      "nama": "indri esti",
+      "nomorUnik": "23456789144",
+      "jenisIzin": "izin",
+      "keterangan": "sgfhg",
+      "alasan": "",
+      "tanggal": "2025-12-04",
+      "status": "izin",
+      "bukti": null
+    },
+    {
+      "id": "dbf7",
+      "kategori": "siswa",
+      "nama": "indri esti",
+      "nomorUnik": "23456789144",
+      "jenisIzin": "sakit",
+      "keterangan": "dvdv",
+      "tanggal": "2025-12-04",
+      "status": "izin",
+      "bukti": null
+    },
+    {
+      "id": "7182",
+      "kategori": "siswa",
+      "nama": "indri esti",
+      "nomorUnik": "23456789144",
+      "jenisIzin": "sakit",
+      "keterangan": "hfhgj",
+      "tanggal": "2025-12-04",
+      "status": "izin",
+      "bukti": null
+    },
+    {
+      "id": "e4d2",
+      "kategori": "siswa",
+      "nama": "indri esti",
+      "nomorUnik": "23456789144",
+      "jenisIzin": "izin",
+      "keterangan": "sfdgg",
+      "tanggal": "2025-12-04",
+      "status": "izin",
+      "bukti": null
+    },
+    {
+      "id": "3aa0",
+      "kategori": "siswa",
+      "nama": "indri esti",
+      "nomorUnik": "23456789144",
+      "jenisIzin": "sakit",
+      "keterangan": "agfhghfhf",
+      "tanggal": "2025-12-04",
+      "status": "izin",
+      "bukti": null
+    },
+    {
+      "id": "9c69",
+      "kategori": "siswa",
+      "nama": "indri esti",
+      "nomorUnik": "23456789144",
+      "jenisIzin": "sakit",
+      "keterangan": "hdgj",
+      "tanggal": "2025-12-04",
+      "status": "izin"
+    },
+    {
+      "id": "1aad",
+      "kategori": "siswa",
+      "nama": "indri esti",
+      "nomorUnik": "23456789144",
+      "jenisIzin": "sakit",
+      "keterangan": "sakit bree ",
+      "tanggal": "2025-12-04",
+      "status": "izin"
     }
   ]
 }

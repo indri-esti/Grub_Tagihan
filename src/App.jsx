@@ -30,6 +30,14 @@ import RekapTagihan from "./Pages/rekap tagihan/RekapTagihan";
 import TambahDatamaster from "./Pages/master data/TambahMasterData";
 import EditMasterData from "./Pages/master data/EditMasterData";
 
+import RekapPresensi from "./Pages/presensi/Rekappresensi";
+import PresensiMasuk from "./Pages/presensi/PresensiMasuk";
+import PresensiPulang from "./Pages/presensi/PresensiPulang";
+import PresensiSiswa from "./Pages/presensi/PresensiSiswa";
+import IzinPresensi from "./Pages/presensi/IzinPresensi";
+
+
+
 function App() {
   return ( 
       <Routes>
@@ -62,6 +70,12 @@ function App() {
         <Route path="/editmasterdata/:id" element={<EditMasterData />} />
         <Route path="/rekaptagihan" element={<RekapTagihan />}/>
        
+        <Route path="/rekappresensi" element={<RekapPresensi />} />
+        <Route path="/presensimasuk" element={<PresensiMasuk />} />
+        <Route path="/presensipulang" element={<PresensiPulang />} />
+        <Route path="/presensisiswa" element={<PresensiSiswa />} />
+        <Route path="/izinpresensi" element={<IzinPresensi />} />
+        
       </Routes> 
   );
 }

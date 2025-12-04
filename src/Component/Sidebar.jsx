@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+
 import {
   FaSignOutAlt,
   FaChartBar,
@@ -10,19 +11,17 @@ import {
   FaChartPie,
   FaArchive,
   FaClipboardList,
+  FaUserCheck,
   FaMoon,
   FaSun,
   FaSchool,
+  FaClipboardCheck,
+  FaRegCalendarCheck,
+  FaChevronDown,
+  FaChevronUp,
 } from "react-icons/fa";
 
-/**
- * SidebarT.jsx
- * - Light mode: sidebar biru
- * - Dark mode: sidebar gelap (hitam/abu)
- * - Single source of truth: `darkMode` state (no tailwind `dark:` usage)
- * - Icon Sekolah digital tanpa gambar (FaSchool)
- */
-
+// ICON HEADER
 const IconSekolahDigital = ({ darkMode }) => (
   <div
     className={`w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg
@@ -34,24 +33,50 @@ const IconSekolahDigital = ({ darkMode }) => (
 
 export default function SidebarT() {
   const navigate = useNavigate();
-  const location = useLocation();
+  const Location = useLocation();
 
-  // localStorage-driven dark mode
+  // CEK HALAMAN AKTIF
+  const isActive = (path) => Location.pathname === path;
+
+  // DARK MODE
   const [darkMode, setDarkMode] = useState(() => {
     return localStorage.getItem("darkMode") === "true";
   });
 
+  // DROPDOWN
+  const [openDatabase, setOpenDatabase] = useState(() => {
+    return localStorage.getItem("openDatabase") === "true";
+  });
+
+  const [openKeuangan, setOpenKeuangan] = useState(() => {
+    return localStorage.getItem("openKeuangan") === "true";
+  });
+
+  const [openPresensi, setOpenPresensi] = useState(() => {
+    return localStorage.getItem("openPresensi") === "true";
+  });
+
+  // SAVE MODE
   useEffect(() => {
-    // persist
     localStorage.setItem("darkMode", darkMode);
-    // also set html class for other global styles if you use them elsewhere
-    const html = document.documentElement;
-    if (darkMode) html.classList.add("dark");
-    else html.classList.remove("dark");
+    if (darkMode) document.documentElement.classList.add("dark");
+    else document.documentElement.classList.remove("dark");
   }, [darkMode]);
 
-  const handleDarkModeToggle = () => setDarkMode((prev) => !prev);
+  // SAVE DROPDOWN
+  useEffect(() => {
+    localStorage.setItem("openDatabase", openDatabase);
+  }, [openDatabase]);
 
+  useEffect(() => {
+    localStorage.setItem("openKeuangan", openKeuangan);
+  }, [openKeuangan]);
+
+  useEffect(() => {
+    localStorage.setItem("openPresensi", openPresensi);
+  }, [openPresensi]);
+
+  // LOGOUT
   const handleLogout = () => {
     Swal.fire({
       title: "Yakin ingin keluar?",
@@ -77,89 +102,165 @@ export default function SidebarT() {
     });
   };
 
-  const sidebarMenu = [
-    {
-      section: "Dashboard",
-      items: [
-        { name: "Dashboard", icon: <FaChartBar className="text-cyan-300" />, path: "/dashboard" },
-      ],
-    },
-    {
-      section: "Database",
-      items: [
-        { name: "Kategori Data", icon: <FaFolderOpen className="text-yellow-300" />, path: "/kategoridata" },
-        { name: "Kelas", icon: <FaChalkboard className="text-orange-300" />, path: "/datakelas" },
-        { name: "Master Data", icon: <FaArchive className="text-green-300" />, path: "/masterdata" },
-      ],
-    },
-    {
-      section: "Keuangan",
-      items: [
-        { name: "Kategori Tagihan", icon: <FaChartPie className="text-purple-300" />, path: "/kategoritagihan" },
-        { name: "Tagihan", icon: <FaMoneyBillWave className="text-green-300" />, path: "/tagihan" },
-        { name: "Rekap Tagihan", icon: <FaClipboardList className="text-yellow-300" />, path: "/rekaptagihan" },
-      ],
-    },
-  ];
-
-  // helpers for classes based on darkMode & active
+  // STYLE
   const sidebarBgClass = darkMode ? "bg-gray-900" : "bg-blue-800";
   const headerLineClass = "bg-yellow-300";
-  const itemActiveClass = (isActive) =>
-    isActive ? (darkMode ? "bg-gray-700 text-white" : "bg-blue-600 text-white") : "";
   const itemHoverClass = darkMode ? "hover:bg-gray-800" : "hover:bg-blue-600";
 
   return (
     <div className="flex">
       <div
-        className={`${sidebarBgClass} fixed top-0 left-0 h-full w-64 text-white p-6 flex flex-col justify-between shadow-xl transition-colors duration-300`}
+        className={`
+          ${sidebarBgClass}
+          fixed top-0 left-0 h-full w-64 text-white
+          p-6 flex flex-col justify-between shadow-xl
+          transition-colors duration-300
+          overflow-y-hidden
+        `}
       >
-        {/* Header */}
+        {/* HEADER */}
         <div className="flex flex-col items-center mb-6 mt-2">
           <IconSekolahDigital darkMode={darkMode} />
-
           <h1 className="text-xl font-bold tracking-wide text-center mt-3">
             School Web
           </h1>
-
           <div className={`w-12 h-[3px] ${headerLineClass} rounded-full mt-2`}></div>
         </div>
 
-        {/* Navigation */}
-        <nav className="space-y-4 mt-1 flex-1 overflow-y-auto pr-2">
-          {sidebarMenu.map((group, gi) => (
-            <div key={gi}>
-              <h3 className="text-sm uppercase tracking-wide text-ư-100 font-semibold mb-2 underline underline-offset-4">
-                {group.section}
-              </h3>
+        {/* MENU */}
+        <nav className="space-y-4 flex-1 pr-2">
 
-              {group.items.map((item, idx) => {
-                const isActive = location.pathname === item.path;
-                return (
-                  <Link
-                    key={idx}
-                    to={item.path}
-                    className={`flex items-center gap-3 py-2.5 px-4 rounded-lg transition-all duration-200
-                      ${itemActiveClass(isActive)} ${!isActive ? itemHoverClass : ""}`}
-                  >
-                    {item.icon}
-                    <span className="text-base font-medium">{item.name}</span>
-                  </Link>
-                );
-              })}
-            </div>
-          ))}
+          {/* DASHBOARD */}
+          <div>
+            <Link
+              to="/dashboard"
+              className={`flex items-center justify-between w-full py-2.5 px-4 rounded-lg ${itemHoverClass}`}
+            >
+              <span className="flex items-center gap-3">
+                <FaChartBar className="text-cyan-300" /> Dashboard
+              </span>
+            </Link>
+
+            {isActive("/dashboard") && (
+              <div className="w-24 h-[3px] bg-white rounded-full ml-12"></div>
+            )}
+          </div>
+
+          {/* DATABASE */}
+          <div>
+            <button
+              onClick={() => setOpenDatabase(!openDatabase)}
+              className={`flex items-center justify-between w-full py-2.5 px-4 rounded-lg ${itemHoverClass}`}
+            >
+              <span className="flex items-center gap-3">
+                <FaArchive className="text-yellow-300" /> Database
+              </span>
+              {openDatabase ? <FaChevronUp /> : <FaChevronDown />}
+            </button>
+
+            {(isActive("/kategoridata") ||
+              isActive("/datakelas") ||
+              isActive("/masterdata")) && (
+              <div className="w-24 h-[3px] bg-white rounded-full ml-12"></div>
+            )}
+
+            {openDatabase && (
+              <div className="ml-6 mt-2 space-y-2">
+                <Link to="/kategoridata" className={`flex items-center gap-3 py-2 px-3 rounded-lg text-sm ${itemHoverClass}`}>
+                  <FaFolderOpen className="text-yellow-300" /> Kategori Data
+                </Link>
+
+                <Link to="/datakelas" className={`flex items-center gap-3 py-2 px-3 rounded-lg text-sm ${itemHoverClass}`}>
+                  <FaChalkboard className="text-orange-300" /> Data Kelas
+                </Link>
+
+                <Link to="/masterdata" className={`flex items-center gap-3 py-2 px-3 rounded-lg text-sm ${itemHoverClass}`}>
+                  <FaArchive className="text-green-300" /> Master Data
+                </Link>
+              </div>
+            )}
+          </div>
+
+          {/* KEUANGAN */}
+          <div>
+            <button
+              onClick={() => setOpenKeuangan(!openKeuangan)}
+              className={`flex items-center justify-between w-full py-2.5 px-4 rounded-lg ${itemHoverClass}`}
+            >
+              <span className="flex items-center gap-3">
+                <FaMoneyBillWave className="text-green-300" /> Keuangan
+              </span>
+              {openKeuangan ? <FaChevronUp /> : <FaChevronDown />}
+            </button>
+
+            {(isActive("/kategoritagihan") ||
+              isActive("/tagihan") ||
+              isActive("/rekaptagihan")) && (
+              <div className="w-24 h-[3px] bg-white rounded-full ml-12"></div>
+            )}
+
+            {openKeuangan && (
+              <div className="ml-6 mt-2 space-y-2">
+                <Link to="/kategoritagihan" className={`flex items-center gap-3 py-2 px-3 rounded-lg text-sm ${itemHoverClass}`}>
+                  <FaChartPie className="text-purple-300" /> Kategori Tagihan
+                </Link>
+
+                <Link to="/tagihan" className={`flex items-center gap-3 py-2 px-3 rounded-lg text-sm ${itemHoverClass}`}>
+                  <FaMoneyBillWave className="text-green-300" /> Tagihan
+                </Link>
+
+                <Link to="/rekaptagihan" className={`flex items-center gap-3 py-2 px-3 rounded-lg text-sm ${itemHoverClass}`}>
+                  <FaClipboardList className="text-yellow-300" /> Rekap Tagihan
+                </Link>
+              </div>
+            )}
+          </div>
+
+          {/* PRESENSI */}
+          <div>
+            <button
+              onClick={() => setOpenPresensi(!openPresensi)}
+              className={`flex items-center justify-between w-full py-2.5 px-4 rounded-lg ${itemHoverClass}`}
+            >
+              <span className="flex items-center gap-3">
+                <FaClipboardCheck className="text-yellow-300" /> Presensi
+              </span>
+              {openPresensi ? <FaChevronUp /> : <FaChevronDown />}
+            </button>
+
+            {(isActive("/presensisiswa") ||
+              isActive("/rekappresensi")) && (
+              <div className="w-24 h-[3px] bg-white rounded-full ml-12"></div>
+            )}
+
+            {openPresensi && (
+              <div className="ml-6 mt-2 space-y-2">
+                <Link to="/presensisiswa" className={`flex items-center gap-3 py-2 px-3 rounded-lg text-sm ${itemHoverClass}`}>
+                  <FaUserCheck className="text-green-300" /> Presensi Siswa
+                </Link>
+
+                <Link to="/rekappresensi" className={`flex items-center gap-3 py-2 px-3 rounded-lg text-sm ${itemHoverClass}`}>
+                  <FaRegCalendarCheck className="text-cyan-400" /> Rekap Presensi
+                </Link>
+              </div>
+            )}
+          </div>
+
         </nav>
 
-        {/* Dark mode toggle */}
+        {/* TOGGLE MODE */}
         <div className="flex items-center justify-between mt-4 mb-4">
           <div className="flex items-center gap-3">
             <div className="flex items-center justify-center w-8 h-8 rounded-md bg-white/10">
               {darkMode ? <FaMoon className="text-yellow-300" /> : <FaSun className="text-yellow-300" />}
             </div>
             <div>
-              <div className="text-sm font-medium">{darkMode ? "Dark Mode" : "Bright Mode"}</div>
-              <div className="text-xs text-gray-300">{darkMode ? "Gelap" : "Terang"}</div>
+              <div className="text-sm font-medium">
+                {darkMode ? "Dark Mode" : "Bright Mode"}
+              </div>
+              <div className="text-xs text-gray-300">
+                {darkMode ? "Gelap" : "Terang"}
+              </div>
             </div>
           </div>
 
@@ -168,17 +269,19 @@ export default function SidebarT() {
               type="checkbox"
               className="sr-only"
               checked={darkMode}
-              onChange={handleDarkModeToggle}
+              onChange={() => setDarkMode(!darkMode)}
             />
             <div className="w-11 h-6 bg-gray-300 rounded-full flex items-center transition">
               <div
-                className={`w-5 h-5 bg-white rounded-full shadow ml-1 transition-transform duration-300 ${darkMode ? "translate-x-5" : "translate-x-0"}`}
+                className={`w-5 h-5 bg-white rounded-full shadow ml-1 transition-transform duration-300 ${
+                  darkMode ? "translate-x-5" : "translate-x-0"
+                }`}
               />
             </div>
           </label>
         </div>
 
-        {/* Logout */}
+        {/* LOGOUT */}
         <div className="mt-4 flex justify-center mb-2">
           <button
             onClick={handleLogout}

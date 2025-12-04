@@ -9,6 +9,7 @@ const TambahDatamaster = () => {
   const [formData, setFormData] = useState({
     nama: "",
     email: "",
+    nomorUniqe: "",     // <-- BENAR
     kategori: "",
     jabatan_kelas: "",
   });
@@ -51,7 +52,7 @@ const TambahDatamaster = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Gabungkan kelas + jurusan menjadi satu opsi unik
+  // Gabungkan kelas + jurusan
   const kelasGabungOptions = [
     ...new Set(
       dataKelas
@@ -63,11 +64,12 @@ const TambahDatamaster = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.nama || !formData.email || !formData.kategori) {
+    // === FIX VALIDASI NOMOR UNIQUE ===
+    if (!formData.nama || !formData.email || !formData.nomorUniqe || !formData.kategori) {
       Swal.fire({
         icon: "warning",
         title: "Lengkapi Data!",
-        text: "Nama, Email, dan Level wajib diisi.",
+        text: "Nama, Email, Nomor Unik, dan Level wajib diisi.",
       });
       return;
     }
@@ -128,6 +130,7 @@ const TambahDatamaster = () => {
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          
           {/* Nama */}
           <div>
             <label className="text-gray-700 text-sm mb-1 block">Nama</label>
@@ -156,11 +159,23 @@ const TambahDatamaster = () => {
             />
           </div>
 
-          {/* Pilih Kategori */}
+          {/* Nomor Unik */}
           <div>
-            <label className="text-gray-700 text-sm mb-1 block">
-              Pilih Level
-            </label>
+            <label className="text-gray-700 text-sm mb-1 block">Nomor Unik</label>
+            <input
+              type="text"
+              name="nomorUniqe"
+              placeholder="Contoh: 202412001"
+              value={formData.nomorUniqe}
+              onChange={handleChange}
+              required
+              className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
+            />
+          </div>
+
+          {/* Pilih Level */}
+          <div>
+            <label className="text-gray-700 text-sm mb-1 block">Pilih Level</label>
             {loading ? (
               <p className="text-gray-500 text-sm">Memuat data...</p>
             ) : (
@@ -181,7 +196,7 @@ const TambahDatamaster = () => {
             )}
           </div>
 
-          {/* Form dinamis */}
+          {/* Form Dinamis */}
           {formData.kategori && (
             <div>
               <label className="text-gray-700 text-sm mb-1 block">
@@ -225,7 +240,7 @@ const TambahDatamaster = () => {
             </div>
           )}
 
-          {/* Tombol Aksi */}
+          {/* Tombol */}
           <div className="flex justify-between mt-6">
             <button
               type="button"
@@ -241,6 +256,7 @@ const TambahDatamaster = () => {
               Simpan
             </button>
           </div>
+
         </form>
       </div>
     </div>
