@@ -158,7 +158,7 @@ const KategoriData = () => {
 
           {/* ⭐ KOLOM BARU */}
           <td className="px-4 py-2 text-center text-gray-700">
-            {item.nomorUniqe || "-"}
+            {item.nomorUnik || "-"}
           </td>
 
           <td className="px-4 py-2 text-left text-gray-700">

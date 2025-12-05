@@ -9,7 +9,7 @@ const TambahDatamaster = () => {
   const [formData, setFormData] = useState({
     nama: "",
     email: "",
-    nomorUniqe: "",     // <-- BENAR
+    nomorUnik: "", // <-- gunakan "nomorUnik"
     kategori: "",
     jabatan_kelas: "",
   });
@@ -18,6 +18,20 @@ const TambahDatamaster = () => {
   const [dataKelas, setDataKelas] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // === AUTO GENERATE RFID NOMOR UNIQUE (8 HEX DIGIT) ===
+ // === AUTO GENERATE RFID NOMOR UNIQUE (NUK-RANDOM) ===
+useEffect(() => {
+  const randomNumber = Math.floor(10000000 + Math.random() * 90000000); // 8 digit random
+  const rfid = `NUK-${randomNumber}`;
+
+  setFormData((prev) => ({
+    ...prev,
+    nomorUnik: rfid, 
+  }));
+}, []);
+  // ====================================================
+
+  // 🔹 Ambil data level dan data_kelas
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -42,7 +56,6 @@ const TambahDatamaster = () => {
     fetchData();
   }, []);
 
-  // Reset form dinamis saat kategori berubah
   useEffect(() => {
     setFormData((prev) => ({ ...prev, jabatan_kelas: "" }));
   }, [formData.kategori]);
@@ -52,7 +65,6 @@ const TambahDatamaster = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Gabungkan kelas + jurusan
   const kelasGabungOptions = [
     ...new Set(
       dataKelas
@@ -64,8 +76,7 @@ const TambahDatamaster = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // === FIX VALIDASI NOMOR UNIQUE ===
-    if (!formData.nama || !formData.email || !formData.nomorUniqe || !formData.kategori) {
+    if (!formData.nama || !formData.email || !formData.nomorUnik || !formData.kategori) {
       Swal.fire({
         icon: "warning",
         title: "Lengkapi Data!",
@@ -95,6 +106,7 @@ const TambahDatamaster = () => {
     }
 
     try {
+      // pastikan mengirim field "nomorUnik" (bukan nomorUniqe)
       await axios.post("http://localhost:5000/kategori_data", formData);
       Swal.fire({
         icon: "success",
@@ -130,7 +142,7 @@ const TambahDatamaster = () => {
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          
+
           {/* Nama */}
           <div>
             <label className="text-gray-700 text-sm mb-1 block">Nama</label>
@@ -159,17 +171,15 @@ const TambahDatamaster = () => {
             />
           </div>
 
-          {/* Nomor Unik */}
+          {/* Nomor Unik (AUTO RFID + READONLY) */}
           <div>
             <label className="text-gray-700 text-sm mb-1 block">Nomor Unik</label>
             <input
               type="text"
-              name="nomorUniqe"
-              placeholder="Contoh: 202412001"
-              value={formData.nomorUniqe}
-              onChange={handleChange}
-              required
-              className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
+              name="nomorUnik" // <-- name sesuai key
+              value={formData.nomorUnik}
+              readOnly
+              className="w-full border border-gray-300 bg-gray-200 rounded-md p-2 cursor-not-allowed outline-none"
             />
           </div>
 

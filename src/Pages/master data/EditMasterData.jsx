@@ -12,6 +12,7 @@ const EditMasterData = () => {
     email: "",
     kategori: "",
     jabatan_kelas: "",
+    nomorUnik: "", // ⬅️ Tambahkan agar tidak hilang
   });
 
   const [levels, setLevels] = useState([]);
@@ -32,11 +33,14 @@ const EditMasterData = () => {
         setDataKelas(resKelas.data || []);
 
         const data = resMaster.data;
+
+        // ⬅️ Pastikan nomorUnik dimasukkan agar tidak hilang
         setFormData({
           nama: data.nama || "",
           email: data.email || "",
           kategori: data.kategori || "",
           jabatan_kelas: data.jabatan_kelas || "",
+          nomorUnik: data.nomorUnik || "", // ⬅️ wajib
         });
       } catch (error) {
         console.error("Gagal mengambil data:", error);
@@ -53,9 +57,13 @@ const EditMasterData = () => {
     fetchData();
   }, [id]);
 
-  // 🔹 Reset input tambahan jika kategori berubah
+  // 🔹 Reset input tambahan jika kategori berubah (nomorUnik tetap aman)
   useEffect(() => {
-    setFormData((prev) => ({ ...prev, jabatan_kelas: "" }));
+    setFormData((prev) => ({
+      ...prev,
+      jabatan_kelas: "",
+      nomorUnik: prev.nomorUnik, // ⬅️ Jangan sampai hilang
+    }));
   }, [formData.kategori]);
 
   // 🔹 Gabungkan kelas & jurusan jadi satu opsi
@@ -116,6 +124,7 @@ const EditMasterData = () => {
 
     try {
       await axios.put(`http://localhost:5000/kategori_data/${id}`, formData);
+
       Swal.fire({
         icon: "success",
         title: "Berhasil!",
@@ -123,6 +132,7 @@ const EditMasterData = () => {
         showConfirmButton: false,
         timer: 1800,
       });
+
       navigate("/masterdata");
     } catch (error) {
       console.error("Gagal mengedit data:", error);
@@ -173,7 +183,7 @@ const EditMasterData = () => {
           {/* Kategori */}
           <div>
             <label className="text-gray-700 text-sm mb-1 block">
-              Pilih Level 
+              Pilih Level
             </label>
             {loading ? (
               <p className="text-gray-500 text-sm">Memuat data...</p>

@@ -9,11 +9,14 @@ import {
   FaCheckCircle,
   FaTimesCircle,
   FaChartBar,
+  FaUserCheck,
 } from "react-icons/fa";
 
 export default function Dashboard() {
   const [kategoriData, setKategoriData] = useState([]);
   const [tagihan, setTagihan] = useState([]);
+  const [filterPresensi, setFilterPresensi] = useState("semua");
+
   const [Presensi, setPresensi] = useState([]);
   const [stats, setStats] = useState({
     totalSiswa: 0,
@@ -24,14 +27,51 @@ export default function Dashboard() {
     totalBelumLunas: 0,
   });
 
-  // helper: ambil nomor unik dari banyak kemungkinan nama field
+  // ============================
+  // STATUS PRESENSI FIX
+  // ============================
+  const getStatus = (item) => {
+  const ket = String(item.keterangan || "").toLowerCase();
+  const st = String(item.status || "").toLowerCase();
+
+  // 1. Jika ada jam masuk → Hadir
+  if (item.jamMasuk && item.jamMasuk.trim() !== "") return "Hadir";
+
+  // 2. Jika ada status langsung dari DB → (izin / sakit / alpa)
+  if (st.includes("izin")) return "Izin";
+  if (st.includes("sakit")) return "Sakit";
+  if (st.includes("alpa")) return "Alpa";
+
+  // 3. Jika keterangan bukan kosong → Anggap Izin / Keperluan
+  if (ket.trim() !== "") {
+    return "Keperluan";
+  }
+
+  // 4. Default
+  return "-";
+};
+
+
+  const getStatusColor = (item) => {
+  const status = getStatus(item);
+
+  if (status === "Hadir") return "bg-green-500 text-white px-3 py-1 rounded-full";
+  if (status === "Izin") return "bg-blue-500 text-white px-3 py-1 rounded-full";
+  if (status === "Keperluan") return "bg-indigo-500 text-white px-3 py-1 rounded-full";
+  if (status === "Sakit") return "bg-yellow-500 text-white px-3 py-1 rounded-full";
+  if (status === "Alpa") return "bg-red-500 text-white px-3 py-1 rounded-full";
+
+  return "bg-gray-300 text-gray-800 px-3 py-1 rounded-full";
+};
+
+  // helper ambil nomor unik
   const getNomorUnik = (obj) => {
     if (!obj) return "-";
     const keysToCheck = [
       "nomorunik",
       "nomorUnik",
       "nomor_unik",
-      "nomorUniqe",   // <-- tambahkan ini (sesuai data yang kamu kasih)
+      "nomorUniqe",
       "id_unik",
       "kode",
       "nomor",
@@ -39,22 +79,22 @@ export default function Dashboard() {
       "unique_id",
     ];
     for (const k of keysToCheck) {
-      if (Object.prototype.hasOwnProperty.call(obj, k) && obj[k] !== undefined && obj[k] !== null && String(obj[k]).trim() !== "") {
+      if (
+        Object.prototype.hasOwnProperty.call(obj, k) &&
+        obj[k] !== undefined &&
+        obj[k] !== null &&
+        String(obj[k]).trim() !== ""
+      ) {
         return String(obj[k]);
       }
-    }
-    // kalau data mungkin ada di dalam nested object (misalnya obj.meta?.nomor)
-    if (obj.meta && (obj.meta.nomor || obj.meta.nomorunik || obj.meta.nomorUnik)) {
-      return obj.meta.nomor || obj.meta.nomorunik || obj.meta.nomorUnik;
     }
     return "-";
   };
 
-  // helper: aman parse int dari string currency (hilangkan non-digit)
+  // helper harga
   const safeParseInt = (val) => {
     if (val === null || val === undefined) return 0;
     const s = String(val);
-    // ambil angka termasuk minus
     const digits = s.replace(/[^0-9-]/g, "");
     const n = parseInt(digits, 10);
     return Number.isNaN(n) ? 0 : n;
@@ -74,28 +114,13 @@ export default function Dashboard() {
         const normalize = (val) => (val ? String(val).toLowerCase() : "");
 
         // Hitungan kategori
-        const totalSiswa = kategori.filter(
-          (x) => normalize(x.kategori) === "siswa"
-        ).length;
+        const totalSiswa = kategori.filter((x) => normalize(x.kategori) === "siswa").length;
+        const totalGuru = kategori.filter((x) => normalize(x.kategori) === "guru").length;
+        const totalKaryawan = kategori.filter((x) => normalize(x.kategori) === "karyawan").length;
 
-        const totalGuru = kategori.filter(
-          (x) => normalize(x.kategori) === "guru"
-        ).length;
-
-        const totalKaryawan = kategori.filter(
-          (x) => normalize(x.kategori) === "karyawan"
-        ).length;
-
-        // Hitungan tagihan (aman)
-        const totalTagihan = tagihanData.reduce(
-          (a, b) => a + safeParseInt(b.harga),
-          0
-        );
-
-        const totalLunas = tagihanData.filter(
-          (t) => normalize(t.status) === "lunas"
-        ).length;
-
+        // Hitungan tagihan
+        const totalTagihan = tagihanData.reduce((a, b) => a + safeParseInt(b.harga), 0);
+        const totalLunas = tagihanData.filter((t) => normalize(t.status) === "lunas").length;
         const totalBelumLunas = tagihanData.length - totalLunas;
 
         setKategoriData(kategori);
@@ -159,6 +184,13 @@ export default function Dashboard() {
   const isKategori = (data, kategori) =>
     String(data.kategori || "").toLowerCase() === kategori.toLowerCase();
 
+  const filteredPresensi = Presensi
+    .filter((p) => p.nama && p.nama.trim() !== "")
+    .filter((p) => {
+      if (filterPresensi === "semua") return true;
+      return String(p.kategori || "").toLowerCase() === filterPresensi;
+    });
+
   return (
     <div className="pl-[calc(15rem+2%)] pr-[4%] pt-[4%] bg-gray-100 min-h-screen transition-all duration-300">
       <SidebarT />
@@ -184,18 +216,92 @@ export default function Dashboard() {
           ))}
         </div>
 
-        {/* === TABEL SISWA === */}
+        {/* === TABEL PRESENSI === */}
+        <div className="bg-white shadow-md rounded-2xl overflow-hidden mb-10">
+          <h2 className="bg-purple-600 text-white p-4 text-lg font-semibold flex items-center gap-2">
+            <FaUserCheck className="text-white text-xl" />
+            Data Presensi Siswa
+          </h2>
+
+          {/* FILTER */}
+          <div className="p-4 flex gap-2 items-center">
+            <select
+              className="border rounded-lg p-2"
+              value={filterPresensi}
+              onChange={(e) => setFilterPresensi(e.target.value)}
+            >
+              <option value="semua">Semua Data</option>
+              <option value="siswa">Siswa</option>
+              <option value="guru">Guru</option>
+              <option value="karyawan">Karyawan</option>
+            </select>
+          </div>
+
+          {/* TABEL */}
+          <table className="min-w-full text-sm text-gray-700">
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="py-3 px-4 text-center">No</th>
+                <th className="py-3 px-4 text-center">Nama</th>
+                <th className="py-3 px-4 text-center">Nomor Uniqe</th>
+                <th className="py-3 px-4 text-center">Keterangan</th>
+                <th className="py-3 px-4 text-center">Jam Masuk</th>
+                <th className="py-3 px-4 text-center">Jam Pulang</th>
+                <th className="py-3 px-4 text-center">Tanggal</th>
+                <th className="py-3 px-4 text-center">Status</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {filteredPresensi.length === 0 ? (
+                <tr>
+                  <td colSpan="8" className="text-center py-4 text-gray-500">
+                    Tidak ada data.
+                  </td>
+                </tr>
+              ) : (
+                filteredPresensi.map((p, i) => {
+                  const tanggalIndo = p.tanggal
+                    ? new Date(p.tanggal).toLocaleDateString("id-ID")
+                    : "-";
+
+                  const nomorUnik = getNomorUnik(p);
+
+                  return (
+                    <tr key={i} className="hover:bg-gray-50">
+                      <td className="py-2 px-4 text-left">{i + 1}</td>
+                      <td className="py-2 px-4 text-left">{p.nama}</td>
+                      <td className="py-2 px-4 text-center">{nomorUnik}</td>
+                      <td className="py-2 px-4 text-center">{p.keterangan}</td>
+                      <td className="py-2 px-4 text-center">{p.jamMasuk}</td>
+                      <td className="py-2 px-4 text-center">{p.jamPulang}</td>
+                      <td className="py-2 px-4 text-center">{tanggalIndo}</td>
+
+                      <td className="py-2 px-4 text-center">
+                        <span className={getStatusColor(p)}>
+                          {getStatus(p)}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* === SISWA === */}
         <div className="bg-white shadow-md rounded-2xl overflow-hidden mb-10">
           <h2 className="bg-green-600 text-white p-4 flex items-center gap-2 text-lg font-semibold">
             <FaUsers /> Data Siswa
           </h2>
+
           <table className="min-w-full text-sm text-gray-700">
             <thead className="bg-gray-100">
               <tr>
                 <th className="py-3 px-4 text-center">No</th>
                 <th className="py-3 px-4 text-center">Nama</th>
                 <th className="py-3 px-4 text-center">Email</th>
-                <th className="py-3 px-4 text-center">Nomor Uniqe</th>
                 <th className="py-3 px-4 text-center">Level</th>
                 <th className="py-3 px-4 text-center">Kelas / Jurusan</th>
               </tr>
@@ -204,7 +310,7 @@ export default function Dashboard() {
             <tbody>
               {kategoriData.filter((x) => isKategori(x, "siswa")).length === 0 ? (
                 <tr>
-                  <td colSpan="6" className="text-center py-4 text-gray-500">
+                  <td colSpan="5" className="text-center py-4 text-gray-500">
                     Tidak ada data siswa.
                   </td>
                 </tr>
@@ -217,7 +323,6 @@ export default function Dashboard() {
                       <td className="py-2 px-4 text-left">{i + 1}</td>
                       <td className="py-2 px-4 text-left">{s.nama}</td>
                       <td className="py-2 px-4 text-left">{s.email}</td>
-                      <td className="py-2 px-4 text-center">{getNomorUnik(s)}</td>
                       <td className="py-2 px-4 text-left">{s.kategori}</td>
                       <td className="py-2 px-4 text-left">{s.jabatan_kelas}</td>
                     </tr>
@@ -227,18 +332,18 @@ export default function Dashboard() {
           </table>
         </div>
 
-        {/* === TABEL GURU === */}
+        {/* === GURU === */}
         <div className="bg-white shadow-md rounded-2xl overflow-hidden mb-10">
           <h2 className="bg-blue-600 text-white p-4 flex items-center gap-2 text-lg font-semibold">
             <FaChalkboardTeacher /> Data Guru
           </h2>
+
           <table className="min-w-full text-sm text-gray-700">
             <thead className="bg-gray-100">
               <tr>
                 <th className="py-3 px-4 text-center">No</th>
                 <th className="py-3 px-4 text-center">Nama</th>
                 <th className="py-3 px-4 text-center">Email</th>
-                <th className="py-3 px-4 text-center">Nomor Uniqe</th>
                 <th className="py-3 px-4 text-center">Level</th>
                 <th className="py-3 px-4 text-center">Mapel</th>
               </tr>
@@ -247,7 +352,7 @@ export default function Dashboard() {
             <tbody>
               {kategoriData.filter((x) => isKategori(x, "guru")).length === 0 ? (
                 <tr>
-                  <td colSpan="6" className="text-center py-4 text-gray-500">
+                  <td colSpan="5" className="text-center py-4 text-gray-500">
                     Tidak ada data guru.
                   </td>
                 </tr>
@@ -260,7 +365,6 @@ export default function Dashboard() {
                       <td className="py-2 px-4 text-left">{i + 1}</td>
                       <td className="py-2 px-4 text-left">{g.nama}</td>
                       <td className="py-2 px-4 text-left">{g.email}</td>
-                      <td className="py-2 px-4 text-center">{getNomorUnik(g)}</td>
                       <td className="py-2 px-4 text-left">{g.kategori}</td>
                       <td className="py-2 px-4 text-left">{g.jabatan_kelas}</td>
                     </tr>
@@ -270,7 +374,7 @@ export default function Dashboard() {
           </table>
         </div>
 
-        {/* === TABEL KARYAWAN === */}
+        {/* === KARYAWAN === */}
         <div className="bg-white shadow-md rounded-2xl overflow-hidden mb-10">
           <h2 className="bg-yellow-600 text-white p-4 flex items-center gap-2 text-lg font-semibold">
             <FaUserTie /> Data Karyawan
@@ -282,7 +386,6 @@ export default function Dashboard() {
                 <th className="py-3 px-4 text-center">No</th>
                 <th className="py-3 px-4 text-center">Nama</th>
                 <th className="py-3 px-4 text-center">Email</th>
-                <th className="py-3 px-4 text-center">Nomor Uniqe</th>
                 <th className="py-3 px-4 text-center">Level</th>
                 <th className="py-3 px-4 text-center">Jabatan</th>
               </tr>
@@ -291,7 +394,7 @@ export default function Dashboard() {
             <tbody>
               {kategoriData.filter((x) => isKategori(x, "karyawan")).length === 0 ? (
                 <tr>
-                  <td colSpan="6" className="text-center py-4 text-gray-500">
+                  <td colSpan="5" className="text-center py-4 text-gray-500">
                     Tidak ada data karyawan.
                   </td>
                 </tr>
@@ -304,7 +407,6 @@ export default function Dashboard() {
                       <td className="py-2 px-4 text-left">{i + 1}</td>
                       <td className="py-2 px-4 text-left">{k.nama}</td>
                       <td className="py-2 px-4 text-left">{k.email}</td>
-                      <td className="py-2 px-4 text-center">{getNomorUnik(k)}</td>
                       <td className="py-2 px-4 text-left">{k.kategori}</td>
                       <td className="py-2 px-4 text-left">{k.jabatan_kelas}</td>
                     </tr>
@@ -314,7 +416,7 @@ export default function Dashboard() {
           </table>
         </div>
 
-        {/* === TABEL TAGIHAN === */}
+        {/* === TAGIHAN === */}
         <div className="bg-white shadow-md rounded-2xl overflow-hidden mb-10">
           <h2 className="bg-orange-600 text-white p-4 flex items-center gap-2 text-lg font-semibold">
             <FaMoneyBillWave /> Data Tagihan
@@ -337,9 +439,11 @@ export default function Dashboard() {
                 <tr key={i} className="hover:bg-gray-50">
                   <td className="py-2 px-4 text-left">{i + 1}</td>
                   <td className="py-2 px-4">{t.nama}</td>
-                  <td className="py-2 px-4 text-left">{t.jenis || t.keterangan}</td>
+                  <td className="py-2 px-4 text-left">
+                    {t.jenis || t.keterangan}
+                  </td>
                   <td className="py-2 px-4 text-right">
-                    Rp {(safeParseInt(t.harga)).toLocaleString("id-ID")}
+                    Rp {safeParseInt(t.harga).toLocaleString("id-ID")}
                   </td>
                   <td className="py-2 px-4 text-center">{t.tanggal}</td>
                   <td

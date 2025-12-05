@@ -5,7 +5,7 @@ import { FaRegFileAlt } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const IzinPresensi = () => {
-  const navigate = useNavigate(); // ← diperbaiki
+  const navigate = useNavigate();
 
   const [form, setForm] = useState({
     kategori: "",
@@ -13,16 +13,12 @@ const IzinPresensi = () => {
     nomorUnik: "",
     jenisIzin: "",
     keterangan: "",
-    // bukti: null,  <-- DIHAPUS
   });
 
   const [kategoriList, setKategoriList] = useState([]);
   const [loadingKategori, setLoadingKategori] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
-  // ==============================
-  // FETCH DATA KATEGORI
-  // ==============================
   const fetchKategori = async () => {
     try {
       setLoadingKategori(true);
@@ -40,18 +36,12 @@ const IzinPresensi = () => {
     fetchKategori();
   }, []);
 
-  // ==============================
-  // FILTER NAMA BERDASARKAN KATEGORI
-  // ==============================
   const filteredNamaList = form.kategori
     ? kategoriList.filter(
         (item) => item.kategori?.toLowerCase() === form.kategori.toLowerCase()
       )
     : [];
 
-  // ==============================
-  // KETIKA PILIH NAMA → NOMOR UNIK
-  // ==============================
   const handleNamaSelect = (e) => {
     const selectedNama = e.target.value;
     const found = kategoriList.find((item) => item.nama === selectedNama);
@@ -68,16 +58,13 @@ const IzinPresensi = () => {
     }));
   };
 
-  // (HANDLE FILE DIHAPUS karena diminta)
-
-  // ==============================
-  // SUBMIT IZIN PRESENSI
-  // ==============================
   const submitIzin = async () => {
     if (!form.kategori || !form.nama || !form.jenisIzin || !form.keterangan) {
-      Swal.fire("Oops!", "Semua form wajib diisi (kecuali bukti).", "warning");
+      Swal.fire("Oops!", "Semua form wajib diisi.", "warning");
       return;
     }
+
+    const tanggalNow = new Date().toISOString().split("T")[0];
 
     const payload = {
       kategori: form.kategori,
@@ -85,21 +72,17 @@ const IzinPresensi = () => {
       nomorUnik: form.nomorUnik || "",
       jenisIzin: form.jenisIzin,
       keterangan: form.keterangan,
-      tanggal: new Date().toISOString().split("T")[0], // YYYY-MM-DD
-      status: "izin",
-      // bukti: null, <-- dihilangkan
+      tanggal: tanggalNow,
+      status: form.jenisIzin.toLowerCase(), // <-- FIX STATUS
     };
 
     try {
       setSubmitting(true);
 
-      // Simpan ke resource izinpresensi (tetap)
       await axios.post("http://localhost:5000/izinpresensi", payload, {
         headers: { "Content-Type": "application/json" },
       });
 
-      // JUGA simpan SALINAN ke presensi supaya muncul di daftar presensi siswa
-      // (jamMasuk / jamPulang dibiarkan kosong)
       const presensiPayload = {
         kategori: payload.kategori,
         nama: payload.nama,
@@ -107,17 +90,19 @@ const IzinPresensi = () => {
         keterangan: payload.keterangan,
         jamMasuk: "",
         jamPulang: "",
-        tanggal: payload.tanggal,
-        status: payload.status,
+        tanggal: tanggalNow,
+        status: form.jenisIzin.toLowerCase(), // <-- FIX STATUS JUGA
       };
 
       await axios.post("http://localhost:5000/presensi", presensiPayload, {
         headers: { "Content-Type": "application/json" },
       });
 
-      Swal.fire("Berhasil!", "Pengajuan izin berhasil dikirim!", "success").then(() => {
-        navigate("/presensisiswa"); // ← navigasi otomatis
-      });
+      Swal.fire("Berhasil!", "Pengajuan izin berhasil dikirim!", "success").then(
+        () => {
+          navigate("/presensisiswa");
+        }
+      );
 
       setForm({
         kategori: "",
@@ -128,7 +113,6 @@ const IzinPresensi = () => {
       });
     } catch (err) {
       console.error("Gagal menyimpan izin:", err);
-
       Swal.fire({
         icon: "error",
         title: "Error",
@@ -219,8 +203,6 @@ const IzinPresensi = () => {
             onChange={(e) => setForm({ ...form, keterangan: e.target.value })}
             className="border rounded-lg px-3 py-2 h-24 resize-none"
           />
-
-          {/* INPUT FILE DIHAPUS SESUAI PERMINTAAN */}
 
           <button
             onClick={submitIzin}

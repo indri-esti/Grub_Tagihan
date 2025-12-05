@@ -10,7 +10,7 @@ const PresensiSiswa = () => {
   const [filteredData, setFilteredData] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const navigate = useNavigate(); // gunakan lowercase untuk menghindari kebingungan
+  const navigate = useNavigate();
 
   const FetchData = async () => {
     try {
@@ -18,7 +18,6 @@ const PresensiSiswa = () => {
       const res = await axios.get("http://localhost:5000/presensi");
       const hasil = res.data || [];
 
-      // pastikan sorting aman meskipun tanggal kosong
       hasil.sort((a, b) => {
         const ta = a?.tanggal ? new Date(a.tanggal).getTime() : 0;
         const tb = b?.tanggal ? new Date(b.tanggal).getTime() : 0;
@@ -57,29 +56,40 @@ const PresensiSiswa = () => {
     }
   };
 
-  const getKeterangan = (item) => {
-    if (!item) return "-";
-    const ket =
-      item.keterangan ??
-      item.ket ??
-      item.alasan ??
-      item.keteranganIzin ??
-      item.keterangan_izin ??
-      item.note ??
-      "";
+  // ⬇️ STATUS OTOMATIS BERDASARKAN DATA
+  const getStatusFromData = (item) => {
+    const ket = (
+      item?.status ||
+      item?.keterangan ||
+      item?.keteranganIzin ||
+      item?.keterangan_izin ||
+      item?.alasan ||
+      item?.ket ||
+      item?.note ||
+      ""
+    ).toLowerCase();
 
-    return ket && typeof ket === "string" && ket.trim() !== "" ? ket : "-";
+    // Kalau ada jam masuk → otomatis HADIR
+    if (item?.jamMasuk || item?.jam_masuk) return "Hadir";
+    if (item?.jamPulang || item?.jam_pulang) return "Hadir";
+
+    if (ket.includes("sakit")) return "Sakit";
+    if (ket.includes("izin")) return "Izin";
+    if (ket.includes("keperluan") || ket.includes("penting")) return "Keperluan Penting";
+    if (ket.includes("alpa") || ket.includes("tanpa keterangan")) return "Alpa";
+
+    return "-";
   };
 
+  // ⬇️ Warna status otomatis
   const getStatusColor = (status) => {
-    if (!status) return "bg-gray-300 text-gray-800";
+    const s = status?.toLowerCase() || "";
 
-    const s = String(status).toLowerCase();
-
-    if (s.includes("hadir")) return "bg-green-500 text-white";
-    if (s.includes("izin")) return "bg-blue-500 text-white";
-    if (s.includes("sakit")) return "bg-yellow-500 text-white";
-    if (s.includes("alpa")) return "bg-red-500 text-white";
+    if (s === "hadir") return "bg-green-600 text-white";
+    if (s === "izin") return "bg-blue-600 text-white";
+    if (s === "sakit") return "bg-yellow-500 text-white";
+    if (s.includes("keperluan")) return "bg-green-500 text-white";
+    if (s === "alpa") return "bg-red-600 text-white";
 
     return "bg-gray-300 text-gray-800";
   };
@@ -121,6 +131,7 @@ const PresensiSiswa = () => {
       <div className="flex flex-col gap-6">
         <div className="flex-1 flex flex-col gap-3 md:ml-6 bg-white shadow-md rounded-2xl p-6">
 
+          {/* JUDUL */}
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-2xl font-semibold text-gray-800 flex items-center gap-2">
               <FaUserCheck className="text-green-300 text-3xl" />
@@ -128,8 +139,8 @@ const PresensiSiswa = () => {
             </h2>
           </div>
 
+          {/* MENU */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-
             <div
               onClick={() => navigate("/izinpresensi")}
               className="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white rounded-xl p-5 flex flex-col items-center justify-center shadow-md transition"
@@ -153,9 +164,9 @@ const PresensiSiswa = () => {
               <FaDoorClosed className="text-3xl mb-2" />
               <p className="text-lg font-medium">Presensi Pulang</p>
             </div>
-
           </div>
 
+          {/* TABEL */}
           {loading ? (
             <p className="text-center py-4 text-gray-500">Memuat data...</p>
           ) : (
@@ -179,58 +190,106 @@ const PresensiSiswa = () => {
 
                 <tbody className="bg-white divide-y divide-gray-200/70">
                   {cleanedData.length > 0 ? (
-                    cleanedData.map((item, i) => (
-                      <tr key={item.id ?? i} className="hover:bg-blue-50/80 transition-all">
+                    cleanedData.map((item, i) => {
+                      const finalKeterangan =
+                        item?.keterangan ||
+                        item?.keteranganIzin ||
+                        item?.keterangan_izin ||
+                        item?.alasan ||
+                        item?.ket ||
+                        item?.note ||
+                        "";
 
-                        <td className="px-4 py-3 text-center">{i + 1}</td>
-                        <td className="px-4 py-3 text-left">{item?.nama || "-"}</td>
+                      // ⬇️ STATUS OTOMATIS
+                      const statusBaru = getStatusFromData(item);
 
-                        <td className="px-4 py-3 text-center">
-                          {item?.nomorUnik || item?.nomor_unik || item?.nomorunik || "-"}
-                        </td>
+                      return (
+                        <tr key={item.id ?? i} className="hover:bg-blue-50/80 transition-all">
 
-                        <td className="px-4 py-3 text-center">
-                          {getKeterangan(item)}
-                        </td>
+                          <td className="px-4 py-3 text-center">{i + 1}</td>
+                          <td className="px-4 py-3 text-left">{item?.nama || "-"}</td>
 
-                        <td className="px-4 py-3 text-center">
-                          {item?.jamMasuk ?? item?.jam_masuk ?? item?.jammasuk ?? "-"}
-                        </td>
+                          <td className="px-4 py-3 text-center">
+                            {item?.nomorUnik || item?.nomor_unik || item?.nomorunik || "-"}
+                          </td>
 
-                        <td className="px-4 py-3 text-center">
-                          {item?.jamPulang ?? item?.jam_pulang ?? item?.jampulang ?? "-"}
-                        </td>
+                          <td className="px-4 py-3 text-center">
+                            {finalKeterangan || "-"}
+                          </td>
 
-                        <td className="px-4 py-3 text-center">
-                          {formatTanggal(item?.tanggal)}
-                        </td>
+                          <td className="px-4 py-3 text-center">
+                            {item?.jamMasuk ?? item?.jam_masuk ?? item?.jammasuk ?? "-"}
+                          </td>
 
-                        <td className="px-4 py-3 text-center">
-                          <span className={`px-3 py-1 rounded-lg text-sm font-semibold ${getStatusColor(item?.status)}`}>
-                            {item?.status || "-"}
-                          </span>
-                        </td>
+                          <td className="px-4 py-3 text-center">
+                            {item?.jamPulang ?? item?.jam_pulang ?? item?.jampulang ?? "-"}
+                          </td>
 
-                        <td className="px-4 py-3 text-center">
-                          <div className="flex justify-center gap-2">
-                            <button
-                              onClick={() => navigate(`/editpresensi/${item.id}`)}
-                              className="bg-gray-700 text-white px-3 py-2 rounded-md hover:bg-gray-600"
+                          <td className="px-4 py-3 text-center">
+                            {formatTanggal(item?.tanggal)}
+                          </td>
+
+                          {/* STATUS FINAL */}
+                          <td className="px-4 py-3 text-center">
+                            <span
+                              className={`px-3 py-1 rounded-lg text-sm font-semibold ${getStatusColor(
+                                statusBaru
+                              )}`}
                             >
-                              ✏
-                            </button>
+                              {statusBaru}
+                            </span>
+                          </td>
 
-                            <button
-                              onClick={() => handleDelete(item.id)}
-                              className="bg-red-700 text-white px-3 py-2 rounded-md hover:bg-red-600"
-                            >
-                              🗑
-                            </button>
-                          </div>
-                        </td>
+                         <td className="px-4 py-3 text-center">
+  <div className="flex justify-center gap-2">
 
-                      </tr>
-                    ))
+    {/* DETAIL PRESENSI SWEETALERT */}
+    <button
+      onClick={() =>
+        Swal.fire({
+          title: "Detail Presensi",
+          html: `
+            <div style="text-align: left; font-size: 15px; line-height: 1.5;">
+              <b>Nama:</b> ${item?.nama || "-"} <br/>
+              <b>Nomor Unik:</b> ${item?.nomorUnik || item?.nomor_unik || "-"} <br/>
+              <b>Keterangan:</b> ${finalKeterangan || "-"} <br/>
+              <b>Jam Masuk:</b> ${item?.jamMasuk ?? item?.jam_masuk ?? "-"} <br/>
+              <b>Jam Pulang:</b> ${item?.jamPulang ?? item?.jam_pulang ?? "-"} <br/>
+              <b>Tanggal:</b> ${formatTanggal(item?.tanggal)} <br/>
+              <b>Status:</b> ${statusBaru}
+            </div>
+          `,
+          confirmButtonText: "Tutup",
+          width: 450
+        })
+      }
+      className="bg-blue-600 text-white px-3 py-2 rounded-md hover:bg-blue-500"
+    >
+      📝
+    </button>
+
+    {/* EDIT */}
+    <button
+      onClick={() => navigate(`/editpresensi/${item.id}`)}
+      className="bg-gray-700 text-white px-3 py-2 rounded-md hover:bg-gray-600"
+    >
+      ✏
+    </button>
+
+    {/* DELETE */}
+    <button
+      onClick={() => handleDelete(item.id)}
+      className="bg-red-700 text-white px-3 py-2 rounded-md hover:bg-red-600"
+    >
+      🗑
+    </button>
+
+  </div>
+</td>
+
+                        </tr>
+                      );
+                    })
                   ) : (
                     <tr>
                       <td colSpan={9} className="text-center py-6 text-gray-500 italic">
