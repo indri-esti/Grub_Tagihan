@@ -192,8 +192,6 @@ const IzinPresensi = () => {
             <option value="">-- Pilih Jenis Izin --</option>
             <option value="sakit">Sakit</option>
             <option value="izin">Izin</option>
-            <option value="keperluan">Keperluan Penting</option>
-            <option value="lainnya">Lainnya</option>
           </select>
 
           <textarea

@@ -56,7 +56,6 @@ const PresensiSiswa = () => {
     }
   };
 
-  // ⬇️ STATUS OTOMATIS BERDASARKAN DATA
   const getStatusFromData = (item) => {
     const ket = (
       item?.status ||
@@ -69,7 +68,6 @@ const PresensiSiswa = () => {
       ""
     ).toLowerCase();
 
-    // Kalau ada jam masuk → otomatis HADIR
     if (item?.jamMasuk || item?.jam_masuk) return "Hadir";
     if (item?.jamPulang || item?.jam_pulang) return "Hadir";
 
@@ -81,7 +79,6 @@ const PresensiSiswa = () => {
     return "-";
   };
 
-  // ⬇️ Warna status otomatis
   const getStatusColor = (status) => {
     const s = status?.toLowerCase() || "";
 
@@ -135,7 +132,7 @@ const PresensiSiswa = () => {
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-2xl font-semibold text-gray-800 flex items-center gap-2">
               <FaUserCheck className="text-green-300 text-3xl" />
-              Presensi Siswa
+              Presensi Semua
             </h2>
           </div>
 
@@ -166,13 +163,45 @@ const PresensiSiswa = () => {
             </div>
           </div>
 
+          {/* FILTER KATEGORI */}
+          <div className="flex items-center gap-3 mb-4">
+            <label className="text-gray-700 font-medium">Filter:</label>
+
+            <select
+              onChange={(e) => {
+                const v = e.target.value.toLowerCase();
+
+                if (v === "semua") {
+                  setFilteredData(Data);
+                } else {
+                  const f = Data.filter((item) => {
+                    const kat =
+                      item?.kategori ||
+                      item?.kategori_singkat ||
+                      item?.role ||
+                      "";
+
+                    return String(kat).toLowerCase() === v;
+                  });
+
+                  setFilteredData(f);
+                }
+              }}
+              className="border border-gray-400 rounded-lg px-3 py-2"
+            >
+              <option value="semua">Semua</option>
+              <option value="siswa">Siswa</option>
+              <option value="guru">Guru</option>
+              <option value="karyawan">Karyawan</option>
+            </select>
+          </div>
+
           {/* TABEL */}
           {loading ? (
             <p className="text-center py-4 text-gray-500">Memuat data...</p>
           ) : (
             <div className="overflow-x-auto">
-              <table className="min-w-full text-sm text-gray-700 
-                border border-gray-300/60 rounded-xl overflow-hidden shadow-sm">
+              <table className="min-w-full text-sm text-gray-700 border border-gray-300/60 rounded-xl overflow-hidden shadow-sm">
 
                 <thead>
                   <tr className="bg-blue-700 text-white">
@@ -200,7 +229,6 @@ const PresensiSiswa = () => {
                         item?.note ||
                         "";
 
-                      // ⬇️ STATUS OTOMATIS
                       const statusBaru = getStatusFromData(item);
 
                       return (
@@ -229,7 +257,6 @@ const PresensiSiswa = () => {
                             {formatTanggal(item?.tanggal)}
                           </td>
 
-                          {/* STATUS FINAL */}
                           <td className="px-4 py-3 text-center">
                             <span
                               className={`px-3 py-1 rounded-lg text-sm font-semibold ${getStatusColor(
@@ -240,52 +267,49 @@ const PresensiSiswa = () => {
                             </span>
                           </td>
 
-                         <td className="px-4 py-3 text-center">
-  <div className="flex justify-center gap-2">
+                          <td className="px-4 py-3 text-center">
+                            <div className="flex justify-center gap-2">
 
-    {/* DETAIL PRESENSI SWEETALERT */}
-    <button
-      onClick={() =>
-        Swal.fire({
-          title: "Detail Presensi",
-          html: `
-            <div style="text-align: left; font-size: 15px; line-height: 1.5;">
-              <b>Nama:</b> ${item?.nama || "-"} <br/>
-              <b>Nomor Unik:</b> ${item?.nomorUnik || item?.nomor_unik || "-"} <br/>
-              <b>Keterangan:</b> ${finalKeterangan || "-"} <br/>
-              <b>Jam Masuk:</b> ${item?.jamMasuk ?? item?.jam_masuk ?? "-"} <br/>
-              <b>Jam Pulang:</b> ${item?.jamPulang ?? item?.jam_pulang ?? "-"} <br/>
-              <b>Tanggal:</b> ${formatTanggal(item?.tanggal)} <br/>
-              <b>Status:</b> ${statusBaru}
-            </div>
-          `,
-          confirmButtonText: "Tutup",
-          width: 450
-        })
-      }
-      className="bg-blue-600 text-white px-3 py-2 rounded-md hover:bg-blue-500"
-    >
-      📝
-    </button>
+                              <button
+                                onClick={() =>
+                                  Swal.fire({
+                                    title: "Detail Presensi",
+                                    html: `
+                                      <div style="text-align: left; font-size: 15px; line-height: 1.5;">
+                                        <b>Nama:</b> ${item?.nama || "-"} <br/>
+                                        <b>Nomor Unik:</b> ${item?.nomorUnik || item?.nomor_unik || "-"} <br/>
+                                        <b>Keterangan:</b> ${finalKeterangan || "-"} <br/>
+                                        <b>Jam Masuk:</b> ${item?.jamMasuk ?? item?.jam_masuk ?? "-"} <br/>
+                                        <b>Jam Pulang:</b> ${item?.jamPulang ?? item?.jam_pulang ?? "-"} <br/>
+                                        <b>Tanggal:</b> ${formatTanggal(item?.tanggal)} <br/>
+                                        <b>Status:</b> ${statusBaru}
+                                      </div>
+                                    `,
+                                    confirmButtonText: "Tutup",
+                                    width: 450
+                                  })
+                                }
+                                className="bg-blue-600 text-white px-3 py-2 rounded-md hover:bg-blue-500"
+                              >
+                                📝
+                              </button>
 
-    {/* EDIT */}
-    <button
-      onClick={() => navigate(`/editpresensi/${item.id}`)}
-      className="bg-gray-700 text-white px-3 py-2 rounded-md hover:bg-gray-600"
-    >
-      ✏
-    </button>
+                              <button
+                                onClick={() => navigate(`/editpresensi/${item.id}`)}
+                                className="bg-gray-700 text-white px-3 py-2 rounded-md hover:bg-gray-600"
+                              >
+                                ✏
+                              </button>
 
-    {/* DELETE */}
-    <button
-      onClick={() => handleDelete(item.id)}
-      className="bg-red-700 text-white px-3 py-2 rounded-md hover:bg-red-600"
-    >
-      🗑
-    </button>
+                              <button
+                                onClick={() => handleDelete(item.id)}
+                                className="bg-red-700 text-white px-3 py-2 rounded-md hover:bg-red-600"
+                              >
+                                🗑
+                              </button>
 
-  </div>
-</td>
+                            </div>
+                          </td>
 
                         </tr>
                       );

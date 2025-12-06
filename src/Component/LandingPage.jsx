@@ -1,4 +1,5 @@
 import React from "react";
+import { motion } from "framer-motion";
 
 function LandingPage() {
   const programKeahlianData = [
@@ -21,19 +22,26 @@ function LandingPage() {
   ];
 
   return (
-    <div className="font-sans bg-gray-50 text-gray-800">
-      {/* Navbar */}
-      <nav className="fixed top-0 left-0 w-full z-50 bg-white shadow-md px-6 py-4 flex justify-between items-center">
-        <h1 className="text-lg md:text-xl font-bold text-indigo-700">
+    <motion.div
+      className="font-sans bg-gray-50 text-gray-800"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.6 }}
+    >
+      {/* NAVBAR */}
+      <nav className="fixed top-0 w-full bg-white shadow-md z-50 px-6 py-4 flex justify-between items-center">
+        <h1 className="text-xl font-bold text-indigo-700">
           SMK BINANUSANTARA SEMARANG
         </h1>
-        <div className="flex gap-2">
+
+        <div className="flex gap-3">
           <a
             href="https://binusasmg.sch.id/ppdb"
             className="bg-yellow-400 text-black px-4 py-2 rounded-lg font-semibold hover:bg-yellow-300 transition"
           >
             Daftar Sekarang
           </a>
+
           <a
             href="/login"
             className="bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-500 transition"
@@ -43,41 +51,62 @@ function LandingPage() {
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <section className="relative text-center pt-32 pb-20 bg-white">
-        <img
+      {/* HERO */}
+      <section className="relative pt-32 pb-24 text-center bg-white overflow-hidden">
+        <motion.img
           src="https://sis.binusasmg.sch.id/assets/dist/img/binusa/bg-hero.jpg"
-          alt="Hero Background"
-          className="absolute inset-0 w-full h-full object-cover opacity-20"
+          alt="Hero background SMK Binanusantara"
+          className="absolute inset-0 w-full h-full object-cover opacity-25"
+          initial={{ scale: 1.05 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 2 }}
         />
-        <div className="relative z-10">
-          <h2 className="text-4xl md:text-5xl font-extrabold mb-4 text-indigo-700">
+
+        <motion.div
+          className="relative z-10 max-w-3xl mx-auto px-6"
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+        >
+          <h2 className="text-4xl md:text-5xl font-extrabold text-indigo-700 mb-5">
             Penerimaan Peserta Didik Baru 2025/2026
           </h2>
-          <p className="text-lg md:text-xl mb-6">
+
+          <p className="text-lg md:text-xl mb-6 text-gray-700">
             Wujudkan masa depan cerah bersama SMK Binanusantara Semarang!
           </p>
-          <a
+
+          <motion.a
+            whileHover={{ scale: 1.05 }}
             href="https://binusasmg.sch.id/ppdb"
-            className="bg-yellow-400 text-black px-6 py-3 rounded-lg font-semibold hover:bg-yellow-300 transition"
+            className="inline-block bg-yellow-400 text-black px-6 py-3 rounded-lg text-lg font-semibold hover:bg-yellow-300 transition"
           >
             Daftar Sekarang
-          </a>
-        </div>
+          </motion.a>
+        </motion.div>
       </section>
 
-      {/* Tentang Sekolah */}
-      <section className="px-6 py-16 max-w-5xl mx-auto text-center bg-white shadow-sm rounded-xl">
-        <h3 className="text-3xl font-bold mb-4 text-indigo-700">
+      {/* TENTANG SEKOLAH */}
+      <motion.section
+        className="px-6 py-16 max-w-5xl mx-auto bg-white shadow-sm rounded-xl mt-6"
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.7 }}
+      >
+        <h3 className="text-3xl font-bold mb-6 text-indigo-700 text-center">
           Tentang Sekolah
         </h3>
-        <p className="text-gray-700 leading-relaxed text-lg">
+
+        <p className="text-gray-700 leading-relaxed text-lg text-center">
           <strong>SMK BINANUSANTARA SEMARANG</strong> adalah sekolah kejuruan
           unggulan yang berkomitmen mencetak lulusan siap kerja, berkarakter
           unggul, dan berdaya saing global. Dengan tenaga pendidik profesional
           serta fasilitas pembelajaran modern, kami membantu peserta didik
           mengembangkan potensi terbaiknya.
-          <br />
+        </p>
+
+        <p className="text-center mt-4">
           <a
             href="https://binusasmg.sch.id/profil-sekolah"
             className="text-indigo-600 font-semibold hover:underline"
@@ -85,72 +114,84 @@ function LandingPage() {
             Lihat lebih lanjut tentang SMK Binanusantara Semarang →
           </a>
         </p>
-      </section>
+      </motion.section>
 
-      {/* Program Keahlian */}
+      {/* PROGRAM KEAHLIAN */}
       <section className="py-16 bg-gray-100">
         <div className="max-w-6xl mx-auto px-6">
           <h3 className="text-3xl font-bold text-center mb-10 text-indigo-700">
             Program Keahlian
           </h3>
+
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {programKeahlianData.map((item, index) => (
-              <div
-                key={index}
-                className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
+            {programKeahlianData.map((item, idx) => (
+              <motion.div
+                key={idx}
+                className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all hover:-translate-y-1"
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: idx * 0.1 }}
               >
                 <img
                   src={item.img}
                   alt={item.jurusan}
                   className="h-44 w-full object-cover"
                 />
-                <div className="p-5 text-center">
+                <div className="p-4 text-center">
                   <h4 className="font-semibold text-lg text-indigo-700">
                     {item.jurusan}
                   </h4>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Info PPDB */}
-      <section
+      {/* INFO PPDB */}
+      <motion.section
         id="daftar"
-        className="px-6 py-16 max-w-5xl mx-auto text-center bg-white shadow-sm rounded-xl"
+        className="px-6 py-16 max-w-5xl mx-auto bg-white shadow-sm rounded-xl"
+        initial={{ opacity: 0, y: 60 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.7 }}
       >
-        <h3 className="text-3xl font-bold mb-8 text-indigo-700">Info PPDB</h3>
-        <div className="text-left">
-          <ol className="text-gray-700 space-y-4 list-decimal list-inside">
+        <h3 className="text-3xl font-bold mb-8 text-indigo-700 text-center">
+          Info PPDB
+        </h3>
+
+        <div className="text-left mx-auto max-w-2xl">
+          <ol className="list-decimal list-inside text-gray-700 space-y-4 text-lg">
             <li>Isi formulir pendaftaran secara online.</li>
             <li>Unggah dokumen persyaratan.</li>
-            <li>Lakukan verifikasi berkas di sekolah.</li>
+            <li>Verifikasi berkas di sekolah.</li>
             <li>Ikuti tes seleksi sesuai jadwal.</li>
             <li>Pengumuman hasil dan daftar ulang.</li>
           </ol>
+
           <div className="text-center mt-10">
-            <a
+            <motion.a
+              whileHover={{ scale: 1.05 }}
               href="https://binusasmg.sch.id/ppdb"
-              className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-500 transition"
+              className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-500 transition inline-block"
             >
               Daftar Online Sekarang
-            </a>
+            </motion.a>
           </div>
         </div>
-      </section>
+      </motion.section>
 
-      {/* Footer */}
-      <footer className="bg-blue-700 text-white py-8 text-center mt-10">
-        <p className="text-lg font-semibold">
-          © 2025 SMK BINANUSANTARA SEMARANG
-        </p>
+      {/* FOOTER */}
+      <footer className="bg-blue-700 text-white py-8 text-center mt-12">
+        <p className="text-lg font-semibold">© 2025 SMK BINANUSANTARA SEMARANG</p>
         <p className="text-sm mt-2">
           Jl. Kemantren Raya No. 10 Wonosari Ngaliyan - Kota Semarang | Telp:
           (024) 1234567
         </p>
       </footer>
-    </div>
+    </motion.div>
   );
 }
 

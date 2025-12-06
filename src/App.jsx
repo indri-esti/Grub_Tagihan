@@ -35,6 +35,7 @@ import PresensiMasuk from "./Pages/presensi/PresensiMasuk";
 import PresensiPulang from "./Pages/presensi/PresensiPulang";
 import PresensiSiswa from "./Pages/presensi/PresensiSiswa";
 import IzinPresensi from "./Pages/presensi/IzinPresensi";
+import EditPresensi from "./Pages/presensi/EditPresensi";
 
 
 
@@ -75,6 +76,7 @@ function App() {
         <Route path="/presensipulang" element={<PresensiPulang />} />
         <Route path="/presensisiswa" element={<PresensiSiswa />} />
         <Route path="/izinpresensi" element={<IzinPresensi />} />
+        <Route path="/editpresensi/:id" element={<EditPresensi />} />
         
       </Routes> 
   );

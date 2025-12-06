@@ -8,8 +8,10 @@ import {
   FaFolderOpen,
   FaChalkboard,
   FaMoneyBillWave,
+  FaCoins,
   FaChartPie,
   FaArchive,
+  FaServer,
   FaClipboardList,
   FaUserCheck,
   FaMoon,
@@ -153,7 +155,7 @@ export default function SidebarT() {
               className={`flex items-center justify-between w-full py-2.5 px-4 rounded-lg ${itemHoverClass}`}
             >
               <span className="flex items-center gap-3">
-                <FaArchive className="text-yellow-300" /> Database
+                <FaServer className="text-[#FFA726]" /> Database
               </span>
               {openDatabase ? <FaChevronUp /> : <FaChevronDown />}
             </button>
@@ -188,7 +190,7 @@ export default function SidebarT() {
               className={`flex items-center justify-between w-full py-2.5 px-4 rounded-lg ${itemHoverClass}`}
             >
               <span className="flex items-center gap-3">
-                <FaMoneyBillWave className="text-green-300" /> Keuangan
+                <FaCoins className="text-yellow-300" /> Keuangan
               </span>
               {openKeuangan ? <FaChevronUp /> : <FaChevronDown />}
             </button>
@@ -223,7 +225,7 @@ export default function SidebarT() {
               className={`flex items-center justify-between w-full py-2.5 px-4 rounded-lg ${itemHoverClass}`}
             >
               <span className="flex items-center gap-3">
-                <FaClipboardCheck className="text-yellow-300" /> Presensi
+                <FaClipboardCheck className="text-purple-200" /> Presensi
               </span>
               {openPresensi ? <FaChevronUp /> : <FaChevronDown />}
             </button>
@@ -236,7 +238,7 @@ export default function SidebarT() {
             {openPresensi && (
               <div className="ml-6 mt-2 space-y-2">
                 <Link to="/presensisiswa" className={`flex items-center gap-3 py-2 px-3 rounded-lg text-sm ${itemHoverClass}`}>
-                  <FaUserCheck className="text-green-300" /> Presensi Siswa
+                  <FaUserCheck className="text-green-300" /> Presensi
                 </Link>
 
                 <Link to="/rekappresensi" className={`flex items-center gap-3 py-2 px-3 rounded-lg text-sm ${itemHoverClass}`}>
