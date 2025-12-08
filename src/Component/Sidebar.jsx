@@ -230,15 +230,17 @@ export default function SidebarT() {
               {openPresensi ? <FaChevronUp /> : <FaChevronDown />}
             </button>
 
-            {(isActive("/presensisiswa") ||
+            {(isActive("/semuapresensi") ||
               isActive("/rekappresensi")) && (
               <div className="w-24 h-[3px] bg-white rounded-full ml-12"></div>
             )}
 
             {openPresensi && (
               <div className="ml-6 mt-2 space-y-2">
-                <Link to="/presensisiswa" className={`flex items-center gap-3 py-2 px-3 rounded-lg text-sm ${itemHoverClass}`}>
-                  <FaUserCheck className="text-green-300" /> Presensi
+
+
+                <Link to="/presensisemua" className={`flex items-center gap-3 py-2 px-3 rounded-lg text-sm ${itemHoverClass}`}>
+                  <FaUserCheck className="text-green-300" /> Semua Presensi
                 </Link>
 
                 <Link to="/rekappresensi" className={`flex items-center gap-3 py-2 px-3 rounded-lg text-sm ${itemHoverClass}`}>

@@ -220,7 +220,7 @@ export default function Dashboard() {
         <div className="bg-white shadow-md rounded-2xl overflow-hidden mb-10">
           <h2 className="bg-purple-600 text-white p-4 text-lg font-semibold flex items-center gap-2">
             <FaUserCheck className="text-white text-xl" />
-            Data Presensi Siswa
+            Data Presensi 
           </h2>
 
           {/* FILTER */}

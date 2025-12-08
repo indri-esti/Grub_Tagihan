@@ -54,7 +54,7 @@
   ],
   "tagihan": [
     {
-      "id": "9dd7",
+      "id": "8703",
       "nama": "indri esti",
       "keterangan": "SPP",
       "harga": "600000",
@@ -62,7 +62,7 @@
       "status": "Lunas"
     },
     {
-      "id": "366d",
+      "id": "1568",
       "nama": "Miya",
       "keterangan": "Seragam",
       "harga": "200000",
@@ -70,15 +70,15 @@
       "status": "Lunas"
     },
     {
+      "id": "c395",
       "nama": "ixia",
       "keterangan": "Uang gedung",
       "harga": "700000",
       "tanggal": "08/11/2025",
-      "status": "Lunas",
-      "id": "072e"
+      "status": "Lunas"
     },
     {
-      "id": "125f",
+      "id": "6cdc",
       "nama": "Zilong",
       "keterangan": "Kas Siswa",
       "harga": "800000",
@@ -86,35 +86,11 @@
       "status": "Lunas"
     },
     {
-      "id": "b7d2",
+      "id": "3713",
       "nama": "Amel",
       "keterangan": "Biaya Ekstrakulikuler",
       "harga": "900000",
       "tanggal": "09/11/2025",
-      "status": "Belum Lunas"
-    },
-    {
-      "id": "cf00",
-      "nama": "Joy",
-      "keterangan": "Biaya Les",
-      "harga": "400000",
-      "tanggal": "10/11/2025",
-      "status": "Belum Lunas"
-    },
-    {
-      "nama": "Gauri",
-      "keterangan": "Biaya UKT",
-      "harga": "600000",
-      "tanggal": "15/11/2025",
-      "status": "Lunas",
-      "id": "9511"
-    },
-    {
-      "id": "891b",
-      "nama": "indra ",
-      "keterangan": "Uang Pendaftaran",
-      "harga": "600000",
-      "tanggal": "01/12/2025",
       "status": "Belum Lunas"
     }
   ],
@@ -157,49 +133,129 @@
     {
       "id": "0ed3",
       "nama": "Biaya UKT",
-      "status": "Aktif"
+      "status": "Nonaktif"
     }
   ],
   "kategori_data": [
     {
-      "nama": "Ixia",
-      "email": "ixia@gmail.com",
+      "id": "2876",
+      "nama": "indri esti",
+      "email": "indriesti4@gmail.com",
+      "nomorUnik": "NUK-62094923",
       "kategori": "Siswa",
-      "jabatan_kelas": "X TKJ",
-      "nomorUnik": "NUK-59843453",
-      "id": "b27b"
+      "jabatan_kelas": "X TKJ"
     },
     {
-      "id": "9953",
-      "nama": "Dani",
-      "email": "Dani@gmail.com",
-      "nomorUnik": "NUK-18435401",
-      "kategori": "Guru",
-      "jabatan_kelas": "PPKN"
+      "id": "9ed5",
+      "nama": "Miya",
+      "email": "Miya@gmail.com",
+      "nomorUnik": "NUK-76694514",
+      "kategori": "Siswa",
+      "jabatan_kelas": "XII RPL 1"
     },
     {
-      "id": "41a0",
-      "nama": "Melisa",
-      "email": "Melisa@gmail.com",
-      "nomorUnik": "NUK-99120412",
-      "kategori": "Karyawan",
-      "jabatan_kelas": "Keuangan"
+      "id": "2b08",
+      "nama": "ixia",
+      "email": "ixia@gmail.com",
+      "nomorUnik": "NUK-79755687",
+      "kategori": "Siswa",
+      "jabatan_kelas": "XI AKL 1"
     },
     {
-      "id": "9ea6",
-      "nama": "Denis",
-      "email": "Denis@gmail.com",
-      "nomorUnik": "NUK-41647221",
+      "id": "2913",
+      "nama": "Zilong",
+      "email": "Zilong@gmail.com",
+      "nomorUnik": "NUK-82075301",
       "kategori": "Siswa",
       "jabatan_kelas": "X TSM"
     },
     {
-      "nama": "Claudia",
-      "email": "Claudia@gmail.com",
+      "id": "3d61",
+      "nama": "Amel",
+      "email": "Amel@gmail.com",
+      "nomorUnik": "NUK-97800900",
+      "kategori": "Siswa",
+      "jabatan_kelas": "XII TKJ"
+    },
+    {
+      "id": "9fa6",
+      "nama": "Doni",
+      "email": "Doni@gmail.com",
+      "nomorUnik": "NUK-51192140",
+      "kategori": "Guru",
+      "jabatan_kelas": "Matematika"
+    },
+    {
+      "id": "e472",
+      "nama": "Miska",
+      "email": "Miska@gmail.com",
+      "nomorUnik": "NUK-64079973",
+      "kategori": "Guru",
+      "jabatan_kelas": "PPKN"
+    },
+    {
+      "id": "15a8",
+      "nama": "Adit",
+      "email": "Adit@gmail.com",
+      "nomorUnik": "NUK-62140693",
       "kategori": "Karyawan",
-      "jabatan_kelas": "Seketariat",
-      "nomorUnik": "NUK-94541643",
-      "id": "43df"
+      "jabatan_kelas": "Administrasi"
+    },
+    {
+      "nama": "Maria",
+      "email": "Maria@gmail.com",
+      "kategori": "Karyawan",
+      "jabatan_kelas": "Manajer",
+      "nomorUnik": "NUK-18618513",
+      "id": "1353"
+    },
+    {
+      "id": "02df",
+      "nama": "Alicia",
+      "email": "Alicia@gmail.com",
+      "nomorUnik": "NUK-10576909",
+      "kategori": "Guru",
+      "jabatan_kelas": "Agama Islam"
+    },
+    {
+      "id": "39b1",
+      "nama": "Fedrin",
+      "email": "Fedrin@gmail.com",
+      "nomorUnik": "NUK-82362969",
+      "kategori": "Guru",
+      "jabatan_kelas": "IPAS"
+    },
+    {
+      "id": "226c",
+      "nama": "Hilda",
+      "email": "Hilda@gmail.com",
+      "nomorUnik": "NUK-99851442",
+      "kategori": "Guru",
+      "jabatan_kelas": "Bahasa indonesia"
+    },
+    {
+      "id": "3b2a",
+      "nama": "Riska",
+      "email": "Riska@gmail.com",
+      "nomorUnik": "NUK-23874657",
+      "kategori": "Karyawan",
+      "jabatan_kelas": "Dosen"
+    },
+    {
+      "id": "14ce",
+      "nama": "Rakha",
+      "email": "Rakha@gmail.com",
+      "nomorUnik": "NUK-71038504",
+      "kategori": "Karyawan",
+      "jabatan_kelas": "Pengacara"
+    },
+    {
+      "id": "77ba",
+      "nama": "Fanny",
+      "email": "Fanny@gmail.com",
+      "nomorUnik": "NUK-59437697",
+      "kategori": "Karyawan",
+      "jabatan_kelas": "Pegawai bank"
     }
   ],
   "data_kelas": [
@@ -255,60 +311,11 @@
   ],
   "presensi": [
     {
-      "id": "1",
-      "kategori": "",
-      "nama": "",
-      "nomorUnik": "",
-      "keterangan": "",
-      "jamMasuk": "",
+      "id": "b6bc",
+      "nomorUnik": "NUK-62094923",
+      "jamMasuk": "14.58",
       "jamPulang": "",
-      "tanggal": "",
-      "status": ""
-    },
-    {
-      "id": "ab27",
-      "kategori": "siswa",
-      "nama": "Ixia",
-      "nomorUnik": "NUK-59843453",
-      "jamMasuk": "13.08",
-      "jamPulang": "14.55",
-      "tanggal": "2025-12-05T06:08:03.511Z"
-    },
-    {
-      "keterangan": "Acara Keluarga",
-      "status": "keperluan",
-      "id": "08cc"
-    },
-    {
-      "id": "ec49",
-      "kategori": "karyawan",
-      "nama": "Melisa",
-      "nomorUnik": "NUK-99120412",
-      "keterangan": "Sakit Karena Darah Tinggi",
-      "jamMasuk": "",
-      "jamPulang": "",
-      "tanggal": "2025-12-05",
-      "status": "sakit"
-    },
-    {
-      "id": "8128",
-      "kategori": "guru",
-      "nama": "Dani",
-      "nomorUnik": "NUK-18435401",
-      "jamMasuk": "09.26",
-      "jamPulang": "",
-      "tanggal": "2025-12-06T02:26:09.725Z"
-    },
-    {
-      "id": "b337",
-      "kategori": "karyawan",
-      "nama": "Claudia",
-      "nomorUnik": "NUK-94541643",
-      "keterangan": "Izin Keluar Karena ada Tamu yang ngajak Makan Siang,Terima Kasih",
-      "jamMasuk": "",
-      "jamPulang": "",
-      "tanggal": "2025-12-06",
-      "status": "izin"
+      "tanggal": "2025-12-08T07:58:29.824Z"
     }
   ],
   "izinpresensi": [
@@ -599,6 +606,76 @@
       "keterangan": "Izin Keluar Karena ada Tamu yang ngajak Makan Siang",
       "tanggal": "2025-12-06",
       "status": "izin"
+    },
+    {
+      "id": "8b26",
+      "kategori": "siswa",
+      "nama": "ixia",
+      "nomorUnik": "NUK-79755687",
+      "jenisIzin": "sakit",
+      "keterangan": "Sakit Karena Darah Tinggi",
+      "tanggal": "2025-12-08",
+      "status": "sakit"
+    },
+    {
+      "id": "1f86",
+      "kategori": "karyawan",
+      "nama": "Maria",
+      "nomorUnik": "NUK-18618513",
+      "jenisIzin": "izin",
+      "keterangan": "Izin karena ada keperluan penting ",
+      "tanggal": "2025-12-08",
+      "status": "izin"
+    },
+    {
+      "id": "3159",
+      "kategori": "siswa",
+      "nama": "Joy",
+      "nomorUnik": "NUK-46254814",
+      "jenisIzin": "sakit",
+      "keterangan": "Sakit Demam",
+      "tanggal": "2025-12-08",
+      "status": "sakit"
+    },
+    {
+      "id": "583a",
+      "kategori": "siswa",
+      "nama": "Amel",
+      "nomorUnik": "NUK-97800900",
+      "jenisIzin": "sakit",
+      "keterangan": "Izin karena ambil ijazah",
+      "tanggal": "2025-12-08",
+      "status": "sakit"
+    },
+    {
+      "id": "f086",
+      "kategori": "siswa",
+      "nama": "Amel",
+      "nomorUnik": "NUK-97800900",
+      "jenisIzin": "sakit",
+      "keterangan": "sdsf",
+      "tanggal": "2025-12-08",
+      "status": "sakit"
+    },
+    {
+      "id": "800c",
+      "kategori": "siswa",
+      "nama": "indri esti",
+      "nomorUnik": "NUK-62094923",
+      "jenisIzin": "sakit",
+      "keterangan": "Sakit karena demam",
+      "tanggal": "2025-12-08",
+      "status": "sakit"
+    },
+    {
+      "id": "7bc2",
+      "kategori": "siswa",
+      "nama": "indri esti",
+      "nomorUnik": "NUK-62094923",
+      "jenisIzin": "sakit",
+      "keterangan": "Sakit karena demam",
+      "tanggal": "2025-12-08",
+      "status": "sakit"
     }
   ]
 }

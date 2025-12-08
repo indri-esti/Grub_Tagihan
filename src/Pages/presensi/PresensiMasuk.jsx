@@ -8,72 +8,50 @@ const PresensiMasuk = () => {
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
-    kategori: "",
-    nama: "",
     nomorUnik: "",
   });
 
-  const [kategoriList, setKategoriList] = useState([]);
-  const [loadingKategori, setLoadingKategori] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   // ==============================
-  // FETCH DATA KATEGORI
+  // JAM DIGITAL
   // ==============================
-  const fetchKategori = async () => {
-    try {
-      setLoadingKategori(true);
-      const res = await axios.get("http://localhost:5000/kategori_data");
-      setKategoriList(res.data || []);
-    } catch (error) {
-      console.error("Gagal fetch kategori:", error);
-    } finally {
-      setLoadingKategori(false);
-    }
-  };
+  const [jam, setJam] = useState("");
 
   useEffect(() => {
-    fetchKategori();
+    const timer = setInterval(() => {
+      const now = new Date();
+      const jamLive = now.toLocaleTimeString("id-ID", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      });
+      setJam(jamLive);
+    }, 1000);
+
+    return () => clearInterval(timer);
   }, []);
 
   // ==============================
-  // FILTER DATA BERDASARKAN LEVEL
+  // HANDLE INPUT
   // ==============================
-  const filteredNamaList = form.kategori
-    ? kategoriList.filter(
-        (item) => item.kategori?.toLowerCase() === form.kategori.toLowerCase()
-      )
-    : [];
-
-  // ==============================
-  // KETIKA PILIH NAMA → NOMOR UNIK OTOMATIS
-  // ==============================
-  const handleNamaSelect = (e) => {
-    const selectedNama = e.target.value;
-    const found = kategoriList.find((item) => item.nama === selectedNama);
-
-    setForm((prev) => ({
-      ...prev,
-      nama: selectedNama,
-      nomorUnik:
-        found?.nomorUnik ||
-        found?.nomorUniqe ||
-        found?.nomor_unique ||
-        "",
-    }));
+  const handleNomorChange = (e) => {
+    setForm({
+      nomorUnik: e.target.value,
+    });
   };
 
   // ==============================
-  // SUBMIT PRESENSI MASUK
+  // SUBMIT MASUK
   // ==============================
   const submitMasuk = async () => {
-    if (!form.kategori || !form.nama || !form.nomorUnik) {
-      Swal.fire("Oops!", "Semua form wajib diisi!", "warning");
+    if (!form.nomorUnik) {
+      Swal.fire("Oops!", "Nomor Unik wajib diisi!", "warning");
       return;
     }
 
     const payload = {
-      ...form,
+      nomorUnik: form.nomorUnik,
       jamMasuk: new Date().toLocaleTimeString("id-ID", {
         hour: "2-digit",
         minute: "2-digit",
@@ -87,99 +65,72 @@ const PresensiMasuk = () => {
       await axios.post("http://localhost:5000/presensi", payload);
 
       Swal.fire("Berhasil!", "Presensi Masuk Tercatat!", "success").then(() => {
-        navigate("/presensisiswa"); // ← otomatis navigasi setelah simpan
+        navigate("/presensisemua");
       });
 
-      setForm({ kategori: "", nama: "", nomorUnik: "" });
+      setForm({ nomorUnik: "" });
     } catch (err) {
       console.error("Gagal menyimpan presensi:", err);
-      Swal.fire("Error", err?.message || "Gagal menyimpan data!", "error");
+      Swal.fire("Error", "Gagal menyimpan data!", "error");
     } finally {
       setSubmitting(false);
     }
   };
 
-  const batal = () => navigate("/presensisiswa");
+  const batal = () => navigate("/presensisemua");
 
+  // ==============================
+  // UI (HANYA NOMOR UNIK)
+  // ==============================
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-      <div className="w-full max-w-md bg-white p-6 rounded-xl shadow-lg">
-        <h2 className="text-2xl font-semibold mb-5 flex items-center gap-2 justify-center">
-          <FaDoorOpen className="text-green-600 text-3xl" />
+      <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl border border-gray-200">
+
+        <h2 className="text-3xl font-bold mb-2 flex flex-col items-center text-green-700">
+          <FaDoorOpen className="text-4xl mb-2" />
           Presensi Masuk
         </h2>
 
+        {/* JAM DIGITAL */}
+        <p className="text-center text-xl font-mono text-gray-700 mb-6">
+          {jam}
+        </p>
+
         <div className="flex flex-col gap-4">
 
-          {/* FILTER KATEGORI */}
-          <select
-            name="kategori"
-            value={form.kategori}
-            onChange={(e) =>
-              setForm({
-                ...form,
-                kategori: e.target.value,
-                nama: "",
-                nomorUnik: "",
-              })
-            }
-            className="border rounded-lg px-3 py-2 focus:outline-green-500"
-          >
-            <option value="">-- Pilih Kategori --</option>
-            <option value="siswa">Siswa</option>
-            <option value="guru">Guru</option>
-            <option value="karyawan">Karyawan</option>
-          </select>
+          {/* Input Nomor Unik */}
+          <div>
+            <label className="text-sm text-gray-600 font-medium">
+              Nomor Unik
+            </label>
+            <input
+              type="text"
+              placeholder="Masukkan Nomor Unik"
+              value={form.nomorUnik}
+              onChange={handleNomorChange}
+              className="w-full mt-1 border rounded-xl px-4 py-3 focus:ring-2 focus:ring-green-400 focus:outline-none transition"
+            />
+          </div>
 
-          {/* Pilih Nama berdasarkan kategori */}
-          <select
-            name="nama"
-            onChange={handleNamaSelect}
-            value={form.nama}
-            className="border rounded-lg px-3 py-2 focus:outline-green-500"
-            disabled={loadingKategori || !form.kategori}
-          >
-            <option value="">
-              {!form.kategori
-                ? "Pilih kategori dulu"
-                : loadingKategori
-                ? "Memuat daftar..."
-                : "-- Pilih Nama --"}
-            </option>
-
-            {filteredNamaList.map((item, index) => (
-              <option key={index} value={item.nama}>
-                {item.nama}
-              </option>
-            ))}
-          </select>
-
-          {/* Nomor Unik otomatis */}
-          <input
-            type="text"
-            name="nomorUnik"
-            placeholder="Nomor Unik"
-            value={form.nomorUnik}
-            readOnly
-            className="border rounded-lg px-3 py-2 bg-gray-200 text-gray-600"
-          />
-
+          {/* Tombol Simpan */}
           <button
             onClick={submitMasuk}
             disabled={submitting}
-            className={`bg-green-600 text-white py-2 rounded-lg font-bold hover:bg-green-700 transition ${
+            className={`w-full py-3 rounded-xl font-bold text-white text-lg bg-green-600 hover:bg-green-700 transition ${
               submitting ? "opacity-70 cursor-not-allowed" : ""
             }`}
           >
-            {submitting ? "Menyimpan..." : "Simpan Presensi Masuk"}
+            {submitting ? "Menyimpan..." : "Simpan Presensi"}
           </button>
 
+          {/* Tombol Batal */}
           <button
             onClick={batal}
-            className="bg-gray-400 text-white py-2 rounded-lg font-bold hover:bg-gray-500 transition"
+            className="w-full py-3 rounded-xl font-semibold text-gray-700 bg-gray-200 hover:bg-gray-300 transition"
           >
             Batal
           </button>
+
         </div>
       </div>
     </div>

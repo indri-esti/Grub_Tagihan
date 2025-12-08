@@ -31,20 +31,25 @@ const TambahData = () => {
       });
   }, []);
 
-  // Ambil daftar siswa dari master data
-  useEffect(() => {
-    axios
-      .get("http://localhost:5000/kategori_data")
-      .then((res) => {
-        const siswaOnly = res.data.filter(
-          (item) => item.kategori?.toLowerCase() === "siswa"
-        );
-        setDataSiswa(siswaOnly);
-      })
-      .catch((err) => {
-        console.error("Gagal mengambil data siswa:", err);
-      });
-  }, []);
+ // Ambil daftar siswa dari master data
+useEffect(() => {
+  axios
+    .get("http://localhost:5000/kategori_data")
+    .then((res) => {
+      const siswaOnly = res.data.filter(
+        (item) =>
+          String(item.kategori || "")
+            .trim()
+            .toLowerCase()
+            .includes("siswa")
+      );
+      setDataSiswa(siswaOnly);
+    })
+    .catch((err) => {
+      console.error("Gagal mengambil data siswa:", err);
+    });
+}, []);
+
 
   // Handle input perubahan
   const handleChange = (e) => {

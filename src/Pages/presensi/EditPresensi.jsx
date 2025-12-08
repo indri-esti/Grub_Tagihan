@@ -77,7 +77,7 @@ const EditPresensi = () => {
       });
 
       Swal.fire("Berhasil!", "Data presensi berhasil diperbarui!", "success").then(
-        () => navigate("/presensisiswa")
+        () => navigate("/presensisemua")
       );
     } catch (err) {
       console.error("Gagal update:", err);
@@ -87,7 +87,7 @@ const EditPresensi = () => {
     }
   };
 
-  const batal = () => navigate("/presensisiswa");
+  const batal = () => navigate("/presensisemua");
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">

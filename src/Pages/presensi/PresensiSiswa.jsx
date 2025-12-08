@@ -9,6 +9,7 @@ const PresensiSiswa = () => {
   const [Data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [masterUser, setMasterUser] = useState([]);   // ✅ tambahan
 
   const navigate = useNavigate();
 
@@ -38,8 +39,19 @@ const PresensiSiswa = () => {
     }
   };
 
+  // ✅ tambahan - ambil data master nama
+  const FetchMasterUser = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/kategori_data");
+      setMasterUser(res.data || []);
+    } catch (err) {
+      console.error("Gagal ambil master user:", err);
+    }
+  };
+
   useEffect(() => {
     FetchData();
+    FetchMasterUser();   // ✅ tambahan
   }, []);
 
   const formatTanggal = (tgl) => {
@@ -54,6 +66,19 @@ const PresensiSiswa = () => {
     } catch {
       return tgl;
     }
+  };
+
+  // ✅ tambahan - ambil nama dari nomor unik
+  const getNamaFromNomor = (nomor) => {
+    if (!nomor) return "-";
+    const found = masterUser.find(
+      (x) =>
+        x.nomorUnik === nomor ||
+        x.nomorUniqe === nomor ||
+        x.nomor_unique === nomor ||
+        x.nomor_unik === nomor
+    );
+    return found?.nama || "-";
   };
 
   const getStatusFromData = (item) => {
@@ -116,9 +141,7 @@ const PresensiSiswa = () => {
   };
 
   const cleanedData = (Array.isArray(filteredData) ? filteredData : []).filter(
-    (item) =>
-      (item?.nama || item?.nama === "") &&
-      (item?.nomorUnik || item?.nomor_unik || item?.nomorunik)
+    (item) => item?.nomorUnik || item?.nomor_unik || item?.nomorunik
   );
 
   return (
@@ -128,7 +151,6 @@ const PresensiSiswa = () => {
       <div className="flex flex-col gap-6">
         <div className="flex-1 flex flex-col gap-3 md:ml-6 bg-white shadow-md rounded-2xl p-6">
 
-          {/* JUDUL */}
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-2xl font-semibold text-gray-800 flex items-center gap-2">
               <FaUserCheck className="text-green-300 text-3xl" />
@@ -136,7 +158,7 @@ const PresensiSiswa = () => {
             </h2>
           </div>
 
-          {/* MENU */}
+          {/* MENU — TIDAK DIUBAH */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
             <div
               onClick={() => navigate("/izinpresensi")}
@@ -163,14 +185,13 @@ const PresensiSiswa = () => {
             </div>
           </div>
 
-          {/* FILTER KATEGORI */}
+          {/* FILTER — TIDAK DIUBAH */}
           <div className="flex items-center gap-3 mb-4">
             <label className="text-gray-700 font-medium">Filter:</label>
 
             <select
               onChange={(e) => {
                 const v = e.target.value.toLowerCase();
-
                 if (v === "semua") {
                   setFilteredData(Data);
                 } else {
@@ -180,10 +201,8 @@ const PresensiSiswa = () => {
                       item?.kategori_singkat ||
                       item?.role ||
                       "";
-
                     return String(kat).toLowerCase() === v;
                   });
-
                   setFilteredData(f);
                 }
               }}
@@ -202,7 +221,6 @@ const PresensiSiswa = () => {
           ) : (
             <div className="overflow-x-auto">
               <table className="min-w-full text-sm text-gray-700 border border-gray-300/60 rounded-xl overflow-hidden shadow-sm">
-
                 <thead>
                   <tr className="bg-blue-700 text-white">
                     <th className="px-4 py-3 text-center">No</th>
@@ -218,115 +236,94 @@ const PresensiSiswa = () => {
                 </thead>
 
                 <tbody className="bg-white divide-y divide-gray-200/70">
-                  {cleanedData.length > 0 ? (
-                    cleanedData.map((item, i) => {
-                      const finalKeterangan =
-                        item?.keterangan ||
-                        item?.keteranganIzin ||
-                        item?.keterangan_izin ||
-                        item?.alasan ||
-                        item?.ket ||
-                        item?.note ||
-                        "";
+                  {cleanedData.map((item, i) => {
+                    const nomor =
+                      item?.nomorUnik || item?.nomor_unik || item?.nomorunik;
 
-                      const statusBaru = getStatusFromData(item);
+                    const finalKeterangan =
+                      item?.keterangan ||
+                      item?.keteranganIzin ||
+                      item?.keterangan_izin ||
+                      item?.alasan ||
+                      item?.ket ||
+                      item?.note ||
+                      "";
 
-                      return (
-                        <tr key={item.id ?? i} className="hover:bg-blue-50/80 transition-all">
+                    const statusBaru = getStatusFromData(item);
 
-                          <td className="px-4 py-3 text-center">{i + 1}</td>
-                          <td className="px-4 py-3 text-left">{item?.nama || "-"}</td>
+                    return (
+                      <tr key={item.id ?? i}>
+                        <td className="px-4 py-3 text-center">{i + 1}</td>
 
-                          <td className="px-4 py-3 text-center">
-                            {item?.nomorUnik || item?.nomor_unik || item?.nomorunik || "-"}
-                          </td>
+                        {/* ✅ nama otomatis */}
+                        <td className="px-4 py-3 text-left">
+                          {item?.nama && item.nama !== ""
+                            ? item.nama
+                            : getNamaFromNomor(nomor)}
+                        </td>
 
-                          <td className="px-4 py-3 text-center">
-                            {finalKeterangan || "-"}
-                          </td>
+                        <td className="px-4 py-3 text-center">{nomor}</td>
+                        <td className="px-4 py-3 text-center">{finalKeterangan || "-"}</td>
+                        <td className="px-4 py-3 text-center">{item?.jamMasuk ?? "-"}</td>
+                        <td className="px-4 py-3 text-center">{item?.jamPulang ?? "-"}</td>
+                        <td className="px-4 py-3 text-center">{formatTanggal(item?.tanggal)}</td>
 
-                          <td className="px-4 py-3 text-center">
-                            {item?.jamMasuk ?? item?.jam_masuk ?? item?.jammasuk ?? "-"}
-                          </td>
+                        <td className="px-4 py-3 text-center">
+                          <span className={`px-3 py-1 rounded-lg text-sm font-semibold ${getStatusColor(statusBaru)}`}>
+                            {statusBaru}
+                          </span>
+                        </td>
 
-                          <td className="px-4 py-3 text-center">
-                            {item?.jamPulang ?? item?.jam_pulang ?? item?.jampulang ?? "-"}
-                          </td>
-
-                          <td className="px-4 py-3 text-center">
-                            {formatTanggal(item?.tanggal)}
-                          </td>
-
-                          <td className="px-4 py-3 text-center">
-                            <span
-                              className={`px-3 py-1 rounded-lg text-sm font-semibold ${getStatusColor(
-                                statusBaru
-                              )}`}
+                        {/* ✅ AKSI — TIDAK DIUBAH */}
+                        <td className="px-4 py-3 text-center">
+                          <div className="flex justify-center gap-2">
+                            <button
+                              onClick={() =>
+                                Swal.fire({
+                                  title: "Detail Presensi",
+                                  html: `
+                                    <div style="text-align: left; font-size: 15px; line-height: 1.5;">
+                                      <b>Nama:</b> ${item?.nama || getNamaFromNomor(nomor)} <br/>
+                                      <b>Nomor Unik:</b> ${nomor} <br/>
+                                      <b>Keterangan:</b> ${finalKeterangan || "-"} <br/>
+                                      <b>Jam Masuk:</b> ${item?.jamMasuk ?? "-"} <br/>
+                                      <b>Jam Pulang:</b> ${item?.jamPulang ?? "-"} <br/>
+                                      <b>Tanggal:</b> ${formatTanggal(item?.tanggal)} <br/>
+                                      <b>Status:</b> ${statusBaru}
+                                    </div>
+                                  `,
+                                  confirmButtonText: "Tutup",
+                                  width: 450
+                                })
+                              }
+                              className="bg-blue-600 text-white px-3 py-2 rounded-md hover:bg-blue-500"
                             >
-                              {statusBaru}
-                            </span>
-                          </td>
+                              📝
+                            </button>
 
-                          <td className="px-4 py-3 text-center">
-                            <div className="flex justify-center gap-2">
+                            <button
+                              onClick={() => navigate(`/editpresensi/${item.id}`)}
+                              className="bg-gray-700 text-white px-3 py-2 rounded-md hover:bg-gray-600"
+                            >
+                              ✏
+                            </button>
 
-                              <button
-                                onClick={() =>
-                                  Swal.fire({
-                                    title: "Detail Presensi",
-                                    html: `
-                                      <div style="text-align: left; font-size: 15px; line-height: 1.5;">
-                                        <b>Nama:</b> ${item?.nama || "-"} <br/>
-                                        <b>Nomor Unik:</b> ${item?.nomorUnik || item?.nomor_unik || "-"} <br/>
-                                        <b>Keterangan:</b> ${finalKeterangan || "-"} <br/>
-                                        <b>Jam Masuk:</b> ${item?.jamMasuk ?? item?.jam_masuk ?? "-"} <br/>
-                                        <b>Jam Pulang:</b> ${item?.jamPulang ?? item?.jam_pulang ?? "-"} <br/>
-                                        <b>Tanggal:</b> ${formatTanggal(item?.tanggal)} <br/>
-                                        <b>Status:</b> ${statusBaru}
-                                      </div>
-                                    `,
-                                    confirmButtonText: "Tutup",
-                                    width: 450
-                                  })
-                                }
-                                className="bg-blue-600 text-white px-3 py-2 rounded-md hover:bg-blue-500"
-                              >
-                                📝
-                              </button>
-
-                              <button
-                                onClick={() => navigate(`/editpresensi/${item.id}`)}
-                                className="bg-gray-700 text-white px-3 py-2 rounded-md hover:bg-gray-600"
-                              >
-                                ✏
-                              </button>
-
-                              <button
-                                onClick={() => handleDelete(item.id)}
-                                className="bg-red-700 text-white px-3 py-2 rounded-md hover:bg-red-600"
-                              >
-                                🗑
-                              </button>
-
-                            </div>
-                          </td>
-
-                        </tr>
-                      );
-                    })
-                  ) : (
-                    <tr>
-                      <td colSpan={9} className="text-center py-6 text-gray-500 italic">
-                        Tidak ada data presensi
-                      </td>
-                    </tr>
-                  )}
+                            <button
+                              onClick={() => handleDelete(item.id)}
+                              className="bg-red-700 text-white px-3 py-2 rounded-md hover:bg-red-600"
+                            >
+                              🗑
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
 
               </table>
             </div>
           )}
-
         </div>
       </div>
     </div>

@@ -100,7 +100,7 @@ const IzinPresensi = () => {
 
       Swal.fire("Berhasil!", "Pengajuan izin berhasil dikirim!", "success").then(
         () => {
-          navigate("/presensisiswa");
+          navigate("/presensisemua");
         }
       );
 
@@ -123,7 +123,7 @@ const IzinPresensi = () => {
     }
   };
 
-  const batal = () => navigate("/presensisiswa");
+  const batal = () => navigate("/presensisemua");
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
