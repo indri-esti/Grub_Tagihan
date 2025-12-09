@@ -59,10 +59,34 @@ const IzinPresensi = () => {
   };
 
   const submitIzin = async () => {
-    if (!form.kategori || !form.nama || !form.jenisIzin || !form.keterangan) {
+    if (!form.kategori || !form.nama || !form.jenisIzin) {
       Swal.fire("Oops!", "Semua form wajib diisi.", "warning");
       return;
     }
+
+    //-------------------------------
+    // AUTO KETERANGAN & JAM MASUK
+    //-------------------------------
+    const now = new Date();
+    const jamNow = now.toLocaleTimeString("id-ID", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
+    let autoKet = form.keterangan;
+
+    if (form.jenisIzin === "alpa" && !autoKet)
+      autoKet = "Tanpa keterangan";
+
+    if (form.jenisIzin === "dispensasi" && !autoKet)
+      autoKet = "Kegiatan resmi sekolah";
+
+    const jamMasukVal =
+      form.jenisIzin === "terlambat" ? jamNow : "";
+
+    //-------------------------------
+    // END AUTO
+    //-------------------------------
 
     const tanggalNow = new Date().toISOString().split("T")[0];
 
@@ -71,9 +95,9 @@ const IzinPresensi = () => {
       nama: form.nama,
       nomorUnik: form.nomorUnik || "",
       jenisIzin: form.jenisIzin,
-      keterangan: form.keterangan,
+      keterangan: autoKet,
       tanggal: tanggalNow,
-      status: form.jenisIzin.toLowerCase(), // <-- FIX STATUS
+      status: form.jenisIzin.toLowerCase(),
     };
 
     try {
@@ -87,11 +111,11 @@ const IzinPresensi = () => {
         kategori: payload.kategori,
         nama: payload.nama,
         nomorUnik: payload.nomorUnik,
-        keterangan: payload.keterangan,
-        jamMasuk: "",
+        keterangan: autoKet,
+        jamMasuk: jamMasukVal,
         jamPulang: "",
         tanggal: tanggalNow,
-        status: form.jenisIzin.toLowerCase(), // <-- FIX STATUS JUGA
+        status: form.jenisIzin.toLowerCase(),
       };
 
       await axios.post("http://localhost:5000/presensi", presensiPayload, {
@@ -192,13 +216,19 @@ const IzinPresensi = () => {
             <option value="">-- Pilih Jenis Izin --</option>
             <option value="sakit">Sakit</option>
             <option value="izin">Izin</option>
+            <option value="dispensasi">Dispensasi</option>
+            <option value="terlambat">Terlambat</option>
+            <option value="pulang_awal">Pulang Awal</option>
+            <option value="alpa">Alpa</option>
           </select>
 
           <textarea
             name="keterangan"
             placeholder="Tuliskan keterangan izin..."
             value={form.keterangan}
-            onChange={(e) => setForm({ ...form, keterangan: e.target.value })}
+            onChange={(e) =>
+              setForm({ ...form, keterangan: e.target.value })
+            }
             className="border rounded-lg px-3 py-2 h-24 resize-none"
           />
 

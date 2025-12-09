@@ -14,10 +14,12 @@ import {
 
 export default function Dashboard() {
   const [kategoriData, setKategoriData] = useState([]);
+  const [MasterUser, setMasterUser] = useState([]);   // FIX: hanya 1 state master user
+
   const [tagihan, setTagihan] = useState([]);
   const [filterPresensi, setFilterPresensi] = useState("semua");
-
   const [Presensi, setPresensi] = useState([]);
+
   const [stats, setStats] = useState({
     totalSiswa: 0,
     totalGuru: 0,
@@ -31,43 +33,38 @@ export default function Dashboard() {
   // STATUS PRESENSI FIX
   // ============================
   const getStatus = (item) => {
-  const ket = String(item.keterangan || "").toLowerCase();
-  const st = String(item.status || "").toLowerCase();
+    const ket = String(item.keterangan || "").toLowerCase();
+    const st = String(item.status || "").toLowerCase();
 
-  // 1. Jika ada jam masuk → Hadir
-  if (item.jamMasuk && item.jamMasuk.trim() !== "") return "Hadir";
-
-  // 2. Jika ada status langsung dari DB → (izin / sakit / alpa)
-  if (st.includes("izin")) return "Izin";
-  if (st.includes("sakit")) return "Sakit";
-  if (st.includes("alpa")) return "Alpa";
-
-  // 3. Jika keterangan bukan kosong → Anggap Izin / Keperluan
-  if (ket.trim() !== "") {
-    return "Keperluan";
-  }
-
-  // 4. Default
-  return "-";
-};
-
+    if (item.jamMasuk && item.jamMasuk.trim() !== "") return "Hadir";
+    if (st.includes("izin")) return "Izin";
+    if (st.includes("sakit")) return "Sakit";
+    if (st.includes("alpa")) return "Alpa";
+    if (ket.trim() !== "") return "Keperluan";
+    return "-";
+  };
 
   const getStatusColor = (item) => {
-  const status = getStatus(item);
+    const status = getStatus(item);
 
-  if (status === "Hadir") return "bg-green-500 text-white px-3 py-1 rounded-full";
-  if (status === "Izin") return "bg-blue-500 text-white px-3 py-1 rounded-full";
-  if (status === "Keperluan") return "bg-indigo-500 text-white px-3 py-1 rounded-full";
-  if (status === "Sakit") return "bg-yellow-500 text-white px-3 py-1 rounded-full";
-  if (status === "Alpa") return "bg-red-500 text-white px-3 py-1 rounded-full";
+    if (status === "Hadir")
+      return "bg-green-500 text-white px-3 py-1 rounded-full";
+    if (status === "Izin")
+      return "bg-blue-500 text-white px-3 py-1 rounded-full";
+    if (status === "Keperluan")
+      return "bg-indigo-500 text-white px-3 py-1 rounded-full";
+    if (status === "Sakit")
+      return "bg-yellow-500 text-white px-3 py-1 rounded-full";
+    if (status === "Alpa")
+      return "bg-red-500 text-white px-3 py-1 rounded-full";
 
-  return "bg-gray-300 text-gray-800 px-3 py-1 rounded-full";
-};
+    return "bg-gray-300 text-gray-800 px-3 py-1 rounded-full";
+  };
 
-  // helper ambil nomor unik
+  // helper nomor unik
   const getNomorUnik = (obj) => {
     if (!obj) return "-";
-    const keysToCheck = [
+    const keys = [
       "nomorunik",
       "nomorUnik",
       "nomor_unik",
@@ -78,7 +75,7 @@ export default function Dashboard() {
       "uniqueNumber",
       "unique_id",
     ];
-    for (const k of keysToCheck) {
+    for (const k of keys) {
       if (
         Object.prototype.hasOwnProperty.call(obj, k) &&
         obj[k] !== undefined &&
@@ -91,13 +88,20 @@ export default function Dashboard() {
     return "-";
   };
 
-  // helper harga
   const safeParseInt = (val) => {
     if (val === null || val === undefined) return 0;
-    const s = String(val);
-    const digits = s.replace(/[^0-9-]/g, "");
+    const digits = String(val).replace(/[^0-9-]/g, "");
     const n = parseInt(digits, 10);
     return Number.isNaN(n) ? 0 : n;
+  };
+
+  const FetchMasterUser = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/kategori_data");
+      setMasterUser(res.data || []);
+    } catch (err) {
+      console.error("Gagal ambil master user:", err);
+    }
   };
 
   useEffect(() => {
@@ -106,19 +110,20 @@ export default function Dashboard() {
         const kategoriRes = await axios.get("http://localhost:5000/kategori_data");
         const tagihanRes = await axios.get("http://localhost:5000/tagihan");
         const PresensiRes = await axios.get("http://localhost:5000/presensi");
+        const userRes = await axios.get("http://localhost:5000/kategori_data");
 
         const kategori = kategoriRes.data || [];
         const tagihanData = tagihanRes.data || [];
         const presensiData = PresensiRes.data || [];
 
+        setMasterUser(userRes.data || []);
+
         const normalize = (val) => (val ? String(val).toLowerCase() : "");
 
-        // Hitungan kategori
         const totalSiswa = kategori.filter((x) => normalize(x.kategori) === "siswa").length;
         const totalGuru = kategori.filter((x) => normalize(x.kategori) === "guru").length;
         const totalKaryawan = kategori.filter((x) => normalize(x.kategori) === "karyawan").length;
 
-        // Hitungan tagihan
         const totalTagihan = tagihanData.reduce((a, b) => a + safeParseInt(b.harga), 0);
         const totalLunas = tagihanData.filter((t) => normalize(t.status) === "lunas").length;
         const totalBelumLunas = tagihanData.length - totalLunas;
@@ -139,57 +144,56 @@ export default function Dashboard() {
         console.error("Gagal memuat data:", error);
       }
     };
+
     fetchAll();
+    FetchMasterUser();
   }, []);
 
   const cards = [
-    {
-      title: "Total Siswa",
-      value: stats.totalSiswa,
-      icon: <FaUsers />,
-      gradient: "from-green-400 to-green-600",
-    },
-    {
-      title: "Total Guru",
-      value: stats.totalGuru,
-      icon: <FaChalkboardTeacher />,
-      gradient: "from-blue-400 to-blue-600",
-    },
-    {
-      title: "Total Karyawan",
-      value: stats.totalKaryawan,
-      icon: <FaUserTie />,
-      gradient: "from-yellow-400 to-yellow-600",
-    },
-    {
-      title: "Total Tagihan",
-      value: `Rp ${stats.totalTagihan.toLocaleString("id-ID")}`,
-      icon: <FaMoneyBillWave />,
-      gradient: "from-orange-400 to-orange-600",
-    },
-    {
-      title: "Total Lunas",
-      value: stats.totalLunas,
-      icon: <FaCheckCircle />,
-      gradient: "from-emerald-400 to-emerald-600",
-    },
-    {
-      title: "Total Belum Lunas",
-      value: stats.totalBelumLunas,
-      icon: <FaTimesCircle />,
-      gradient: "from-red-400 to-red-600",
-    },
+    { title: "Total Siswa", value: stats.totalSiswa, icon: <FaUsers />, gradient: "from-green-400 to-green-600" },
+    { title: "Total Guru", value: stats.totalGuru, icon: <FaChalkboardTeacher />, gradient: "from-blue-400 to-blue-600" },
+    { title: "Total Karyawan", value: stats.totalKaryawan, icon: <FaUserTie />, gradient: "from-yellow-400 to-yellow-600" },
+    { title: "Total Tagihan", value: `Rp ${stats.totalTagihan.toLocaleString("id-ID")}`, icon: <FaMoneyBillWave />, gradient: "from-orange-400 to-orange-600" },
+    { title: "Total Lunas", value: stats.totalLunas, icon: <FaCheckCircle />, gradient: "from-emerald-400 to-emerald-600" },
+    { title: "Total Belum Lunas", value: stats.totalBelumLunas, icon: <FaTimesCircle />, gradient: "from-red-400 to-red-600" },
   ];
 
   const isKategori = (data, kategori) =>
     String(data.kategori || "").toLowerCase() === kategori.toLowerCase();
 
-  const filteredPresensi = Presensi
-    .filter((p) => p.nama && p.nama.trim() !== "")
-    .filter((p) => {
-      if (filterPresensi === "semua") return true;
-      return String(p.kategori || "").toLowerCase() === filterPresensi;
-    });
+ const filteredPresensi = Presensi
+  .filter((p) => p.nomorUnik || p.nomor_unik || p.nomorunik)
+  .filter((p) => {
+    if (filterPresensi === "semua") return true;
+
+    const nomor = getNomorUnik(p);
+
+    const user = MasterUser.find(
+      (x) =>
+        x.nomorUnik === nomor ||
+        x.nomorUniqe === nomor ||
+        x.nomor_unique === nomor ||
+        x.nomor_unik === nomor ||
+        x.nomor === nomor
+    );
+
+    if (!user) return false;
+
+    return String(user.kategori || "").toLowerCase() === filterPresensi;
+  });
+
+    const GetNamaByNomor = (nomor) => {
+  if (!nomor) return "-";
+  const found = MasterUser.find(
+    (x) =>
+      x.nomorUnik === nomor ||
+      x.nomorUniqe === nomor ||
+      x.nomor_unique === nomor ||
+      x.nomor_unik === nomor ||
+      x.nomor === nomor
+  );
+  return found?.nama || "-";
+};
 
   return (
     <div className="pl-[calc(15rem+2%)] pr-[4%] pt-[4%] bg-gray-100 min-h-screen transition-all duration-300">
@@ -216,14 +220,13 @@ export default function Dashboard() {
           ))}
         </div>
 
-        {/* === TABEL PRESENSI === */}
+        {/* == PRESENSI == */}
         <div className="bg-white shadow-md rounded-2xl overflow-hidden mb-10">
           <h2 className="bg-purple-600 text-white p-4 text-lg font-semibold flex items-center gap-2">
             <FaUserCheck className="text-white text-xl" />
-            Data Presensi 
+            Data Presensi
           </h2>
 
-          {/* FILTER */}
           <div className="p-4 flex gap-2 items-center">
             <select
               className="border rounded-lg p-2"
@@ -237,7 +240,6 @@ export default function Dashboard() {
             </select>
           </div>
 
-          {/* TABEL */}
           <table className="min-w-full text-sm text-gray-700">
             <thead className="bg-gray-100">
               <tr>
@@ -270,13 +272,12 @@ export default function Dashboard() {
                   return (
                     <tr key={i} className="hover:bg-gray-50">
                       <td className="py-2 px-4 text-left">{i + 1}</td>
-                      <td className="py-2 px-4 text-left">{p.nama}</td>
+                     <td className="py-2 px-4 text-left">{GetNamaByNomor(nomorUnik)}</td>
                       <td className="py-2 px-4 text-center">{nomorUnik}</td>
                       <td className="py-2 px-4 text-center">{p.keterangan}</td>
                       <td className="py-2 px-4 text-center">{p.jamMasuk}</td>
                       <td className="py-2 px-4 text-center">{p.jamPulang}</td>
                       <td className="py-2 px-4 text-center">{tanggalIndo}</td>
-
                       <td className="py-2 px-4 text-center">
                         <span className={getStatusColor(p)}>
                           {getStatus(p)}

@@ -10,44 +10,60 @@ const RekapPresensi = () => {
   const [filteredData, setFilteredData] = useState([]);
   const [filter, setFilter] = useState("semua");
   const [loading, setLoading] = useState(true);
+  const [masterUser, setMasterUser] = useState([]); // ✅ tambahan
 
   const Navigate = useNavigate();
 
-  // ✅ Tentukan status presensi
+  const FetchMasterUser = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/kategori_data");
+      setMasterUser(res.data || []);
+    } catch (err) {
+      console.error("Gagal ambil master user:", err);
+    }
+  };
+
+  const getNamaFromNomor = (nomor) => {
+    if (!nomor) return "-";
+    const found = masterUser.find(
+      (x) =>
+        x.nomorUnik === nomor ||
+        x.nomorUniqe === nomor ||
+        x.nomor_unique === nomor ||
+        x.nomor_unik === nomor
+    );
+    return found?.nama || "-";
+  };
+
   const getStatus = (item) => {
-  const ket = String(item.keterangan || "").toLowerCase();
-  const st = String(item.status || "").toLowerCase();
+    const ket = String(item.keterangan || "").toLowerCase();
+    const st = String(item.status || "").toLowerCase();
 
-  // 1. Jika ada jam masuk → Hadir
-  if (item.jamMasuk && item.jamMasuk.trim() !== "") return "Hadir";
+    if (item.jamMasuk && item.jamMasuk.trim() !== "") return "Hadir";
+    if (st === "izin" || ket.includes("izin")) return "Izin";
+    if (st === "sakit" || ket.includes("sakit")) return "Sakit";
+    if (st === "dispensasi" || ket.includes("dispensasi")) return "Dispensasi";
+    if (st === "terlambat" || ket.includes("terlambat")) return "Terlambat";
+   if (st === "pulang awal" || st === "pulang_awal" || ket.includes("pulang awal"))
+  return "Pulang Awal";
+    if (st === "alpa" || ket.includes("alpa")) return "Alpa";
+    return "-";
+  };
 
-  // 2. Jika ada status langsung dari DB → (izin / sakit / alpa)
-  if (st.includes("izin")) return "Izin";
-  if (st.includes("sakit")) return "Sakit";
-  if (st.includes("alpa")) return "Alpa";
+   const getStatusColor = (status) => {
+    const s = status?.toLowerCase() || "";
 
-  // 3. Jika keterangan bukan kosong → Anggap Izin / Keperluan
-  if (ket.trim() !== "") {
-    return "Keperluan";
-  }
+    
+    if (s === "hadir") return "bg-green-600 text-white";
+    if (s === "izin") return "bg-blue-600 text-white";
+    if (s === "sakit") return "bg-yellow-500 text-white";
+    if (s === "dispensasi") return "bg-indigo-600 text-white";
+    if (s === "terlambat") return "bg-orange-500 text-white";
+    if (s === "pulang awal") return "bg-purple-600 text-white";
+    if (s === "alpa") return "bg-red-600 text-white";
 
-  // 4. Default
-  return "-";
-};
-
-  // ✅ Tentukan warna status
-  const getStatusColor = (item) => {
-  const status = getStatus(item);
-
-  if (status === "Hadir") return "bg-green-500 text-white px-3 py-1 rounded-full";
-  if (status === "Izin") return "bg-blue-500 text-white px-3 py-1 rounded-full";
-  if (status === "Keperluan") return "bg-indigo-500 text-white px-3 py-1 rounded-full";
-  if (status === "Sakit") return "bg-yellow-500 text-white px-3 py-1 rounded-full";
-  if (status === "Alpa") return "bg-red-500 text-white px-3 py-1 rounded-full";
-
-  return "bg-gray-300 text-gray-800 px-3 py-1 rounded-full";
-};
-
+    return "bg-gray-300 text-gray-800";
+  };
 
   const FetchData = async () => {
     try {
@@ -73,6 +89,7 @@ const RekapPresensi = () => {
 
   useEffect(() => {
     FetchData();
+    FetchMasterUser(); // ✅ panggil master user juga
   }, []);
 
   const formatTanggal = (tgl) => {
@@ -131,8 +148,7 @@ const RekapPresensi = () => {
 
   const cleanedData = filteredData.filter(
     (item) =>
-      (item.nama || item.nama === "") &&
-      (item.nomorUnik || item.nomor_unik || item.nomorunik)
+      item?.nomorUnik || item?.nomor_unik || item?.nomorunik
   );
 
   return (
@@ -141,7 +157,6 @@ const RekapPresensi = () => {
 
       <div className="flex flex-col gap-6">
         <div className="flex-1 flex flex-col gap-3 md:ml-6 bg-white shadow-md rounded-2xl p-6">
-
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-2xl font-semibold text-gray-800 flex items-center gap-2">
               <FaRegCalendarCheck className="text-cyan-400 text-3xl" />
@@ -169,7 +184,6 @@ const RekapPresensi = () => {
           ) : (
             <div className="overflow-x-auto">
               <table className="min-w-full text-sm text-gray-700 border border-gray-300/60 rounded-xl overflow-hidden shadow-sm">
-
                 <thead>
                   <tr className="bg-blue-700 text-white">
                     <th className="px-4 py-3 text-center">No</th>
@@ -183,66 +197,45 @@ const RekapPresensi = () => {
                   </tr>
                 </thead>
 
-                <tbody className="bg-white divide-y divide-gray-200/70">
-                  {cleanedData.length > 0 ? (
-                    cleanedData.map((item, i) => (
-                      <tr
-                        key={item.id || i}
-                        className="hover:bg-blue-50/80 transition-all"
-                      >
-                        <td className="px-4 py-3 text-center">{i + 1}</td>
+               <tbody className="bg-white divide-y divide-gray-200/70">
+  {cleanedData.length > 0 ? (
+    cleanedData.map((item, i) => {
+      const nomor = item.nomorUnik || item.nomor_unik || item.nomorunik;
 
-                        <td className="px-4 py-3 text-left">{item.nama || "-"}</td>
+      return (
+        <tr key={item.id || i}>
+          <td className="px-4 py-3 text-center">{i + 1}</td>
 
-                        <td className="px-4 py-3 text-center">
-                          {item.nomorUnik || item.nomor_unik || item.nomorunik || "-"}
-                        </td>
+          <td className="px-4 py-3 text-left">
+            {item.nama && item.nama !== ""
+              ? item.nama
+              : getNamaFromNomor(nomor)}
+          </td>
 
-                        <td className="px-4 py-3 text-center">
-                          {item.keterangan || ""}
-                        </td>
+          <td className="px-4 py-3 text-center">{nomor}</td>
+          <td className="px-4 py-3 text-center">{item.keterangan || ""}</td>
+          <td className="px-4 py-3 text-center">{item.jamMasuk ?? "-"}</td>
+          <td className="px-4 py-3 text-center">{item.jamPulang ?? "-"}</td>
+          <td className="px-4 py-3 text-center">{formatTanggal(item.tanggal)}</td>
+          <td className="px-4 py-3 text-center">
+            <span
+              className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(getStatus(item))}`}
+            >
+              {getStatus(item)}
+            </span>
+          </td>
+        </tr>
+      );
+    })
+  ) : (
+    <tr>
+      <td colSpan="7" className="text-center py-4 text-gray-500 italic">
+        Tidak ada data presensi di temukan
+      </td>
+    </tr>
+  )}
+</tbody>
 
-                        <td className="px-4 py-3 text-center">
-                          {item.jamMasuk ??
-                            item.jam_masuk ??
-                            item.jammasuk ??
-                            "-"}
-                        </td>
-
-                        <td className="px-4 py-3 text-center">
-                          {item.jamPulang ??
-                            item.jam_pulang ??
-                            item.jampulang ??
-                            "-"}
-                        </td>
-
-                        <td className="px-4 py-3 text-center">
-                          {formatTanggal(item.tanggal)}
-                        </td>
-
-                        {/* ✅ STATUS SUDAH FIX */}
-                        <td className="px-4 py-3 text-center">
-                          <span
-                            className={`px-3 py-1 rounded-lg text-sm font-semibold ${getStatusColor(
-                              item
-                            )}`}
-                          >
-                            {getStatus(item)}
-                          </span>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td
-                        colSpan="8"
-                        className="text-center py-6 text-gray-500 italic"
-                      >
-                        Tidak ada data presensi
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
 
               </table>
             </div>

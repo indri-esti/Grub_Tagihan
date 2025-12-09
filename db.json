@@ -311,11 +311,58 @@
   ],
   "presensi": [
     {
-      "id": "b6bc",
+      "id": "7e06",
       "nomorUnik": "NUK-62094923",
-      "jamMasuk": "14.58",
+      "jamMasuk": "07.51",
+      "jamPulang": "10.34",
+      "tanggal": "2025-12-09T00:51:55.833Z"
+    },
+    {
+      "id": "6b57",
+      "nomorUnik": "NUK-76694514",
+      "jamMasuk": "10.34",
+      "jamPulang": "10.36",
+      "tanggal": "2025-12-09T03:34:31.993Z"
+    },
+    {
+      "id": "06a3",
+      "nomorUnik": "NUK-51192140",
+      "jamMasuk": "10.59",
       "jamPulang": "",
-      "tanggal": "2025-12-08T07:58:29.824Z"
+      "tanggal": "2025-12-09T03:59:03.086Z"
+    },
+    {
+      "id": "0d70",
+      "kategori": "karyawan",
+      "nama": "Adit",
+      "nomorUnik": "NUK-62140693",
+      "keterangan": "mengambil ijazah",
+      "jamMasuk": "",
+      "jamPulang": "",
+      "tanggal": "2025-12-09",
+      "status": "pulang_awal"
+    },
+    {
+      "id": "ea24",
+      "kategori": "siswa",
+      "nama": "Zilong",
+      "nomorUnik": "NUK-82075301",
+      "keterangan": "Karena Bangun kesiangan",
+      "jamMasuk": "13.50",
+      "jamPulang": "",
+      "tanggal": "2025-12-09",
+      "status": "terlambat"
+    },
+    {
+      "id": "9bcd",
+      "kategori": "siswa",
+      "nama": "Miya",
+      "nomorUnik": "NUK-76694514",
+      "keterangan": "Tak ada Keterangan",
+      "jamMasuk": "",
+      "jamPulang": "",
+      "tanggal": "2025-12-09",
+      "status": "alpa"
     }
   ],
   "izinpresensi": [
@@ -676,6 +723,106 @@
       "keterangan": "Sakit karena demam",
       "tanggal": "2025-12-08",
       "status": "sakit"
+    },
+    {
+      "id": "e407",
+      "kategori": "siswa",
+      "nama": "indri esti",
+      "nomorUnik": "NUK-62094923",
+      "jenisIzin": "izin",
+      "keterangan": "Mengambil ijazah",
+      "tanggal": "2025-12-09",
+      "status": "izin"
+    },
+    {
+      "id": "f86b",
+      "kategori": "siswa",
+      "nama": "Zilong",
+      "nomorUnik": "NUK-82075301",
+      "jenisIzin": "pulang_awal",
+      "keterangan": "Karena mengambil ijazah",
+      "tanggal": "2025-12-09",
+      "status": "pulang_awal"
+    },
+    {
+      "id": "104e",
+      "kategori": "karyawan",
+      "nama": "Adit",
+      "nomorUnik": "NUK-62140693",
+      "jenisIzin": "pulang_awal",
+      "keterangan": "Karena Mengambil ijazah",
+      "tanggal": "2025-12-09",
+      "status": "pulang_awal"
+    },
+    {
+      "id": "c45a",
+      "kategori": "karyawan",
+      "nama": "Adit",
+      "nomorUnik": "NUK-62140693",
+      "jenisIzin": "pulang_awal",
+      "keterangan": "mengambil ijazah",
+      "tanggal": "2025-12-09",
+      "status": "pulang_awal"
+    },
+    {
+      "id": "4f4e",
+      "kategori": "siswa",
+      "nama": "Zilong",
+      "nomorUnik": "NUK-82075301",
+      "jenisIzin": "terlambat",
+      "keterangan": "Karena Telat bangun",
+      "tanggal": "2025-12-09",
+      "status": "terlambat"
+    },
+    {
+      "id": "1677",
+      "kategori": "siswa",
+      "nama": "Zilong",
+      "nomorUnik": "NUK-82075301",
+      "jenisIzin": "dispensasi",
+      "keterangan": "Lomba antar sekolah",
+      "tanggal": "2025-12-09",
+      "status": "dispensasi"
+    },
+    {
+      "id": "abd1",
+      "kategori": "siswa",
+      "nama": "Zilong",
+      "nomorUnik": "NUK-82075301",
+      "jenisIzin": "alpa",
+      "keterangan": "tidak ada keterangan",
+      "tanggal": "2025-12-09",
+      "status": "alpa"
+    },
+    {
+      "id": "def9",
+      "kategori": "siswa",
+      "nama": "Zilong",
+      "nomorUnik": "NUK-82075301",
+      "jenisIzin": "terlambat",
+      "keterangan": "",
+      "tanggal": "2025-12-09",
+      "status": "terlambat"
+    },
+    {
+      "id": "5c16",
+      "kategori": "siswa",
+      "nama": "Amel",
+      "nomorUnik": "NUK-97800900",
+      "jenisIzin": "alpa",
+      "keterangan": "Tanpa keterangan",
+      "tanggal": "2025-12-09",
+      "status": "alpa"
+    },
+    {
+      "id": "c3aa",
+      "kategori": "siswa",
+      "nama": "Miya",
+      "nomorUnik": "NUK-76694514",
+      "jenisIzin": "alpa",
+      "keterangan": "Tidak ada keterangan",
+      "tanggal": "2025-12-09",
+      "status": "alpa"
     }
   ]
 }

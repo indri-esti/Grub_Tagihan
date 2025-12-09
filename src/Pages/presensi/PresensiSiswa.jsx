@@ -1,3 +1,7 @@
+// ===========================================
+// PRESENSI SISWA - STATUS SUDAH DIPERBAIKI
+// ===========================================
+
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import SidebarT from "../../Component/Sidebar";
@@ -9,7 +13,8 @@ const PresensiSiswa = () => {
   const [Data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [masterUser, setMasterUser] = useState([]);   // ✅ tambahan
+  const [masterUser, setMasterUser] = useState([]);
+  const [CurrentFilter, setCurrentFilter] = useState("semua");
 
   const navigate = useNavigate();
 
@@ -39,7 +44,6 @@ const PresensiSiswa = () => {
     }
   };
 
-  // ✅ tambahan - ambil data master nama
   const FetchMasterUser = async () => {
     try {
       const res = await axios.get("http://localhost:5000/kategori_data");
@@ -51,7 +55,7 @@ const PresensiSiswa = () => {
 
   useEffect(() => {
     FetchData();
-    FetchMasterUser();   // ✅ tambahan
+    FetchMasterUser();
   }, []);
 
   const formatTanggal = (tgl) => {
@@ -68,7 +72,6 @@ const PresensiSiswa = () => {
     }
   };
 
-  // ✅ tambahan - ambil nama dari nomor unik
   const getNamaFromNomor = (nomor) => {
     if (!nomor) return "-";
     const found = masterUser.find(
@@ -81,36 +84,40 @@ const PresensiSiswa = () => {
     return found?.nama || "-";
   };
 
+  // ===========================================
+  //  STATUS DIBENARKAN — HANYA BAGIAN INI
+  // ===========================================
   const getStatusFromData = (item) => {
-    const ket = (
-      item?.status ||
-      item?.keterangan ||
-      item?.keteranganIzin ||
-      item?.keterangan_izin ||
-      item?.alasan ||
-      item?.ket ||
-      item?.note ||
-      ""
-    ).toLowerCase();
+  const explicitStatus = (item?.status || "").toLowerCase();
 
-    if (item?.jamMasuk || item?.jam_masuk) return "Hadir";
-    if (item?.jamPulang || item?.jam_pulang) return "Hadir";
+  // PRIORITAS UTAMA = status yg dikirim dari izin
+  if (explicitStatus === "terlambat") return "Terlambat";
+  if (explicitStatus === "sakit") return "Sakit";
+  if (explicitStatus === "izin") return "Izin";
+  if (explicitStatus === "dispensasi") return "Dispensasi";
+  if (explicitStatus === "pulang_awal") return "Pulang Awal";
+  if (explicitStatus === "alpa") return "Alpa";
 
-    if (ket.includes("sakit")) return "Sakit";
-    if (ket.includes("izin")) return "Izin";
-    if (ket.includes("keperluan") || ket.includes("penting")) return "Keperluan Penting";
-    if (ket.includes("alpa") || ket.includes("tanpa keterangan")) return "Alpa";
+  // Kalau tidak ada jam masuk/pulang → Alpa
+  if (!item?.jamMasuk && !item?.jamPulang) return "Alpa";
 
-    return "-";
-  };
+  // Jika ada jam → Hadir
+  if (item?.jamMasuk || item?.jamPulang) return "Hadir";
 
+  return "-";
+};
+
+  // ===========================================
   const getStatusColor = (status) => {
     const s = status?.toLowerCase() || "";
 
+    
     if (s === "hadir") return "bg-green-600 text-white";
     if (s === "izin") return "bg-blue-600 text-white";
     if (s === "sakit") return "bg-yellow-500 text-white";
-    if (s.includes("keperluan")) return "bg-green-500 text-white";
+    if (s === "dispensasi") return "bg-indigo-600 text-white";
+    if (s === "terlambat") return "bg-orange-500 text-white";
+    if (s === "pulang awal") return "bg-purple-600 text-white";
     if (s === "alpa") return "bg-red-600 text-white";
 
     return "bg-gray-300 text-gray-800";
@@ -140,7 +147,7 @@ const PresensiSiswa = () => {
     });
   };
 
-  const cleanedData = (Array.isArray(filteredData) ? filteredData : []).filter(
+  const cleanedData = filteredData.filter(
     (item) => item?.nomorUnik || item?.nomor_unik || item?.nomorunik
   );
 
@@ -192,19 +199,36 @@ const PresensiSiswa = () => {
             <select
               onChange={(e) => {
                 const v = e.target.value.toLowerCase();
+                setCurrentFilter(v);
+
                 if (v === "semua") {
                   setFilteredData(Data);
-                } else {
-                  const f = Data.filter((item) => {
-                    const kat =
-                      item?.kategori ||
-                      item?.kategori_singkat ||
-                      item?.role ||
-                      "";
-                    return String(kat).toLowerCase() === v;
-                  });
-                  setFilteredData(f);
+                  return;
                 }
+
+                const f = Data.filter((item) => {
+                  const nomor =
+                    item?.nomorUnik ||
+                    item?.nomor_unik ||
+                    item?.nomorunik;
+
+                  const user = masterUser.find(
+                    (x) =>
+                      x.nomorUnik === nomor ||
+                      x.nomorUniqe === nomor ||
+                      x.nomor_unique === nomor ||
+                      x.nomor_unik === nomor ||
+                      x.nomor === nomor
+                  );
+
+                  if (!user) return false;
+
+                  const kategori = String(user.kategori || "").toLowerCase();
+
+                  return kategori === v;
+                });
+
+                setFilteredData(f);
               }}
               className="border border-gray-400 rounded-lg px-3 py-2"
             >
@@ -236,91 +260,109 @@ const PresensiSiswa = () => {
                 </thead>
 
                 <tbody className="bg-white divide-y divide-gray-200/70">
-                  {cleanedData.map((item, i) => {
-                    const nomor =
-                      item?.nomorUnik || item?.nomor_unik || item?.nomorunik;
+                  {cleanedData.length > 0 ? (
+                    cleanedData.map((item, i) => {
+                      const nomor =
+                        item?.nomorUnik || item?.nomor_unik || item?.nomorunik;
 
-                    const finalKeterangan =
-                      item?.keterangan ||
-                      item?.keteranganIzin ||
-                      item?.keterangan_izin ||
-                      item?.alasan ||
-                      item?.ket ||
-                      item?.note ||
-                      "";
+                      const finalKeterangan =
+                        item?.keterangan ||
+                        item?.keteranganIzin ||
+                        item?.keterangan_izin ||
+                        item?.alasan ||
+                        item?.ket ||
+                        item?.note ||
+                        "";
 
-                    const statusBaru = getStatusFromData(item);
+                      const statusBaru = getStatusFromData(item);
 
-                    return (
-                      <tr key={item.id ?? i}>
-                        <td className="px-4 py-3 text-center">{i + 1}</td>
+                      return (
+                        <tr key={item.id ?? i}>
+                          <td className="px-4 py-3 text-center">{i + 1}</td>
 
-                        {/* ✅ nama otomatis */}
-                        <td className="px-4 py-3 text-left">
-                          {item?.nama && item.nama !== ""
-                            ? item.nama
-                            : getNamaFromNomor(nomor)}
-                        </td>
+                          <td className="px-4 py-3 text-left">
+                            {item?.nama && item.nama !== ""
+                              ? item.nama
+                              : getNamaFromNomor(nomor)}
+                          </td>
 
-                        <td className="px-4 py-3 text-center">{nomor}</td>
-                        <td className="px-4 py-3 text-center">{finalKeterangan || "-"}</td>
-                        <td className="px-4 py-3 text-center">{item?.jamMasuk ?? "-"}</td>
-                        <td className="px-4 py-3 text-center">{item?.jamPulang ?? "-"}</td>
-                        <td className="px-4 py-3 text-center">{formatTanggal(item?.tanggal)}</td>
+                          <td className="px-4 py-3 text-center">{nomor}</td>
+                          <td className="px-4 py-3 text-center">{finalKeterangan || "-"}</td>
+                          <td className="px-4 py-3 text-center">{item?.jamMasuk ?? "-"}</td>
+                          <td className="px-4 py-3 text-center">{item?.jamPulang ?? "-"}</td>
+                          <td className="px-4 py-3 text-center">{formatTanggal(item?.tanggal)}</td>
 
-                        <td className="px-4 py-3 text-center">
-                          <span className={`px-3 py-1 rounded-lg text-sm font-semibold ${getStatusColor(statusBaru)}`}>
-                            {statusBaru}
-                          </span>
-                        </td>
-
-                        {/* ✅ AKSI — TIDAK DIUBAH */}
-                        <td className="px-4 py-3 text-center">
-                          <div className="flex justify-center gap-2">
-                            <button
-                              onClick={() =>
-                                Swal.fire({
-                                  title: "Detail Presensi",
-                                  html: `
-                                    <div style="text-align: left; font-size: 15px; line-height: 1.5;">
-                                      <b>Nama:</b> ${item?.nama || getNamaFromNomor(nomor)} <br/>
-                                      <b>Nomor Unik:</b> ${nomor} <br/>
-                                      <b>Keterangan:</b> ${finalKeterangan || "-"} <br/>
-                                      <b>Jam Masuk:</b> ${item?.jamMasuk ?? "-"} <br/>
-                                      <b>Jam Pulang:</b> ${item?.jamPulang ?? "-"} <br/>
-                                      <b>Tanggal:</b> ${formatTanggal(item?.tanggal)} <br/>
-                                      <b>Status:</b> ${statusBaru}
-                                    </div>
-                                  `,
-                                  confirmButtonText: "Tutup",
-                                  width: 450
-                                })
-                              }
-                              className="bg-blue-600 text-white px-3 py-2 rounded-md hover:bg-blue-500"
+                          <td className="px-4 py-3 text-center">
+                            <span
+                              className={`px-3 py-1 rounded-lg text-sm font-semibold ${getStatusColor(
+                                statusBaru
+                              )}`}
                             >
-                              📝
-                            </button>
+                              {statusBaru}
+                            </span>
+                          </td>
 
-                            <button
-                              onClick={() => navigate(`/editpresensi/${item.id}`)}
-                              className="bg-gray-700 text-white px-3 py-2 rounded-md hover:bg-gray-600"
-                            >
-                              ✏
-                            </button>
+                          <td className="px-4 py-3 text-center">
+                            <div className="flex justify-center gap-2">
+                              <button
+                                onClick={() =>
+                                  Swal.fire({
+                                    title: "Detail Presensi",
+                                    html: `
+                                      <div style="text-align: left; font-size: 15px; line-height: 1.5;">
+                                        <b>Nama:</b> ${item?.nama || getNamaFromNomor(nomor)} <br/>
+                                        <b>Nomor Unik:</b> ${nomor} <br/>
+                                        <b>Keterangan:</b> ${finalKeterangan || "-"} <br/>
+                                        <b>Jam Masuk:</b> ${item?.jamMasuk ?? "-"} <br/>
+                                        <b>Jam Pulang:</b> ${item?.jamPulang ?? "-"} <br/>
+                                        <b>Tanggal:</b> ${formatTanggal(item?.tanggal)} <br/>
+                                        <b>Status:</b> ${statusBaru}
+                                      </div>
+                                    `,
+                                    confirmButtonText: "Tutup",
+                                    width: 450
+                                  })
+                                }
+                                className="bg-blue-600 text-white px-3 py-2 rounded-md hover:bg-blue-500"
+                              >
+                                📝
+                              </button>
 
-                            <button
-                              onClick={() => handleDelete(item.id)}
-                              className="bg-red-700 text-white px-3 py-2 rounded-md hover:bg-red-600"
-                            >
-                              🗑
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
+                              <button
+                                onClick={() => navigate(`/editpresensi/${item.id}`)}
+                                className="bg-gray-700 text-white px-3 py-2 rounded-md hover:bg-gray-600"
+                              >
+                                ✏
+                              </button>
+
+                              <button
+                                onClick={() => handleDelete(item.id)}
+                                className="bg-red-700 text-white px-3 py-2 rounded-md hover:bg-red-600"
+                              >
+                                🗑
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  ) : (
+                    <tr>
+                      <td
+                        colSpan="9"
+                        className="text-center py-6 text-gray-500 italic"
+                      >
+                        {CurrentFilter === "siswa"
+                          ? "Tidak ada data presensi siswa ditemukan"
+                          : CurrentFilter === "guru"
+                          ? "Tidak ada data presensi guru ditemukan"
+                          : CurrentFilter === "karyawan"
+                          ? "Tidak ada data presensi karyawan ditemukan"
+                          : "Tidak ada data presensi ditemukan"}
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
-
               </table>
             </div>
           )}

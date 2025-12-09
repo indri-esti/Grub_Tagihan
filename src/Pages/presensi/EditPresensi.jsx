@@ -108,17 +108,21 @@ const EditPresensi = () => {
           </div>
         ) : (
           <div className="flex flex-col gap-4">
-            <select
-              name="status"
-              value={form.status}
-              onChange={(e) => setForm({ ...form, status: e.target.value })}
-              className="border rounded-lg px-3 py-2"
-              disabled={saving}
-            >
-              <option value="">-- Pilih Status Presensi --</option>
-              <option value="sakit">Sakit</option>
-              <option value="izin">Izin</option>
-            </select>
+           <select
+  name="status"
+  value={form.status}
+  onChange={(e) => setForm({ ...form, status: e.target.value })}
+  className="border rounded-lg px-3 py-2"
+  disabled={saving}
+>
+  <option value="">-- Pilih Status Presensi --</option>
+  <option value="sakit">Sakit</option>
+  <option value="izin">Izin</option>
+  <option value="dispensasi">Dispensasi</option>
+  <option value="terlambat">Terlambat</option>
+  <option value="pulang_awal">Pulang Awal</option>
+  <option value="alpa">Alpa</option>
+</select>
 
             <textarea
               name="keterangan"

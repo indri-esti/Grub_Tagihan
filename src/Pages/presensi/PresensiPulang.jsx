@@ -10,26 +10,46 @@ const PresensiPulang = () => {
   const [data, setData] = useState([]);
 
   // ==============================
-  // JAM DIGITAL
+  // JAM DIGITAL LED + BLINK
   // ==============================
   const [jam, setJam] = useState("");
+  const [blink, setBlink] = useState(true);
 
   useEffect(() => {
     const timer = setInterval(() => {
       const now = new Date();
-      const jamLive = now.toLocaleTimeString("id-ID", {
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-      });
-      setJam(jamLive);
+
+      setBlink((prev) => !prev);
+
+      const hh = now.getHours().toString().padStart(2, "0");
+      const mm = now.getMinutes().toString().padStart(2, "0");
+      const ss = now.getSeconds().toString().padStart(2, "0");
+
+      const separator = blink ? ":" : " ";
+
+      setJam(`${hh}${separator}${mm}${separator}${ss}`);
     }, 1000);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [blink]);
 
   // ==============================
-  // FETCH DATA PRESENSI
+  // SUARA NOTIFIKASI
+  // ==============================
+  const playSound = () => {
+    const audio = new Audio("/sound/berhasil.mp3");
+    audio.play();
+  };
+
+  // ==============================
+  // FULLSCREEN MODE
+  // ==============================
+  const Fullscreen = () => {
+    document.documentElement.requestFullscreen();
+  };
+
+  // ==============================
+  // FETCH DATA
   // ==============================
   const fetchData = async () => {
     try {
@@ -53,7 +73,6 @@ const PresensiPulang = () => {
     const presensiHariIni = data.find((d) => {
       const nomor = d.nomorUnik || d.nomorunik || d.nomor_unik || "";
       const tanggal = d.tanggal || "";
-
       return nomor === nomorUnik && tanggal.startsWith(today);
     });
 
@@ -73,42 +92,55 @@ const PresensiPulang = () => {
         }
       );
 
-      Swal.fire(
-        "Berhasil!",
-        "Presensi Pulang berhasil dicatat.",
-        "success"
-      ).then(() => {
+      playSound(); // 🔊 bunyi
+
+      Swal.fire("Berhasil!", "Presensi Pulang berhasil dicatat.", "success").then(() => {
         navigate("/presensisemua");
       });
 
       setNomorUnik("");
       fetchData();
     } catch {
-  Swal.fire("Error", "Gagal menyimpan presensi pulang!", "error");
-}
+      Swal.fire("Error", "Gagal menyimpan presensi pulang!", "error");
+    }
   };
 
   const batal = () => navigate("/presensisemua");
 
   // ==============================
-  // UI TANPA GRADIENT + JAM DIGITAL
+  // UI LED CLASSIC
   // ==============================
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
       <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl border border-gray-200">
 
-        <h2 className="text-3xl font-bold mb-2 flex flex-col items-center text-red-700">
+        {/* HEADER */}
+        <h2 className="text-3xl font-bold mb-4 flex flex-col items-center text-red-700">
           <FaDoorClosed className="text-4xl mb-2" />
           Presensi Pulang
         </h2>
 
-        {/* JAM DIGITAL */}
-        <p className="text-center text-xl font-mono text-gray-700 mb-6">
+        {/* JAM LED */}
+        <p
+          className="text-center text-4xl font-mono tracking-widest mb-8 select-none"
+          style={{
+            background: "#000",
+            color: "#ff3333",
+            padding: "14px 0",
+            borderRadius: "12px",
+            fontWeight: "bold",
+            letterSpacing: "6px",
+            border: "2px solid #ff0000",
+            boxShadow: "0 0 12px #ff0000",
+          }}
+        >
           {jam}
         </p>
 
+        {/* FULLSCREEN BUTTON */}
         <div className="flex flex-col gap-5">
 
+          {/* Input Nomor Unik */}
           <div>
             <label className="text-sm text-gray-600 font-medium">
               Nomor Unik
@@ -118,10 +150,11 @@ const PresensiPulang = () => {
               placeholder="Masukkan Nomor Unik"
               value={nomorUnik}
               onChange={(e) => setNomorUnik(e.target.value)}
-              className="w-full mt-1 border rounded-xl px-4 py-3 focus:ring-2 focus:ring-red-400 focus:outline-none transition"
+              className="w-full mt-1 border border-gray-300 rounded-xl px-4 py-3 text-lg focus:ring-2 focus:ring-red-400 focus:outline-none transition"
             />
           </div>
 
+          {/* Tombol */}
           <button
             onClick={submitPulang}
             className="w-full py-3 rounded-xl font-bold text-white text-lg bg-red-600 hover:bg-red-700 transition shadow-md"
