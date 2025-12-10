@@ -363,6 +363,24 @@
       "jamPulang": "",
       "tanggal": "2025-12-09",
       "status": "alpa"
+    },
+    {
+      "id": "0ff8",
+      "kategori": "siswa",
+      "nama": "indri esti",
+      "nomorUnik": "NUK-62094923",
+      "keterangan": "Karena Demam ",
+      "jamMasuk": "",
+      "jamPulang": "",
+      "tanggal": "2025-12-10",
+      "status": "sakit"
+    },
+    {
+      "id": "0fa2",
+      "nomorUnik": "NUK-18618513",
+      "jamMasuk": "14.11",
+      "jamPulang": "",
+      "tanggal": "2025-12-10T07:11:26.044Z"
     }
   ],
   "izinpresensi": [
@@ -823,6 +841,33 @@
       "keterangan": "Tidak ada keterangan",
       "tanggal": "2025-12-09",
       "status": "alpa"
+    },
+    {
+      "id": "7d3a",
+      "kategori": "siswa",
+      "nama": "indri esti",
+      "nomorUnik": "NUK-62094923",
+      "jenisIzin": "sakit",
+      "keterangan": "Karena Demam ",
+      "tanggal": "2025-12-10",
+      "status": "sakit"
+    }
+  ],
+  "kategori_izin": [
+    {
+      "id": "1",
+      "jenisIzin": "izin",
+      "status": "Aktif"
+    },
+    {
+      "id": "3e9e",
+      "nama": "Sakit",
+      "status": "Aktif"
+    },
+    {
+      "nama": "Izin",
+      "status": "Aktif",
+      "id": "084b"
     }
   ]
 }

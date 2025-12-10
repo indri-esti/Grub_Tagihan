@@ -37,6 +37,10 @@ import PresensiSiswa from "./Pages/presensi/PresensiSiswa";
 import IzinPresensi from "./Pages/presensi/IzinPresensi";
 import EditPresensi from "./Pages/presensi/EditPresensi";
 
+import KategoriIzin from "./Pages/kategori izin presensi/KategoriIzin";
+import TambahDataKategori from "./Pages/kategori izin presensi/TambahDataKategori";
+import EditDataKategori from "./Pages/kategori izin presensi/EditDataKategori";
+
 
 
 
@@ -78,7 +82,10 @@ function App() {
         <Route path="/presensisemua" element={<PresensiSiswa />} />
         <Route path="/izinpresensi" element={<IzinPresensi />} />
         <Route path="/editpresensi/:id" element={<EditPresensi />} />
-        
+
+        <Route path="/kategoriizin" element={<KategoriIzin />} />
+        <Route path="/tambahkategoriizin" element={<TambahDataKategori />} />
+        <Route path="/editkategoriizin/:id" element={<EditDataKategori />} />
         
       </Routes> 
   );

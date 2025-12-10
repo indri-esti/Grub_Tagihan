@@ -13,6 +13,7 @@ import {
   FaArchive,
   FaServer,
   FaClipboardList,
+  FaFileSignature ,
   FaUserCheck,
   FaMoon,
   FaSun,
@@ -238,6 +239,9 @@ export default function SidebarT() {
             {openPresensi && (
               <div className="ml-6 mt-2 space-y-2">
 
+                <Link to="/kategoriizin" className={`flex items-center gap-3 py-2 px-3 rounded-lg text-sm ${itemHoverClass}`}>
+                  < FaFileSignature className="text-slate-200" /> Kategori Izin
+                </Link>
 
                 <Link to="/presensisemua" className={`flex items-center gap-3 py-2 px-3 rounded-lg text-sm ${itemHoverClass}`}>
                   <FaUserCheck className="text-green-300" /> Semua Presensi

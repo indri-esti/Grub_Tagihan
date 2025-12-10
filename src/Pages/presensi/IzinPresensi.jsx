@@ -16,9 +16,13 @@ const IzinPresensi = () => {
   });
 
   const [kategoriList, setKategoriList] = useState([]);
+  const [jenisIzinList, setJenisIzinList] = useState([]); // <-- kategori_izin
   const [loadingKategori, setLoadingKategori] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
+  // ============================================
+  // FETCH KATEGORI NAMA (kategori_data)
+  // ============================================
   const fetchKategori = async () => {
     try {
       setLoadingKategori(true);
@@ -32,13 +36,32 @@ const IzinPresensi = () => {
     }
   };
 
+  // ============================================
+  // FETCH JENIS IZIN (kategori_izin)
+  // ============================================
+  const fetchJenisIzin = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/kategori_izin");
+      const aktifOnly = (res.data || []).filter(
+        (item) => String(item.status || "").toLowerCase() === "aktif"
+      );
+      setJenisIzinList(aktifOnly);
+    } catch (err) {
+      console.error("Gagal fetch kategori izin:", err);
+      Swal.fire("Error", "Gagal memuat jenis izin.", "error");
+    }
+  };
+
   useEffect(() => {
     fetchKategori();
+    fetchJenisIzin();
   }, []);
 
   const filteredNamaList = form.kategori
     ? kategoriList.filter(
-        (item) => item.kategori?.toLowerCase() === form.kategori.toLowerCase()
+        (item) =>
+          String(item.kategori || "").toLowerCase() ===
+          String(form.kategori || "").toLowerCase()
       )
     : [];
 
@@ -58,15 +81,15 @@ const IzinPresensi = () => {
     }));
   };
 
+  // ============================================
+  // SUBMIT IZIN (tidak diubah)
+  // ============================================
   const submitIzin = async () => {
     if (!form.kategori || !form.nama || !form.jenisIzin) {
       Swal.fire("Oops!", "Semua form wajib diisi.", "warning");
       return;
     }
 
-    //-------------------------------
-    // AUTO KETERANGAN & JAM MASUK
-    //-------------------------------
     const now = new Date();
     const jamNow = now.toLocaleTimeString("id-ID", {
       hour: "2-digit",
@@ -75,18 +98,14 @@ const IzinPresensi = () => {
 
     let autoKet = form.keterangan;
 
-    if (form.jenisIzin === "alpa" && !autoKet)
+    if (String(form.jenisIzin).toLowerCase() === "alpa" && !autoKet)
       autoKet = "Tanpa keterangan";
 
-    if (form.jenisIzin === "dispensasi" && !autoKet)
+    if (String(form.jenisIzin).toLowerCase() === "dispensasi" && !autoKet)
       autoKet = "Kegiatan resmi sekolah";
 
     const jamMasukVal =
-      form.jenisIzin === "terlambat" ? jamNow : "";
-
-    //-------------------------------
-    // END AUTO
-    //-------------------------------
+      String(form.jenisIzin).toLowerCase() === "terlambat" ? jamNow : "";
 
     const tanggalNow = new Date().toISOString().split("T")[0];
 
@@ -97,15 +116,13 @@ const IzinPresensi = () => {
       jenisIzin: form.jenisIzin,
       keterangan: autoKet,
       tanggal: tanggalNow,
-      status: form.jenisIzin.toLowerCase(),
+      status: String(form.jenisIzin).toLowerCase(),
     };
 
     try {
       setSubmitting(true);
 
-      await axios.post("http://localhost:5000/izinpresensi", payload, {
-        headers: { "Content-Type": "application/json" },
-      });
+      await axios.post("http://localhost:5000/izinpresensi", payload);
 
       const presensiPayload = {
         kategori: payload.kategori,
@@ -115,12 +132,10 @@ const IzinPresensi = () => {
         jamMasuk: jamMasukVal,
         jamPulang: "",
         tanggal: tanggalNow,
-        status: form.jenisIzin.toLowerCase(),
+        status: String(form.jenisIzin).toLowerCase(),
       };
 
-      await axios.post("http://localhost:5000/presensi", presensiPayload, {
-        headers: { "Content-Type": "application/json" },
-      });
+      await axios.post("http://localhost:5000/presensi", presensiPayload);
 
       Swal.fire("Berhasil!", "Pengajuan izin berhasil dikirim!", "success").then(
         () => {
@@ -158,6 +173,7 @@ const IzinPresensi = () => {
         </h2>
 
         <div className="flex flex-col gap-4">
+          {/* Kategori */}
           <select
             name="kategori"
             value={form.kategori}
@@ -177,6 +193,7 @@ const IzinPresensi = () => {
             <option value="karyawan">Karyawan</option>
           </select>
 
+          {/* Nama */}
           <select
             name="nama"
             onChange={handleNamaSelect}
@@ -193,12 +210,13 @@ const IzinPresensi = () => {
             </option>
 
             {filteredNamaList.map((item, index) => (
-              <option key={index} value={item.nama}>
-                {item.nama}
+              <option key={index} value={String(item.nama || "")}>
+                {String(item.nama || "")}
               </option>
             ))}
           </select>
 
+          {/* Nomor Unik */}
           <input
             type="text"
             placeholder="Nomor Unik"
@@ -207,21 +225,24 @@ const IzinPresensi = () => {
             className="border rounded-lg px-3 py-2 bg-gray-200 text-gray-600"
           />
 
-          <select
-            name="jenisIzin"
-            value={form.jenisIzin}
-            onChange={(e) => setForm({ ...form, jenisIzin: e.target.value })}
-            className="border rounded-lg px-3 py-2"
-          >
-            <option value="">-- Pilih Jenis Izin --</option>
-            <option value="sakit">Sakit</option>
-            <option value="izin">Izin</option>
-            <option value="dispensasi">Dispensasi</option>
-            <option value="terlambat">Terlambat</option>
-            <option value="pulang_awal">Pulang Awal</option>
-            <option value="alpa">Alpa</option>
-          </select>
+          {/* JENIS IZIN DARI kategori_izin */}
+       <select
+  name="jenisIzin"
+  value={form.jenisIzin}
+  onChange={(e) => setForm({ ...form, jenisIzin: e.target.value })}
+  className="border rounded-lg px-3 py-2"
+>
+  <option value="" disabled hidden>-- Pilih Jenis Izin --</option>
 
+  {jenisIzinList.map((item) => (
+    <option key={item.id} value={item.nama}>
+      {item.nama}
+    </option>
+  ))}
+</select>
+
+
+          {/* Keterangan */}
           <textarea
             name="keterangan"
             placeholder="Tuliskan keterangan izin..."
@@ -232,6 +253,7 @@ const IzinPresensi = () => {
             className="border rounded-lg px-3 py-2 h-24 resize-none"
           />
 
+          {/* Button Submit */}
           <button
             onClick={submitIzin}
             disabled={submitting}
@@ -242,6 +264,7 @@ const IzinPresensi = () => {
             {submitting ? "Mengirim..." : "Kirim Izin Presensi"}
           </button>
 
+          {/* Batal */}
           <button
             onClick={batal}
             className="bg-gray-400 text-white py-2 rounded-lg font-bold hover:bg-gray-500"

@@ -35,20 +35,25 @@ const RekapPresensi = () => {
     return found?.nama || "-";
   };
 
-  const getStatus = (item) => {
-    const ket = String(item.keterangan || "").toLowerCase();
-    const st = String(item.status || "").toLowerCase();
+ const GetStatusFromData = (item) => {
+  const explicitStatus = (item?.status || "").toLowerCase();
 
-    if (item.jamMasuk && item.jamMasuk.trim() !== "") return "Hadir";
-    if (st === "izin" || ket.includes("izin")) return "Izin";
-    if (st === "sakit" || ket.includes("sakit")) return "Sakit";
-    if (st === "dispensasi" || ket.includes("dispensasi")) return "Dispensasi";
-    if (st === "terlambat" || ket.includes("terlambat")) return "Terlambat";
-   if (st === "pulang awal" || st === "pulang_awal" || ket.includes("pulang awal"))
-  return "Pulang Awal";
-    if (st === "alpa" || ket.includes("alpa")) return "Alpa";
-    return "-";
-  };
+  // PRIORITAS UTAMA = status yg dikirim dari izin
+  if (explicitStatus === "terlambat") return "Terlambat";
+  if (explicitStatus === "sakit") return "Sakit";
+  if (explicitStatus === "izin") return "Izin";
+  if (explicitStatus === "dispensasi") return "Dispensasi";
+  if (explicitStatus === "pulang_awal") return "Pulang Awal";
+  if (explicitStatus === "alpa") return "Alpa";
+
+  // Kalau tidak ada jam masuk/pulang → Alpa
+  if (!item?.jamMasuk && !item?.jamPulang) return "Alpa";
+
+  // Jika ada jam → Hadir
+  if (item?.jamMasuk || item?.jamPulang) return "Hadir";
+
+  return "-";
+};
 
    const getStatusColor = (status) => {
     const s = status?.toLowerCase() || "";
@@ -64,6 +69,7 @@ const RekapPresensi = () => {
 
     return "bg-gray-300 text-gray-800";
   };
+
 
   const FetchData = async () => {
     try {
@@ -219,9 +225,11 @@ const RekapPresensi = () => {
           <td className="px-4 py-3 text-center">{formatTanggal(item.tanggal)}</td>
           <td className="px-4 py-3 text-center">
             <span
-              className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(getStatus(item))}`}
+              className={`px-3 py-1 rounded-full text-sm font-semibold ${getStatusColor(
+                GetStatusFromData(item)
+              )}`}
             >
-              {getStatus(item)}
+              {GetStatusFromData(item)}
             </span>
           </td>
         </tr>

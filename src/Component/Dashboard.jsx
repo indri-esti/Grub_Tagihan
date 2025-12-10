@@ -32,33 +32,38 @@ export default function Dashboard() {
   // ============================
   // STATUS PRESENSI FIX
   // ============================
-  const getStatus = (item) => {
-    const ket = String(item.keterangan || "").toLowerCase();
-    const st = String(item.status || "").toLowerCase();
+  const GetStatusFromData = (item) => {
+  const explicitStatus = (item?.status || "").toLowerCase();
 
-    if (item.jamMasuk && item.jamMasuk.trim() !== "") return "Hadir";
-    if (st.includes("izin")) return "Izin";
-    if (st.includes("sakit")) return "Sakit";
-    if (st.includes("alpa")) return "Alpa";
-    if (ket.trim() !== "") return "Keperluan";
-    return "-";
-  };
+  // PRIORITAS UTAMA = status yg dikirim dari izin
+  if (explicitStatus === "terlambat") return "Terlambat";
+  if (explicitStatus === "sakit") return "Sakit";
+  if (explicitStatus === "izin") return "Izin";
+  if (explicitStatus === "dispensasi") return "Dispensasi";
+  if (explicitStatus === "pulang_awal") return "Pulang Awal";
+  if (explicitStatus === "alpa") return "Alpa";
 
-  const getStatusColor = (item) => {
-    const status = getStatus(item);
+  // Kalau tidak ada jam masuk/pulang → Alpa
+  if (!item?.jamMasuk && !item?.jamPulang) return "Alpa";
 
-    if (status === "Hadir")
-      return "bg-green-500 text-white px-3 py-1 rounded-full";
-    if (status === "Izin")
-      return "bg-blue-500 text-white px-3 py-1 rounded-full";
-    if (status === "Keperluan")
-      return "bg-indigo-500 text-white px-3 py-1 rounded-full";
-    if (status === "Sakit")
-      return "bg-yellow-500 text-white px-3 py-1 rounded-full";
-    if (status === "Alpa")
-      return "bg-red-500 text-white px-3 py-1 rounded-full";
+  // Jika ada jam → Hadir
+  if (item?.jamMasuk || item?.jamPulang) return "Hadir";
 
-    return "bg-gray-300 text-gray-800 px-3 py-1 rounded-full";
+  return "-";
+};
+  const getStatusColor = (status) => {
+    const s = status?.toLowerCase() || "";
+
+    
+    if (s === "hadir") return "bg-green-600 text-white";
+    if (s === "izin") return "bg-blue-600 text-white";
+    if (s === "sakit") return "bg-yellow-500 text-white";
+    if (s === "dispensasi") return "bg-indigo-600 text-white";
+    if (s === "terlambat") return "bg-orange-500 text-white";
+    if (s === "pulang awal") return "bg-purple-600 text-white";
+    if (s === "alpa") return "bg-red-600 text-white";
+
+    return "bg-gray-300 text-gray-800";
   };
 
   // helper nomor unik
@@ -279,8 +284,12 @@ export default function Dashboard() {
                       <td className="py-2 px-4 text-center">{p.jamPulang}</td>
                       <td className="py-2 px-4 text-center">{tanggalIndo}</td>
                       <td className="py-2 px-4 text-center">
-                        <span className={getStatusColor(p)}>
-                          {getStatus(p)}
+                        <span
+                          className={`px-3 py-1 rounded-full text-sm font-semibold ${getStatusColor(
+                            GetStatusFromData(p)
+                          )}`}
+                        >
+                          {GetStatusFromData(p)}
                         </span>
                       </td>
                     </tr>
