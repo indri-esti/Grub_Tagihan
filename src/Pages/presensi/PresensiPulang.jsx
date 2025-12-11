@@ -94,7 +94,11 @@ const PresensiPulang = () => {
 
       playSound(); // 🔊 bunyi
 
-      Swal.fire("Berhasil!", "Presensi Pulang berhasil dicatat.", "success").then(() => {
+      Swal.fire(
+        "Berhasil!",
+        "Presensi Pulang berhasil dicatat.",
+        "success"
+      ).then(() => {
         navigate("/presensisemua");
       });
 
@@ -113,7 +117,6 @@ const PresensiPulang = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
       <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl border border-gray-200">
-
         {/* HEADER */}
         <h2 className="text-3xl font-bold mb-4 flex flex-col items-center text-red-700">
           <FaDoorClosed className="text-4xl mb-2" />
@@ -139,7 +142,6 @@ const PresensiPulang = () => {
 
         {/* FULLSCREEN BUTTON */}
         <div className="flex flex-col gap-5">
-
           {/* Input Nomor Unik */}
           <div>
             <label className="text-sm text-gray-600 font-medium">
@@ -168,7 +170,6 @@ const PresensiPulang = () => {
           >
             Batal
           </button>
-
         </div>
       </div>
     </div>

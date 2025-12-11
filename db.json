@@ -354,17 +354,6 @@
       "status": "terlambat"
     },
     {
-      "id": "9bcd",
-      "kategori": "siswa",
-      "nama": "Miya",
-      "nomorUnik": "NUK-76694514",
-      "keterangan": "Tak ada Keterangan",
-      "jamMasuk": "",
-      "jamPulang": "",
-      "tanggal": "2025-12-09",
-      "status": "alpa"
-    },
-    {
       "id": "0ff8",
       "kategori": "siswa",
       "nama": "indri esti",
@@ -381,6 +370,42 @@
       "jamMasuk": "14.11",
       "jamPulang": "",
       "tanggal": "2025-12-10T07:11:26.044Z"
+    },
+    {
+      "id": "d776",
+      "kategori": "guru",
+      "nama": "Fedrin",
+      "nomorUnik": "NUK-82362969",
+      "keterangan": "",
+      "jamMasuk": "",
+      "jamPulang": "",
+      "tanggal": "2025-12-10",
+      "status": "alpha"
+    },
+    {
+      "id": "dc6f",
+      "nomorUnik": "NUK-64079973",
+      "jamMasuk": "07.34",
+      "jamPulang": "",
+      "tanggal": "2025-12-11T00:34:46.308Z"
+    },
+    {
+      "id": "c443",
+      "nomorUnik": "NUK-59437697",
+      "jamMasuk": "10.12",
+      "jamPulang": "",
+      "tanggal": "2025-12-11T03:12:59.493Z"
+    },
+    {
+      "id": "accd",
+      "kategori": "karyawan",
+      "nama": "Fanny",
+      "nomorUnik": "NUK-59437697",
+      "keterangan": "karena ada pertemuan dengan direktur",
+      "jamMasuk": "",
+      "jamPulang": "10.13",
+      "tanggal": "2025-12-11",
+      "status": "izin"
     }
   ],
   "izinpresensi": [
@@ -851,6 +876,86 @@
       "keterangan": "Karena Demam ",
       "tanggal": "2025-12-10",
       "status": "sakit"
+    },
+    {
+      "id": "2c81",
+      "kategori": "guru",
+      "nama": "Fedrin",
+      "nomorUnik": "NUK-82362969",
+      "jenisIzin": "Alpha",
+      "keterangan": "",
+      "tanggal": "2025-12-10",
+      "status": "alpha"
+    },
+    {
+      "id": "aa0b",
+      "kategori": "karyawan",
+      "nama": "Fanny",
+      "nomorUnik": "NUK-59437697",
+      "jenisIzin": "Izin",
+      "keterangan": "ada makan siang bersama manajer",
+      "tanggal": "2025-12-11",
+      "status": "izin"
+    },
+    {
+      "id": "5b01",
+      "kategori": "siswa",
+      "nama": "Amel",
+      "nomorUnik": "NUK-97800900",
+      "jenisIzin": "Izin",
+      "keterangan": "ambil ijzah",
+      "tanggal": "2025-12-11",
+      "status": "izin"
+    },
+    {
+      "id": "b987",
+      "kategori": "karyawan",
+      "nama": "Fanny",
+      "nomorUnik": "NUK-59437697",
+      "jenisIzin": "Izin",
+      "keterangan": "",
+      "tanggal": "2025-12-11",
+      "status": "izin"
+    },
+    {
+      "id": "a76e",
+      "kategori": "karyawan",
+      "nama": "Fanny",
+      "nomorUnik": "NUK-59437697",
+      "jenisIzin": "Izin",
+      "keterangan": "",
+      "tanggal": "2025-12-11",
+      "status": "izin"
+    },
+    {
+      "id": "8490",
+      "kategori": "karyawan",
+      "nama": "Fanny",
+      "nomorUnik": "NUK-59437697",
+      "jenisIzin": "Izin",
+      "keterangan": "",
+      "tanggal": "2025-12-11",
+      "status": "izin"
+    },
+    {
+      "id": "2e2d",
+      "kategori": "karyawan",
+      "nama": "Fanny",
+      "nomorUnik": "NUK-59437697",
+      "jenisIzin": "Izin",
+      "keterangan": "karena ada pertemuan dengan direktur",
+      "tanggal": "2025-12-11",
+      "status": "izin"
+    },
+    {
+      "id": "1653",
+      "kategori": "siswa",
+      "nama": "indri esti",
+      "nomorUnik": "NUK-62094923",
+      "jenisIzin": "Dispensasi",
+      "keterangan": "lomba ",
+      "tanggal": "2025-12-11",
+      "status": "dispensasi"
     }
   ],
   "kategori_izin": [
@@ -868,6 +973,21 @@
       "nama": "Izin",
       "status": "Aktif",
       "id": "084b"
+    },
+    {
+      "id": "6a0c",
+      "nama": "Dispensasi",
+      "status": "Aktif"
+    },
+    {
+      "id": "db8c",
+      "nama": "Terlambat",
+      "status": "Nonaktif"
+    },
+    {
+      "id": "1d7d",
+      "nama": "Alpa",
+      "status": "Nonaktif"
     }
   ]
 }

@@ -5,7 +5,12 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import SidebarT from "../../Component/Sidebar";
-import { FaUserCheck, FaRegFileAlt, FaDoorOpen, FaDoorClosed } from "react-icons/fa";
+import {
+  FaUserCheck,
+  FaRegFileAlt,
+  FaDoorOpen,
+  FaDoorClosed,
+} from "react-icons/fa";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 
@@ -88,30 +93,29 @@ const PresensiSiswa = () => {
   //  STATUS DIBENARKAN — HANYA BAGIAN INI
   // ===========================================
   const getStatusFromData = (item) => {
-  const explicitStatus = (item?.status || "").toLowerCase();
+    const explicitStatus = (item?.status || "").toLowerCase();
 
-  // PRIORITAS UTAMA = status yg dikirim dari izin
-  if (explicitStatus === "terlambat") return "Terlambat";
-  if (explicitStatus === "sakit") return "Sakit";
-  if (explicitStatus === "izin") return "Izin";
-  if (explicitStatus === "dispensasi") return "Dispensasi";
-  if (explicitStatus === "pulang_awal") return "Pulang Awal";
-  if (explicitStatus === "alpa") return "Alpa";
+    // PRIORITAS UTAMA = status yg dikirim dari izin
+    if (explicitStatus === "terlambat") return "Terlambat";
+    if (explicitStatus === "sakit") return "Sakit";
+    if (explicitStatus === "izin") return "Izin";
+    if (explicitStatus === "dispensasi") return "Dispensasi";
+    if (explicitStatus === "pulang_awal") return "Pulang Awal";
+    if (explicitStatus === "alpa") return "Alpa";
 
-  // Kalau tidak ada jam masuk/pulang → Alpa
-  if (!item?.jamMasuk && !item?.jamPulang) return "Alpa";
+    // Kalau tidak ada jam masuk/pulang → Alpa
+    if (!item?.jamMasuk && !item?.jamPulang) return "Alpa";
 
-  // Jika ada jam → Hadir
-  if (item?.jamMasuk || item?.jamPulang) return "Hadir";
+    // Jika ada jam → Hadir
+    if (item?.jamMasuk || item?.jamPulang) return "Hadir";
 
-  return "-";
-};
+    return "-";
+  };
 
   // ===========================================
   const getStatusColor = (status) => {
     const s = status?.toLowerCase() || "";
 
-    
     if (s === "hadir") return "bg-green-600 text-white";
     if (s === "izin") return "bg-blue-600 text-white";
     if (s === "sakit") return "bg-yellow-500 text-white";
@@ -147,9 +151,13 @@ const PresensiSiswa = () => {
     });
   };
 
-  const cleanedData = filteredData.filter(
-    (item) => item?.nomorUnik || item?.nomor_unik || item?.nomorunik
-  );
+ const cleanedData = filteredData.filter(
+  (item) =>
+    item?.nomor ||
+    item?.nomorUnik ||
+    item?.nomor_unik ||
+    item?.nomorunik
+);
 
   return (
     <div className="pl-[calc(15rem+1%)] pr-[5%] pt-[5%] md:pt-10 transition-all duration-300">
@@ -157,7 +165,6 @@ const PresensiSiswa = () => {
 
       <div className="flex flex-col gap-6">
         <div className="flex-1 flex flex-col gap-3 md:ml-6 bg-white shadow-md rounded-2xl p-6">
-
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-2xl font-semibold text-gray-800 flex items-center gap-2">
               <FaUserCheck className="text-green-300 text-3xl" />
@@ -208,9 +215,7 @@ const PresensiSiswa = () => {
 
                 const f = Data.filter((item) => {
                   const nomor =
-                    item?.nomorUnik ||
-                    item?.nomor_unik ||
-                    item?.nomorunik;
+                    item?.nomorUnik || item?.nomor_unik || item?.nomorunik;
 
                   const user = masterUser.find(
                     (x) =>
@@ -287,10 +292,18 @@ const PresensiSiswa = () => {
                           </td>
 
                           <td className="px-4 py-3 text-center">{nomor}</td>
-                          <td className="px-4 py-3 text-center">{finalKeterangan || "-"}</td>
-                          <td className="px-4 py-3 text-center">{item?.jamMasuk ?? "-"}</td>
-                          <td className="px-4 py-3 text-center">{item?.jamPulang ?? "-"}</td>
-                          <td className="px-4 py-3 text-center">{formatTanggal(item?.tanggal)}</td>
+                          <td className="px-4 py-3 text-center">
+                            {finalKeterangan || "-"}
+                          </td>
+                          <td className="px-4 py-3 text-center">
+                            {item?.jamMasuk ?? "-"}
+                          </td>
+                          <td className="px-4 py-3 text-center">
+                            {item?.jamPulang ?? "-"}
+                          </td>
+                          <td className="px-4 py-3 text-center">
+                            {formatTanggal(item?.tanggal)}
+                          </td>
 
                           <td className="px-4 py-3 text-center">
                             <span
@@ -310,17 +323,27 @@ const PresensiSiswa = () => {
                                     title: "Detail Presensi",
                                     html: `
                                       <div style="text-align: left; font-size: 15px; line-height: 1.5;">
-                                        <b>Nama:</b> ${item?.nama || getNamaFromNomor(nomor)} <br/>
+                                        <b>Nama:</b> ${
+                                          item?.nama || getNamaFromNomor(nomor)
+                                        } <br/>
                                         <b>Nomor Unik:</b> ${nomor} <br/>
-                                        <b>Keterangan:</b> ${finalKeterangan || "-"} <br/>
-                                        <b>Jam Masuk:</b> ${item?.jamMasuk ?? "-"} <br/>
-                                        <b>Jam Pulang:</b> ${item?.jamPulang ?? "-"} <br/>
-                                        <b>Tanggal:</b> ${formatTanggal(item?.tanggal)} <br/>
+                                        <b>Keterangan:</b> ${
+                                          finalKeterangan || "-"
+                                        } <br/>
+                                        <b>Jam Masuk:</b> ${
+                                          item?.jamMasuk ?? "-"
+                                        } <br/>
+                                        <b>Jam Pulang:</b> ${
+                                          item?.jamPulang ?? "-"
+                                        } <br/>
+                                        <b>Tanggal:</b> ${formatTanggal(
+                                          item?.tanggal
+                                        )} <br/>
                                         <b>Status:</b> ${statusBaru}
                                       </div>
                                     `,
                                     confirmButtonText: "Tutup",
-                                    width: 450
+                                    width: 450,
                                   })
                                 }
                                 className="bg-blue-600 text-white px-3 py-2 rounded-md hover:bg-blue-500"
@@ -329,7 +352,9 @@ const PresensiSiswa = () => {
                               </button>
 
                               <button
-                                onClick={() => navigate(`/editpresensi/${item.id}`)}
+                                onClick={() =>
+                                  navigate(`/editpresensi/${item.id}`)
+                                }
                                 className="bg-gray-700 text-white px-3 py-2 rounded-md hover:bg-gray-600"
                               >
                                 ✏

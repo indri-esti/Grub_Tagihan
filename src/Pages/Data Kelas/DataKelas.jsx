@@ -159,7 +159,9 @@ const DataKelas = () => {
                         <td className="px-4 py-3 text-left">{item.jurusan}</td>
                         <td className="px-4 py-3 text-center flex justify-center gap-2">
                           <button
-                            onClick={() => navigate(`/edit_datakelas/${item.id}`)}
+                            onClick={() =>
+                              navigate(`/edit_datakelas/${item.id}`)
+                            }
                             className="bg-gray-700 text-white px-3 py-1 rounded-md hover:bg-gray-800 transition"
                           >
                             ✏

@@ -13,7 +13,7 @@ import {
   FaArchive,
   FaServer,
   FaClipboardList,
-  FaFileSignature ,
+  FaFileSignature,
   FaUserCheck,
   FaMoon,
   FaSun,
@@ -127,12 +127,13 @@ export default function SidebarT() {
           <h1 className="text-xl font-bold tracking-wide text-center mt-3">
             School Web
           </h1>
-          <div className={`w-12 h-[3px] ${headerLineClass} rounded-full mt-2`}></div>
+          <div
+            className={`w-12 h-[3px] ${headerLineClass} rounded-full mt-2`}
+          ></div>
         </div>
 
         {/* MENU */}
         <nav className="space-y-4 flex-1 pr-2">
-
           {/* DASHBOARD */}
           <div>
             <Link
@@ -169,15 +170,24 @@ export default function SidebarT() {
 
             {openDatabase && (
               <div className="ml-6 mt-2 space-y-2">
-                <Link to="/kategoridata" className={`flex items-center gap-3 py-2 px-3 rounded-lg text-sm ${itemHoverClass}`}>
+                <Link
+                  to="/kategoridata"
+                  className={`flex items-center gap-3 py-2 px-3 rounded-lg text-sm ${itemHoverClass}`}
+                >
                   <FaFolderOpen className="text-yellow-300" /> Kategori Data
                 </Link>
 
-                <Link to="/datakelas" className={`flex items-center gap-3 py-2 px-3 rounded-lg text-sm ${itemHoverClass}`}>
+                <Link
+                  to="/datakelas"
+                  className={`flex items-center gap-3 py-2 px-3 rounded-lg text-sm ${itemHoverClass}`}
+                >
                   <FaChalkboard className="text-orange-300" /> Data Kelas
                 </Link>
 
-                <Link to="/masterdata" className={`flex items-center gap-3 py-2 px-3 rounded-lg text-sm ${itemHoverClass}`}>
+                <Link
+                  to="/masterdata"
+                  className={`flex items-center gap-3 py-2 px-3 rounded-lg text-sm ${itemHoverClass}`}
+                >
                   <FaArchive className="text-green-300" /> Master Data
                 </Link>
               </div>
@@ -204,15 +214,24 @@ export default function SidebarT() {
 
             {openKeuangan && (
               <div className="ml-6 mt-2 space-y-2">
-                <Link to="/kategoritagihan" className={`flex items-center gap-3 py-2 px-3 rounded-lg text-sm ${itemHoverClass}`}>
+                <Link
+                  to="/kategoritagihan"
+                  className={`flex items-center gap-3 py-2 px-3 rounded-lg text-sm ${itemHoverClass}`}
+                >
                   <FaChartPie className="text-purple-300" /> Kategori Tagihan
                 </Link>
 
-                <Link to="/tagihan" className={`flex items-center gap-3 py-2 px-3 rounded-lg text-sm ${itemHoverClass}`}>
+                <Link
+                  to="/tagihan"
+                  className={`flex items-center gap-3 py-2 px-3 rounded-lg text-sm ${itemHoverClass}`}
+                >
                   <FaMoneyBillWave className="text-green-300" /> Tagihan
                 </Link>
 
-                <Link to="/rekaptagihan" className={`flex items-center gap-3 py-2 px-3 rounded-lg text-sm ${itemHoverClass}`}>
+                <Link
+                  to="/rekaptagihan"
+                  className={`flex items-center gap-3 py-2 px-3 rounded-lg text-sm ${itemHoverClass}`}
+                >
                   <FaClipboardList className="text-yellow-300" /> Rekap Tagihan
                 </Link>
               </div>
@@ -231,36 +250,49 @@ export default function SidebarT() {
               {openPresensi ? <FaChevronUp /> : <FaChevronDown />}
             </button>
 
-            {(isActive("/semuapresensi") ||
+            {(isActive("/kategoriizin") ||
+              isActive("/presensisemua") ||
               isActive("/rekappresensi")) && (
               <div className="w-24 h-[3px] bg-white rounded-full ml-12"></div>
             )}
 
             {openPresensi && (
               <div className="ml-6 mt-2 space-y-2">
-
-                <Link to="/kategoriizin" className={`flex items-center gap-3 py-2 px-3 rounded-lg text-sm ${itemHoverClass}`}>
-                  < FaFileSignature className="text-slate-200" /> Kategori Izin
+                <Link
+                  to="/kategoriizin"
+                  className={`flex items-center gap-3 py-2 px-3 rounded-lg text-sm ${itemHoverClass}`}
+                >
+                  <FaFileSignature className="text-slate-200" /> Kategori Izin
                 </Link>
 
-                <Link to="/presensisemua" className={`flex items-center gap-3 py-2 px-3 rounded-lg text-sm ${itemHoverClass}`}>
+                <Link
+                  to="/presensisemua"
+                  className={`flex items-center gap-3 py-2 px-3 rounded-lg text-sm ${itemHoverClass}`}
+                >
                   <FaUserCheck className="text-green-300" /> Semua Presensi
                 </Link>
 
-                <Link to="/rekappresensi" className={`flex items-center gap-3 py-2 px-3 rounded-lg text-sm ${itemHoverClass}`}>
-                  <FaRegCalendarCheck className="text-cyan-400" /> Rekap Presensi
+                <Link
+                  to="/rekappresensi"
+                  className={`flex items-center gap-3 py-2 px-3 rounded-lg text-sm ${itemHoverClass}`}
+                >
+                  <FaRegCalendarCheck className="text-cyan-400" /> Rekap
+                  Presensi
                 </Link>
               </div>
             )}
           </div>
-
         </nav>
 
         {/* TOGGLE MODE */}
         <div className="flex items-center justify-between mt-4 mb-4">
           <div className="flex items-center gap-3">
             <div className="flex items-center justify-center w-8 h-8 rounded-md bg-white/10">
-              {darkMode ? <FaMoon className="text-yellow-300" /> : <FaSun className="text-yellow-300" />}
+              {darkMode ? (
+                <FaMoon className="text-yellow-300" />
+              ) : (
+                <FaSun className="text-yellow-300" />
+              )}
             </div>
             <div>
               <div className="text-sm font-medium">

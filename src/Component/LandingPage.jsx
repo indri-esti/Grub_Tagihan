@@ -185,7 +185,9 @@ function LandingPage() {
 
       {/* FOOTER */}
       <footer className="bg-blue-700 text-white py-8 text-center mt-12">
-        <p className="text-lg font-semibold">© 2025 SMK BINANUSANTARA SEMARANG</p>
+        <p className="text-lg font-semibold">
+          © 2025 SMK BINANUSANTARA SEMARANG
+        </p>
         <p className="text-sm mt-2">
           Jl. Kemantren Raya No. 10 Wonosari Ngaliyan - Kota Semarang | Telp:
           (024) 1234567

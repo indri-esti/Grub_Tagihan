@@ -125,79 +125,97 @@ const KategoriData = () => {
           ) : (
             <div className="overflow-x-auto rounded-lg bg-white">
               <table className="min-w-full text-sm border-separate border-spacing-y-1">
-  <thead>
-    <tr className="bg-blue-600 text-white rounded-lg">
-      <th className="px-4 py-2 text-center font-semibold">No</th>
-      <th className="px-4 py-2 text-center font-semibold">Nama</th>
-      <th className="px-4 py-2 text-center font-semibold">Email</th>
+                <thead>
+                  <tr className="bg-blue-600 text-white rounded-lg">
+                    <th className="px-4 py-2 text-center font-semibold">No</th>
+                    <th className="px-4 py-2 text-center font-semibold">
+                      Nama
+                    </th>
+                    <th className="px-4 py-2 text-center font-semibold">
+                      Email
+                    </th>
 
-      {/* ⭐ KOLOM BARU */}
-      <th className="px-4 py-2 text-center font-semibold">Nomor Uniqe</th>
+                    {/* ⭐ KOLOM BARU */}
+                    <th className="px-4 py-2 text-center font-semibold">
+                      Nomor Uniqe
+                    </th>
 
-      <th className="px-4 py-2 text-center font-semibold">Level</th>
-      <th className="px-4 py-2 text-center font-semibold">
-        {filter === "Guru"
-          ? "Mapel"
-          : filter === "Siswa"
-          ? "Kelas"
-          : filter === "Karyawan"
-          ? "Bagian"
-          : "Mapel / Kelas"}
-      </th>
-      <th className="px-4 py-2 text-center font-semibold">Aksi</th>
-    </tr>
-  </thead>
+                    <th className="px-4 py-2 text-center font-semibold">
+                      Level
+                    </th>
+                    <th className="px-4 py-2 text-center font-semibold">
+                      {filter === "Guru"
+                        ? "Mapel"
+                        : filter === "Siswa"
+                        ? "Kelas"
+                        : filter === "Karyawan"
+                        ? "Bagian"
+                        : "Mapel / Kelas"}
+                    </th>
+                    <th className="px-4 py-2 text-center font-semibold">
+                      Aksi
+                    </th>
+                  </tr>
+                </thead>
 
-  <tbody>
-    {filteredData.length > 0 ? (
-      filteredData.map((item, index) => (
-        <tr key={item.id || index} className="bg-gray-50 hover:bg-gray-100 rounded-md">
-          <td className="px-4 py-2 text-left">{index + 1}</td>
-          <td className="px-4 py-2 text-left text-gray-700">{item.nama || "-"}</td>
-          <td className="px-4 py-2 text-left text-gray-700">{item.email || "-"}</td>
+                <tbody>
+                  {filteredData.length > 0 ? (
+                    filteredData.map((item, index) => (
+                      <tr
+                        key={item.id || index}
+                        className="bg-gray-50 hover:bg-gray-100 rounded-md"
+                      >
+                        <td className="px-4 py-2 text-left">{index + 1}</td>
+                        <td className="px-4 py-2 text-left text-gray-700">
+                          {item.nama || "-"}
+                        </td>
+                        <td className="px-4 py-2 text-left text-gray-700">
+                          {item.email || "-"}
+                        </td>
 
-          {/* ⭐ KOLOM BARU */}
-          <td className="px-4 py-2 text-center text-gray-700">
-            {item.nomorUnik || "-"}
-          </td>
+                        {/* ⭐ KOLOM BARU */}
+                        <td className="px-4 py-2 text-center text-gray-700">
+                          {item.nomorUnik || "-"}
+                        </td>
 
-          <td className="px-4 py-2 text-left text-gray-700">
-            {item.kategori || "-"}
-          </td>
-          <td className="px-4 py-2 text-left text-gray-700">
-            {item.jabatan_kelas || "-"}
-          </td>
-          <td className="px-4 py-3 text-left">
-            <div className="flex justify-center gap-2">
-              <button
-                onClick={() => navigate(`/editmasterdata/${item.id}`)}
-                className="bg-gray-700 text-white px-3 py-2 rounded-md hover:bg-gray-600"
-              >
-                ✏
-              </button>
-              <button
-                onClick={() => handleDelete(item.id)}
-                className="bg-red-700 text-white px-3 py-2 rounded-md hover:bg-red-600"
-              >
-                🗑
-              </button>
-            </div>
-          </td>
-        </tr>
-      ))
-    ) : (
-      <tr>
-        <td
-          colSpan="7"
-          className="text-center py-5 text-gray-500 italic bg-gray-50 rounded-md"
-        >
-          Tidak ada data ditemukan.
-        </td>
-      </tr>
-    )}
-  </tbody>
-</table>
-
+                        <td className="px-4 py-2 text-left text-gray-700">
+                          {item.kategori || "-"}
+                        </td>
+                        <td className="px-4 py-2 text-left text-gray-700">
+                          {item.jabatan_kelas || "-"}
+                        </td>
+                        <td className="px-4 py-3 text-left">
+                          <div className="flex justify-center gap-2">
+                            <button
+                              onClick={() =>
+                                navigate(`/editmasterdata/${item.id}`)
+                              }
+                              className="bg-gray-700 text-white px-3 py-2 rounded-md hover:bg-gray-600"
+                            >
+                              ✏
+                            </button>
+                            <button
+                              onClick={() => handleDelete(item.id)}
+                              className="bg-red-700 text-white px-3 py-2 rounded-md hover:bg-red-600"
+                            >
+                              🗑
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td
+                        colSpan="7"
+                        className="text-center py-5 text-gray-500 italic bg-gray-50 rounded-md"
+                      >
+                        Tidak ada data ditemukan.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
             </div>
           )}
         </div>

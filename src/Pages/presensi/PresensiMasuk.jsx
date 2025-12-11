@@ -99,7 +99,6 @@ const PresensiMasuk = () => {
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
       <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-lg border border-gray-200">
-
         {/* HEADER */}
         <h2 className="text-center text-3xl font-extrabold text-green-700 mb-4">
           <div className="flex flex-col items-center">
@@ -127,7 +126,6 @@ const PresensiMasuk = () => {
 
         {/* FORM */}
         <div className="flex flex-col gap-5">
-
           <div>
             <label className="text-sm text-gray-600 font-medium">
               Nomor Unik
@@ -157,9 +155,7 @@ const PresensiMasuk = () => {
           >
             Batal
           </button>
-
         </div>
-
       </div>
     </div>
   );

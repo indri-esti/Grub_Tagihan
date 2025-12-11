@@ -35,30 +35,29 @@ const RekapPresensi = () => {
     return found?.nama || "-";
   };
 
- const GetStatusFromData = (item) => {
-  const explicitStatus = (item?.status || "").toLowerCase();
+  const GetStatusFromData = (item) => {
+    const explicitStatus = (item?.status || "").toLowerCase();
 
-  // PRIORITAS UTAMA = status yg dikirim dari izin
-  if (explicitStatus === "terlambat") return "Terlambat";
-  if (explicitStatus === "sakit") return "Sakit";
-  if (explicitStatus === "izin") return "Izin";
-  if (explicitStatus === "dispensasi") return "Dispensasi";
-  if (explicitStatus === "pulang_awal") return "Pulang Awal";
-  if (explicitStatus === "alpa") return "Alpa";
+    // PRIORITAS UTAMA = status yg dikirim dari izin
+    if (explicitStatus === "terlambat") return "Terlambat";
+    if (explicitStatus === "sakit") return "Sakit";
+    if (explicitStatus === "izin") return "Izin";
+    if (explicitStatus === "dispensasi") return "Dispensasi";
+    if (explicitStatus === "pulang_awal") return "Pulang Awal";
+    if (explicitStatus === "alpa") return "Alpa";
 
-  // Kalau tidak ada jam masuk/pulang → Alpa
-  if (!item?.jamMasuk && !item?.jamPulang) return "Alpa";
+    // Kalau tidak ada jam masuk/pulang → Alpa
+    if (!item?.jamMasuk && !item?.jamPulang) return "Alpa";
 
-  // Jika ada jam → Hadir
-  if (item?.jamMasuk || item?.jamPulang) return "Hadir";
+    // Jika ada jam → Hadir
+    if (item?.jamMasuk || item?.jamPulang) return "Hadir";
 
-  return "-";
-};
+    return "-";
+  };
 
-   const getStatusColor = (status) => {
+  const getStatusColor = (status) => {
     const s = status?.toLowerCase() || "";
 
-    
     if (s === "hadir") return "bg-green-600 text-white";
     if (s === "izin") return "bg-blue-600 text-white";
     if (s === "sakit") return "bg-yellow-500 text-white";
@@ -69,7 +68,6 @@ const RekapPresensi = () => {
 
     return "bg-gray-300 text-gray-800";
   };
-
 
   const FetchData = async () => {
     try {
@@ -120,8 +118,7 @@ const RekapPresensi = () => {
     if (filter === "hari-ini") {
       hasil = hasil.filter(
         (item) =>
-          typeof item.tanggal === "string" &&
-          item.tanggal.startsWith(todayStr)
+          typeof item.tanggal === "string" && item.tanggal.startsWith(todayStr)
       );
     }
 
@@ -153,8 +150,7 @@ const RekapPresensi = () => {
   }, [filter, data]);
 
   const cleanedData = filteredData.filter(
-    (item) =>
-      item?.nomorUnik || item?.nomor_unik || item?.nomorunik
+    (item) => item?.nomorUnik || item?.nomor_unik || item?.nomorunik
   );
 
   return (
@@ -203,48 +199,58 @@ const RekapPresensi = () => {
                   </tr>
                 </thead>
 
-               <tbody className="bg-white divide-y divide-gray-200/70">
-  {cleanedData.length > 0 ? (
-    cleanedData.map((item, i) => {
-      const nomor = item.nomorUnik || item.nomor_unik || item.nomorunik;
+                <tbody className="bg-white divide-y divide-gray-200/70">
+                  {cleanedData.length > 0 ? (
+                    cleanedData.map((item, i) => {
+                      const nomor =
+                        item.nomorUnik || item.nomor_unik || item.nomorunik;
 
-      return (
-        <tr key={item.id || i}>
-          <td className="px-4 py-3 text-center">{i + 1}</td>
+                      return (
+                        <tr key={item.id || i}>
+                          <td className="px-4 py-3 text-center">{i + 1}</td>
 
-          <td className="px-4 py-3 text-left">
-            {item.nama && item.nama !== ""
-              ? item.nama
-              : getNamaFromNomor(nomor)}
-          </td>
+                          <td className="px-4 py-3 text-left">
+                            {item.nama && item.nama !== ""
+                              ? item.nama
+                              : getNamaFromNomor(nomor)}
+                          </td>
 
-          <td className="px-4 py-3 text-center">{nomor}</td>
-          <td className="px-4 py-3 text-center">{item.keterangan || ""}</td>
-          <td className="px-4 py-3 text-center">{item.jamMasuk ?? "-"}</td>
-          <td className="px-4 py-3 text-center">{item.jamPulang ?? "-"}</td>
-          <td className="px-4 py-3 text-center">{formatTanggal(item.tanggal)}</td>
-          <td className="px-4 py-3 text-center">
-            <span
-              className={`px-3 py-1 rounded-full text-sm font-semibold ${getStatusColor(
-                GetStatusFromData(item)
-              )}`}
-            >
-              {GetStatusFromData(item)}
-            </span>
-          </td>
-        </tr>
-      );
-    })
-  ) : (
-    <tr>
-      <td colSpan="7" className="text-center py-4 text-gray-500 italic">
-        Tidak ada data presensi di temukan
-      </td>
-    </tr>
-  )}
-</tbody>
-
-
+                          <td className="px-4 py-3 text-center">{nomor}</td>
+                          <td className="px-4 py-3 text-center">
+                            {item.keterangan || ""}
+                          </td>
+                          <td className="px-4 py-3 text-center">
+                            {item.jamMasuk ?? "-"}
+                          </td>
+                          <td className="px-4 py-3 text-center">
+                            {item.jamPulang ?? "-"}
+                          </td>
+                          <td className="px-4 py-3 text-center">
+                            {formatTanggal(item.tanggal)}
+                          </td>
+                          <td className="px-4 py-3 text-center">
+                            <span
+                              className={`px-3 py-1 rounded-full text-sm font-semibold ${getStatusColor(
+                                GetStatusFromData(item)
+                              )}`}
+                            >
+                              {GetStatusFromData(item)}
+                            </span>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  ) : (
+                    <tr>
+                      <td
+                        colSpan="7"
+                        className="text-center py-4 text-gray-500 italic"
+                      >
+                        Tidak ada data presensi di temukan
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
               </table>
             </div>
           )}

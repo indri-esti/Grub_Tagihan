@@ -14,7 +14,7 @@ import {
 
 export default function Dashboard() {
   const [kategoriData, setKategoriData] = useState([]);
-  const [MasterUser, setMasterUser] = useState([]);   // FIX: hanya 1 state master user
+  const [MasterUser, setMasterUser] = useState([]); // FIX: hanya 1 state master user
 
   const [tagihan, setTagihan] = useState([]);
   const [filterPresensi, setFilterPresensi] = useState("semua");
@@ -33,28 +33,27 @@ export default function Dashboard() {
   // STATUS PRESENSI FIX
   // ============================
   const GetStatusFromData = (item) => {
-  const explicitStatus = (item?.status || "").toLowerCase();
+    const explicitStatus = (item?.status || "").toLowerCase();
 
-  // PRIORITAS UTAMA = status yg dikirim dari izin
-  if (explicitStatus === "terlambat") return "Terlambat";
-  if (explicitStatus === "sakit") return "Sakit";
-  if (explicitStatus === "izin") return "Izin";
-  if (explicitStatus === "dispensasi") return "Dispensasi";
-  if (explicitStatus === "pulang_awal") return "Pulang Awal";
-  if (explicitStatus === "alpa") return "Alpa";
+    // PRIORITAS UTAMA = status yg dikirim dari izin
+    if (explicitStatus === "terlambat") return "Terlambat";
+    if (explicitStatus === "sakit") return "Sakit";
+    if (explicitStatus === "izin") return "Izin";
+    if (explicitStatus === "dispensasi") return "Dispensasi";
+    if (explicitStatus === "pulang_awal") return "Pulang Awal";
+    if (explicitStatus === "alpa") return "Alpa";
 
-  // Kalau tidak ada jam masuk/pulang → Alpa
-  if (!item?.jamMasuk && !item?.jamPulang) return "Alpa";
+    // Kalau tidak ada jam masuk/pulang → Alpa
+    if (!item?.jamMasuk && !item?.jamPulang) return "Alpa";
 
-  // Jika ada jam → Hadir
-  if (item?.jamMasuk || item?.jamPulang) return "Hadir";
+    // Jika ada jam → Hadir
+    if (item?.jamMasuk || item?.jamPulang) return "Hadir";
 
-  return "-";
-};
+    return "-";
+  };
   const getStatusColor = (status) => {
     const s = status?.toLowerCase() || "";
 
-    
     if (s === "hadir") return "bg-green-600 text-white";
     if (s === "izin") return "bg-blue-600 text-white";
     if (s === "sakit") return "bg-yellow-500 text-white";
@@ -112,7 +111,9 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchAll = async () => {
       try {
-        const kategoriRes = await axios.get("http://localhost:5000/kategori_data");
+        const kategoriRes = await axios.get(
+          "http://localhost:5000/kategori_data"
+        );
         const tagihanRes = await axios.get("http://localhost:5000/tagihan");
         const PresensiRes = await axios.get("http://localhost:5000/presensi");
         const userRes = await axios.get("http://localhost:5000/kategori_data");
@@ -125,12 +126,23 @@ export default function Dashboard() {
 
         const normalize = (val) => (val ? String(val).toLowerCase() : "");
 
-        const totalSiswa = kategori.filter((x) => normalize(x.kategori) === "siswa").length;
-        const totalGuru = kategori.filter((x) => normalize(x.kategori) === "guru").length;
-        const totalKaryawan = kategori.filter((x) => normalize(x.kategori) === "karyawan").length;
+        const totalSiswa = kategori.filter(
+          (x) => normalize(x.kategori) === "siswa"
+        ).length;
+        const totalGuru = kategori.filter(
+          (x) => normalize(x.kategori) === "guru"
+        ).length;
+        const totalKaryawan = kategori.filter(
+          (x) => normalize(x.kategori) === "karyawan"
+        ).length;
 
-        const totalTagihan = tagihanData.reduce((a, b) => a + safeParseInt(b.harga), 0);
-        const totalLunas = tagihanData.filter((t) => normalize(t.status) === "lunas").length;
+        const totalTagihan = tagihanData.reduce(
+          (a, b) => a + safeParseInt(b.harga),
+          0
+        );
+        const totalLunas = tagihanData.filter(
+          (t) => normalize(t.status) === "lunas"
+        ).length;
         const totalBelumLunas = tagihanData.length - totalLunas;
 
         setKategoriData(kategori);
@@ -155,20 +167,50 @@ export default function Dashboard() {
   }, []);
 
   const cards = [
-    { title: "Total Siswa", value: stats.totalSiswa, icon: <FaUsers />, gradient: "from-green-400 to-green-600" },
-    { title: "Total Guru", value: stats.totalGuru, icon: <FaChalkboardTeacher />, gradient: "from-blue-400 to-blue-600" },
-    { title: "Total Karyawan", value: stats.totalKaryawan, icon: <FaUserTie />, gradient: "from-yellow-400 to-yellow-600" },
-    { title: "Total Tagihan", value: `Rp ${stats.totalTagihan.toLocaleString("id-ID")}`, icon: <FaMoneyBillWave />, gradient: "from-orange-400 to-orange-600" },
-    { title: "Total Lunas", value: stats.totalLunas, icon: <FaCheckCircle />, gradient: "from-emerald-400 to-emerald-600" },
-    { title: "Total Belum Lunas", value: stats.totalBelumLunas, icon: <FaTimesCircle />, gradient: "from-red-400 to-red-600" },
+    {
+      title: "Total Siswa",
+      value: stats.totalSiswa,
+      icon: <FaUsers />,
+      gradient: "from-green-400 to-green-600",
+    },
+    {
+      title: "Total Guru",
+      value: stats.totalGuru,
+      icon: <FaChalkboardTeacher />,
+      gradient: "from-blue-400 to-blue-600",
+    },
+    {
+      title: "Total Karyawan",
+      value: stats.totalKaryawan,
+      icon: <FaUserTie />,
+      gradient: "from-yellow-400 to-yellow-600",
+    },
+    {
+      title: "Total Tagihan",
+      value: `Rp ${stats.totalTagihan.toLocaleString("id-ID")}`,
+      icon: <FaMoneyBillWave />,
+      gradient: "from-orange-400 to-orange-600",
+    },
+    {
+      title: "Total Lunas",
+      value: stats.totalLunas,
+      icon: <FaCheckCircle />,
+      gradient: "from-emerald-400 to-emerald-600",
+    },
+    {
+      title: "Total Belum Lunas",
+      value: stats.totalBelumLunas,
+      icon: <FaTimesCircle />,
+      gradient: "from-red-400 to-red-600",
+    },
   ];
 
   const isKategori = (data, kategori) =>
     String(data.kategori || "").toLowerCase() === kategori.toLowerCase();
 
- const filteredPresensi = Presensi
-  .filter((p) => p.nomorUnik || p.nomor_unik || p.nomorunik)
-  .filter((p) => {
+  const filteredPresensi = Presensi.filter(
+    (p) => p.nomorUnik || p.nomor_unik || p.nomorunik
+  ).filter((p) => {
     if (filterPresensi === "semua") return true;
 
     const nomor = getNomorUnik(p);
@@ -187,18 +229,18 @@ export default function Dashboard() {
     return String(user.kategori || "").toLowerCase() === filterPresensi;
   });
 
-    const GetNamaByNomor = (nomor) => {
-  if (!nomor) return "-";
-  const found = MasterUser.find(
-    (x) =>
-      x.nomorUnik === nomor ||
-      x.nomorUniqe === nomor ||
-      x.nomor_unique === nomor ||
-      x.nomor_unik === nomor ||
-      x.nomor === nomor
-  );
-  return found?.nama || "-";
-};
+  const GetNamaByNomor = (nomor) => {
+    if (!nomor) return "-";
+    const found = MasterUser.find(
+      (x) =>
+        x.nomorUnik === nomor ||
+        x.nomorUniqe === nomor ||
+        x.nomor_unique === nomor ||
+        x.nomor_unik === nomor ||
+        x.nomor === nomor
+    );
+    return found?.nama || "-";
+  };
 
   return (
     <div className="pl-[calc(15rem+2%)] pr-[4%] pt-[4%] bg-gray-100 min-h-screen transition-all duration-300">
@@ -277,7 +319,9 @@ export default function Dashboard() {
                   return (
                     <tr key={i} className="hover:bg-gray-50">
                       <td className="py-2 px-4 text-left">{i + 1}</td>
-                     <td className="py-2 px-4 text-left">{GetNamaByNomor(nomorUnik)}</td>
+                      <td className="py-2 px-4 text-left">
+                        {GetNamaByNomor(nomorUnik)}
+                      </td>
                       <td className="py-2 px-4 text-center">{nomorUnik}</td>
                       <td className="py-2 px-4 text-center">{p.keterangan}</td>
                       <td className="py-2 px-4 text-center">{p.jamMasuk}</td>
@@ -318,7 +362,8 @@ export default function Dashboard() {
             </thead>
 
             <tbody>
-              {kategoriData.filter((x) => isKategori(x, "siswa")).length === 0 ? (
+              {kategoriData.filter((x) => isKategori(x, "siswa")).length ===
+              0 ? (
                 <tr>
                   <td colSpan="5" className="text-center py-4 text-gray-500">
                     Tidak ada data siswa.
@@ -360,7 +405,8 @@ export default function Dashboard() {
             </thead>
 
             <tbody>
-              {kategoriData.filter((x) => isKategori(x, "guru")).length === 0 ? (
+              {kategoriData.filter((x) => isKategori(x, "guru")).length ===
+              0 ? (
                 <tr>
                   <td colSpan="5" className="text-center py-4 text-gray-500">
                     Tidak ada data guru.
@@ -402,7 +448,8 @@ export default function Dashboard() {
             </thead>
 
             <tbody>
-              {kategoriData.filter((x) => isKategori(x, "karyawan")).length === 0 ? (
+              {kategoriData.filter((x) => isKategori(x, "karyawan")).length ===
+              0 ? (
                 <tr>
                   <td colSpan="5" className="text-center py-4 text-gray-500">
                     Tidak ada data karyawan.
@@ -470,7 +517,6 @@ export default function Dashboard() {
             </tbody>
           </table>
         </div>
-
       </div>
     </div>
   );

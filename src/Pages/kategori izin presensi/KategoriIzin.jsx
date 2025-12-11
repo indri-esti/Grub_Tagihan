@@ -75,12 +75,10 @@ const KategoriIzin = () => {
   return (
     <div className="pl-[calc(15rem+1%)] pr-[5%] pt-[5%] md:pt-10 transition-all duration-300">
       <div className="flex flex-col gap-6">
-        
         <SidebarT />
 
         {/* Konten utama */}
         <div className="flex-1 flex flex-col gap-3 md:ml-6 bg-white shadow-lg rounded-lg p-6">
-          
           {/* Header */}
           <div className="flex justify-between items-center mb-3">
             <h2 className="text-2xl font-semibold text-gray-800 flex items-center gap-2">
@@ -111,10 +109,10 @@ const KategoriIzin = () => {
           {loading ? (
             <p className="text-center">Memuat data...</p>
           ) : (
-           <div className="overflow-x-auto">
+            <div className="overflow-x-auto">
               <table className="min-w-full text-sm text-gray-700 border border-gray-300/60 rounded-xl overflow-hidden shadow-sm">
                 <thead>
-                   <tr className="bg-blue-700 text-white">
+                  <tr className="bg-blue-700 text-white">
                     <th className="px-4 py-3 text-center font-semibold tracking-wide">
                       No
                     </th>
@@ -137,7 +135,7 @@ const KategoriIzin = () => {
                         key={item.id}
                         className="hover:bg-blue-50 transition duration-150 ease-in-out"
                       >
-                        <td className="px-4 py-3 text-gray-700 text-left">
+                        <td className="px-4 py-3 text-gray-700 text-center">
                           {index + 1}
                         </td>
                         <td className="px-4 py-3 text-gray-800 font-medium">
@@ -157,7 +155,9 @@ const KategoriIzin = () => {
 
                         <td className="px-4 py-3 text-center flex justify-center gap-2">
                           <button
-                            onClick={() => navigate(`/editkategoriizin/${item.id}`)}
+                            onClick={() =>
+                              navigate(`/editkategoriizin/${item.id}`)
+                            }
                             className="bg-gray-700 text-white px-3 py-2 rounded-md hover:bg-gray-600 transition"
                           >
                             ✏

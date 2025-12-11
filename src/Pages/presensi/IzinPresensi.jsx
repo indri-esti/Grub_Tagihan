@@ -124,24 +124,33 @@ const IzinPresensi = () => {
 
       await axios.post("http://localhost:5000/izinpresensi", payload);
 
-      const presensiPayload = {
-        kategori: payload.kategori,
-        nama: payload.nama,
-        nomorUnik: payload.nomorUnik,
-        keterangan: autoKet,
-        jamMasuk: jamMasukVal,
-        jamPulang: "",
-        tanggal: tanggalNow,
-        status: String(form.jenisIzin).toLowerCase(),
-      };
+     // Tentukan jam pulang otomatis jika jenis izin = izin
+let jamPulangVal = "";
+if (String(form.jenisIzin).toLowerCase() === "izin") {
+  jamPulangVal = jamNow; // otomatis jam sekarang
+}
+
+const presensiPayload = {
+  kategori: payload.kategori,
+  nama: payload.nama,
+  nomorUnik: payload.nomorUnik,
+  keterangan: autoKet,
+  jamMasuk: jamMasukVal,
+  jamPulang: jamPulangVal,
+  tanggal: tanggalNow,
+  status: String(form.jenisIzin).toLowerCase(),
+};
+
 
       await axios.post("http://localhost:5000/presensi", presensiPayload);
 
-      Swal.fire("Berhasil!", "Pengajuan izin berhasil dikirim!", "success").then(
-        () => {
-          navigate("/presensisemua");
-        }
-      );
+      Swal.fire(
+        "Berhasil!",
+        "Pengajuan izin berhasil dikirim!",
+        "success"
+      ).then(() => {
+        navigate("/presensisemua");
+      });
 
       setForm({
         kategori: "",
@@ -226,30 +235,29 @@ const IzinPresensi = () => {
           />
 
           {/* JENIS IZIN DARI kategori_izin */}
-       <select
-  name="jenisIzin"
-  value={form.jenisIzin}
-  onChange={(e) => setForm({ ...form, jenisIzin: e.target.value })}
-  className="border rounded-lg px-3 py-2"
->
-  <option value="" disabled hidden>-- Pilih Jenis Izin --</option>
+          <select
+            name="jenisIzin"
+            value={form.jenisIzin}
+            onChange={(e) => setForm({ ...form, jenisIzin: e.target.value })}
+            className="border rounded-lg px-3 py-2"
+          >
+            <option value="" disabled hidden>
+              -- Pilih Jenis Izin --
+            </option>
 
-  {jenisIzinList.map((item) => (
-    <option key={item.id} value={item.nama}>
-      {item.nama}
-    </option>
-  ))}
-</select>
-
+            {jenisIzinList.map((item) => (
+              <option key={item.id} value={item.nama}>
+                {item.nama}
+              </option>
+            ))}
+          </select>
 
           {/* Keterangan */}
           <textarea
             name="keterangan"
             placeholder="Tuliskan keterangan izin..."
             value={form.keterangan}
-            onChange={(e) =>
-              setForm({ ...form, keterangan: e.target.value })
-            }
+            onChange={(e) => setForm({ ...form, keterangan: e.target.value })}
             className="border rounded-lg px-3 py-2 h-24 resize-none"
           />
 
