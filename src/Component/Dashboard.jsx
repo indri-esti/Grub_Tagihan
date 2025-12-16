@@ -32,26 +32,26 @@ export default function Dashboard() {
   // ============================
   // STATUS PRESENSI FIX
   // ============================
-  const GetStatusFromData = (item) => {
-    const explicitStatus = (item?.status || "").toLowerCase();
+const GetStatusFromData = (item) => {
+  const explicitStatus = (item?.status || "")
+    .toLowerCase()
+    .replace(" ", "_");
 
-    // PRIORITAS UTAMA = status yg dikirim dari izin
-    if (explicitStatus === "terlambat") return "Terlambat";
-    if (explicitStatus === "sakit") return "Sakit";
-    if (explicitStatus === "izin") return "Izin";
-    if (explicitStatus === "dispensasi") return "Dispensasi";
-    if (explicitStatus === "pulang_awal") return "Pulang Awal";
-    if (explicitStatus === "alpa") return "Alpa";
+  if (explicitStatus === "terlambat") return "Terlambat";
+  if (explicitStatus === "sakit") return "Sakit";
+  if (explicitStatus === "izin") return "Izin";
+  if (explicitStatus === "dispensasi") return "Dispensasi";
+  if (explicitStatus === "pulang_awal") return "Pulang Awal";
+  if (explicitStatus === "alpa") return "Alpa";
+  if (explicitStatus === "hadir") return "Hadir";
 
-    // Kalau tidak ada jam masuk/pulang → Alpa
-    if (!item?.jamMasuk && !item?.jamPulang) return "Alpa";
+  if (!item?.jamMasuk && !item?.jamPulang) return "Alpa";
+  if (item?.jamMasuk || item?.jamPulang) return "Hadir";
 
-    // Jika ada jam → Hadir
-    if (item?.jamMasuk || item?.jamPulang) return "Hadir";
+  return "-";
+};
 
-    return "-";
-  };
-  const getStatusColor = (status) => {
+ const GetStatusColor = (status) => {
     const s = status?.toLowerCase() || "";
 
     if (s === "hadir") return "bg-green-600 text-white";
@@ -65,29 +65,20 @@ export default function Dashboard() {
     return "bg-gray-300 text-gray-800";
   };
 
+
   // helper nomor unik
-  const getNomorUnik = (obj) => {
+ const getNomorUnik = (obj) => {
     if (!obj) return "-";
     const keys = [
-      "nomorunik",
       "nomorUnik",
-      "nomor_unik",
       "nomorUniqe",
-      "id_unik",
-      "kode",
+      "nomor_unik",
       "nomor",
-      "uniqueNumber",
-      "unique_id",
+      "kode",
+      "id_unik",
     ];
     for (const k of keys) {
-      if (
-        Object.prototype.hasOwnProperty.call(obj, k) &&
-        obj[k] !== undefined &&
-        obj[k] !== null &&
-        String(obj[k]).trim() !== ""
-      ) {
-        return String(obj[k]);
-      }
+      if (obj[k]) return String(obj[k]);
     }
     return "-";
   };
@@ -111,30 +102,36 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchAll = async () => {
       try {
-        const kategoriRes = await axios.get(
-          "http://localhost:5000/kategori_data"
-        );
-        const tagihanRes = await axios.get("http://localhost:5000/tagihan");
-        const PresensiRes = await axios.get("http://localhost:5000/presensi");
-        const userRes = await axios.get("http://localhost:5000/kategori_data");
+        const [
+          kategoriRes,
+          tagihanRes,
+          presensiRes,
+          izinRes,
+        ] = await Promise.all([
+          axios.get("http://localhost:5000/kategori_data"),
+          axios.get("http://localhost:5000/tagihan"),
+          axios.get("http://localhost:5000/presensi"),
+          axios.get("http://localhost:5000/izinpresensi"),
+        ]);
 
         const kategori = kategoriRes.data || [];
         const tagihanData = tagihanRes.data || [];
-        const presensiData = PresensiRes.data || [];
+        const presensiData = presensiRes.data || [];
+        const izinData = izinRes.data || [];
 
-        setMasterUser(userRes.data || []);
+        /* === GABUNG PRESENSI + IZIN === */
+        const gabunganPresensi = [...presensiData, ...izinData].sort(
+          (a, b) => new Date(b.tanggal) - new Date(a.tanggal)
+        );
 
-        const normalize = (val) => (val ? String(val).toLowerCase() : "");
+        setKategoriData(kategori);
+        setTagihan(tagihanData);
+        setPresensi(gabunganPresensi);
+        setMasterUser(kategori);
 
-        const totalSiswa = kategori.filter(
-          (x) => normalize(x.kategori) === "siswa"
-        ).length;
-        const totalGuru = kategori.filter(
-          (x) => normalize(x.kategori) === "guru"
-        ).length;
-        const totalKaryawan = kategori.filter(
-          (x) => normalize(x.kategori) === "karyawan"
-        ).length;
+        const totalSiswa = kategori.filter((x) => normalize(x.kategori) === "siswa").length;
+        const totalGuru = kategori.filter((x) => normalize(x.kategori) === "guru").length;
+        const totalKaryawan = kategori.filter((x) => normalize(x.kategori) === "karyawan").length;
 
         const totalTagihan = tagihanData.reduce(
           (a, b) => a + safeParseInt(b.harga),
@@ -143,11 +140,6 @@ export default function Dashboard() {
         const totalLunas = tagihanData.filter(
           (t) => normalize(t.status) === "lunas"
         ).length;
-        const totalBelumLunas = tagihanData.length - totalLunas;
-
-        setKategoriData(kategori);
-        setTagihan(tagihanData);
-        setPresensi(presensiData);
 
         setStats({
           totalSiswa,
@@ -155,16 +147,19 @@ export default function Dashboard() {
           totalKaryawan,
           totalTagihan,
           totalLunas,
-          totalBelumLunas,
+          totalBelumLunas: tagihanData.length - totalLunas,
         });
-      } catch (error) {
-        console.error("Gagal memuat data:", error);
+      } catch (err) {
+        console.error("Gagal load dashboard:", err);
       }
     };
 
     fetchAll();
-    FetchMasterUser();
   }, []);
+  const normalize = (str) => {
+    return String(str || "").toLowerCase().replace(/\s+/g, "_");
+  };
+
 
   const cards = [
     {
@@ -208,39 +203,38 @@ export default function Dashboard() {
   const isKategori = (data, kategori) =>
     String(data.kategori || "").toLowerCase() === kategori.toLowerCase();
 
-  const filteredPresensi = Presensi.filter(
-    (p) => p.nomorUnik || p.nomor_unik || p.nomorunik
-  ).filter((p) => {
-    if (filterPresensi === "semua") return true;
+ const filteredPresensi = Presensi.filter((p) => {
+  if (filterPresensi === "semua") return true;
 
-    const nomor = getNomorUnik(p);
+  const nomor = getNomorUnik(p);
 
+  const user = MasterUser.find(
+    (u) =>
+      String(u.nomorUnik) === String(nomor) ||
+      String(u.nomorUniqe) === String(nomor) ||
+      String(u.nomor_unik) === String(nomor) ||
+      String(u.nomor) === String(nomor)
+  );
+
+  if (!user) return true;
+
+  return String(user.kategori || "").toLowerCase() === filterPresensi;
+});
+
+
+ const GetNamaByNomor = (nomor) => {
+    if (!nomor || nomor === "-") return "-";
     const user = MasterUser.find(
-      (x) =>
-        x.nomorUnik === nomor ||
-        x.nomorUniqe === nomor ||
-        x.nomor_unique === nomor ||
-        x.nomor_unik === nomor ||
-        x.nomor === nomor
+      (u) =>
+        String(u.nomorUnik) === String(nomor) ||
+        String(u.nomorUniqe) === String(nomor) ||
+        String(u.nomor_unik) === String(nomor) ||
+        String(u.nomor) === String(nomor)
     );
-
-    if (!user) return false;
-
-    return String(user.kategori || "").toLowerCase() === filterPresensi;
-  });
-
-  const GetNamaByNomor = (nomor) => {
-    if (!nomor) return "-";
-    const found = MasterUser.find(
-      (x) =>
-        x.nomorUnik === nomor ||
-        x.nomorUniqe === nomor ||
-        x.nomor_unique === nomor ||
-        x.nomor_unik === nomor ||
-        x.nomor === nomor
-    );
-    return found?.nama || "-";
+    return user?.nama || "-";
   };
+
+
 
   return (
     <div className="pl-[calc(15rem+2%)] pr-[4%] pt-[4%] bg-gray-100 min-h-screen transition-all duration-300">
@@ -329,7 +323,7 @@ export default function Dashboard() {
                       <td className="py-2 px-4 text-center">{tanggalIndo}</td>
                       <td className="py-2 px-4 text-center">
                         <span
-                          className={`px-3 py-1 rounded-full text-sm font-semibold ${getStatusColor(
+                          className={`px-3 py-1 rounded-full text-sm font-semibold ${GetStatusColor(
                             GetStatusFromData(p)
                           )}`}
                         >

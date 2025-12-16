@@ -266,13 +266,6 @@ export default function SidebarT() {
                 </Link>
 
                 <Link
-                  to="/presensisemua"
-                  className={`flex items-center gap-3 py-2 px-3 rounded-lg text-sm ${itemHoverClass}`}
-                >
-                  <FaUserCheck className="text-green-300" /> Semua Presensi
-                </Link>
-
-                <Link
                   to="/rekappresensi"
                   className={`flex items-center gap-3 py-2 px-3 rounded-lg text-sm ${itemHoverClass}`}
                 >

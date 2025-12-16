@@ -79,7 +79,7 @@ function App() {
         <Route path="/rekappresensi" element={<RekapPresensi />} />
         <Route path="/presensimasuk" element={<PresensiMasuk />} />
         <Route path="/presensipulang" element={<PresensiPulang />} />
-        <Route path="/presensisemua" element={<PresensiSiswa />} />
+        <Route path="/presensi" element={<PresensiSiswa />} />
         <Route path="/izinpresensi" element={<IzinPresensi />} />
         <Route path="/editpresensi/:id" element={<EditPresensi />} />
 

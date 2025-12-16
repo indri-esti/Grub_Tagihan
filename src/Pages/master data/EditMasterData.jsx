@@ -180,6 +180,22 @@ const EditMasterData = () => {
             />
           </div>
 
+          {/* Nomor Unik */}
+<div>
+  <label className="text-gray-700 text-sm mb-1 block">
+    Nomor Unik
+  </label>
+  <input
+    type="text"
+    name="nomorUnik"
+    placeholder="Contoh: NUK001 / NIS123"
+    value={formData.nomorUnik}
+    onChange={handleChange}
+    className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
+  />
+</div>
+
+
           {/* Kategori */}
           <div>
             <label className="text-gray-700 text-sm mb-1 block">

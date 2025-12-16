@@ -8,47 +8,40 @@ const IzinPresensi = () => {
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
-    kategori: "",
-    nama: "",
     nomorUnik: "",
+    nama: "",
     jenisIzin: "",
     keterangan: "",
   });
 
   const [kategoriList, setKategoriList] = useState([]);
-  const [jenisIzinList, setJenisIzinList] = useState([]); // <-- kategori_izin
-  const [loadingKategori, setLoadingKategori] = useState(false);
+  const [jenisIzinList, setJenisIzinList] = useState([]);
   const [submitting, setSubmitting] = useState(false);
+  const [step, setStep] = useState(1);
 
   // ============================================
-  // FETCH KATEGORI NAMA (kategori_data)
+  // FETCH DATA
   // ============================================
   const fetchKategori = async () => {
     try {
-      setLoadingKategori(true);
       const res = await axios.get("http://localhost:5000/kategori_data");
-      setKategoriList(res.data || []);
-    } catch (error) {
-      console.error("Gagal fetch kategori:", error);
-      Swal.fire("Error", "Gagal memuat daftar kategori.", "error");
-    } finally {
-      setLoadingKategori(false);
+      setKategoriList(Array.isArray(res.data) ? res.data : []);
+    } catch {
+      setKategoriList([]);
+      Swal.fire("Error", "Gagal memuat data kategori", "error");
     }
   };
 
-  // ============================================
-  // FETCH JENIS IZIN (kategori_izin)
-  // ============================================
   const fetchJenisIzin = async () => {
     try {
       const res = await axios.get("http://localhost:5000/kategori_izin");
-      const aktifOnly = (res.data || []).filter(
-        (item) => String(item.status || "").toLowerCase() === "aktif"
+      const aktif = (Array.isArray(res.data) ? res.data : []).filter(
+        (x) => String(x?.status || "").toLowerCase() === "aktif"
       );
-      setJenisIzinList(aktifOnly);
-    } catch (err) {
-      console.error("Gagal fetch kategori izin:", err);
-      Swal.fire("Error", "Gagal memuat jenis izin.", "error");
+      setJenisIzinList(aktif);
+    } catch {
+      setJenisIzinList([]);
+      Swal.fire("Error", "Gagal memuat jenis izin", "error");
     }
   };
 
@@ -57,224 +50,162 @@ const IzinPresensi = () => {
     fetchJenisIzin();
   }, []);
 
-  const filteredNamaList = form.kategori
-    ? kategoriList.filter(
-        (item) =>
-          String(item.kategori || "").toLowerCase() ===
-          String(form.kategori || "").toLowerCase()
-      )
-    : [];
-
-  const handleNamaSelect = (e) => {
-    const selectedNama = e.target.value;
-    const found = kategoriList.find((item) => item.nama === selectedNama);
-
-    setForm((prev) => ({
-      ...prev,
-      nama: selectedNama,
-      nomorUnik:
-        found?.nomorUnik ||
-        found?.nomorUniqe ||
-        found?.nomor_unique ||
-        found?.nomor_unik ||
-        "",
-    }));
-  };
-
   // ============================================
-  // SUBMIT IZIN (tidak diubah)
+  // AUTO ISI NAMA DARI NOMOR UNIK
   // ============================================
-  const submitIzin = async () => {
-    if (!form.kategori || !form.nama || !form.jenisIzin) {
-      Swal.fire("Oops!", "Semua form wajib diisi.", "warning");
+  useEffect(() => {
+    if (!form.nomorUnik) {
+      setForm((prev) => ({ ...prev, nama: "" }));
       return;
     }
 
-    const now = new Date();
-    const jamNow = now.toLocaleTimeString("id-ID", {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+    const found = kategoriList.find(
+      (x) =>
+        x?.nomorUnik === form.nomorUnik ||
+        x?.nomorUniqe === form.nomorUnik ||
+        x?.nomor_unique === form.nomorUnik ||
+        x?.nomor_unik === form.nomorUnik
+    );
 
-    let autoKet = form.keterangan;
+    setForm((prev) => ({
+      ...prev,
+      nama: found?.nama || "",
+    }));
+  }, [form.nomorUnik, kategoriList]);
 
-    if (String(form.jenisIzin).toLowerCase() === "alpa" && !autoKet)
-      autoKet = "Tanpa keterangan";
-
-    if (String(form.jenisIzin).toLowerCase() === "dispensasi" && !autoKet)
-      autoKet = "Kegiatan resmi sekolah";
-
-    const jamMasukVal =
-      String(form.jenisIzin).toLowerCase() === "terlambat" ? jamNow : "";
-
-    const tanggalNow = new Date().toISOString().split("T")[0];
-
-    const payload = {
-      kategori: form.kategori,
-      nama: form.nama,
-      nomorUnik: form.nomorUnik || "",
-      jenisIzin: form.jenisIzin,
-      keterangan: autoKet,
-      tanggal: tanggalNow,
-      status: String(form.jenisIzin).toLowerCase(),
-    };
-
-    try {
-      setSubmitting(true);
-
-      await axios.post("http://localhost:5000/izinpresensi", payload);
-
-     // Tentukan jam pulang otomatis jika jenis izin = izin
-let jamPulangVal = "";
-if (String(form.jenisIzin).toLowerCase() === "izin") {
-  jamPulangVal = jamNow; // otomatis jam sekarang
-}
-
-const presensiPayload = {
-  kategori: payload.kategori,
-  nama: payload.nama,
-  nomorUnik: payload.nomorUnik,
-  keterangan: autoKet,
-  jamMasuk: jamMasukVal,
-  jamPulang: jamPulangVal,
-  tanggal: tanggalNow,
-  status: String(form.jenisIzin).toLowerCase(),
-};
-
-
-      await axios.post("http://localhost:5000/presensi", presensiPayload);
-
-      Swal.fire(
-        "Berhasil!",
-        "Pengajuan izin berhasil dikirim!",
-        "success"
-      ).then(() => {
-        navigate("/presensisemua");
-      });
-
-      setForm({
-        kategori: "",
-        nama: "",
-        nomorUnik: "",
-        jenisIzin: "",
-        keterangan: "",
-      });
-    } catch (err) {
-      console.error("Gagal menyimpan izin:", err);
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "Gagal menyimpan izin! Cek server.",
-      });
-    } finally {
-      setSubmitting(false);
+  // ============================================
+  // SUBMIT IZIN
+  // ============================================
+  const submitIzin = async () => {
+  // STEP 1 → hanya cek nomor unik
+  if (step === 1) {
+    if (!form.nomorUnik) {
+      Swal.fire("Oops!", "Nomor unik wajib diisi.", "warning");
+      return;
     }
+
+    // lanjut ke step 2 (tampilkan jenis izin & keterangan)
+    setStep(2);
+    return;
+  }
+
+  // STEP 2 → kirim izin
+  if (!form.jenisIzin) {
+    Swal.fire("Oops!", "Jenis izin wajib dipilih.", "warning");
+    return;
+  }
+
+  const jenisLower = String(form.jenisIzin).toLowerCase();
+
+  const now = new Date();
+  const jamNow = now.toLocaleTimeString("id-ID", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  const tanggalNow = new Date().toISOString().split("T")[0];
+
+  let autoKet = form.keterangan;
+  if (jenisLower === "alpa" && !autoKet) {
+    autoKet = "Tanpa keterangan";
+  }
+
+  const payloadPresensi = {
+    kategori: "izin",
+    nama: form.nama || "-",
+    nomorUnik: form.nomorUnik,
+    keterangan: autoKet,
+    jamMasuk: jenisLower === "terlambat" ? jamNow : "",
+    jamPulang: jenisLower === "izin" ? jamNow : "",
+    tanggal: tanggalNow,
+    status: jenisLower,
   };
 
-  const batal = () => navigate("/presensisemua");
+  try {
+    setSubmitting(true);
+
+    // IZIN → SIMPAN KE IZIN PRESENSI SAJA
+await axios.post("http://localhost:5000/izinpresensi", {
+  ...payloadPresensi,
+  jenisIzin: form.jenisIzin,
+});
+
+    Swal.fire("Berhasil", "Izin presensi berhasil dikirim", "success").then(
+      () => navigate("/presensi")
+    );
+  } catch {
+    Swal.fire("Error", "Gagal menyimpan izin", "error");
+  } finally {
+    setSubmitting(false);
+  }
+};
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-      <div className="w-full max-w-md bg-white p-6 rounded-xl shadow-lg">
-        <h2 className="text-2xl font-semibold mb-5 flex items-center gap-2 justify-center">
-          <FaRegFileAlt className="text-blue-600 text-3xl" />
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 to-cyan-100 px-4">
+      <div className="w-full max-w-md bg-white p-7 rounded-2xl shadow-xl">
+        <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 justify-center text-blue-700">
+          <FaRegFileAlt className="text-3xl" />
           Izin Presensi
         </h2>
 
         <div className="flex flex-col gap-4">
-          {/* Kategori */}
-          <select
-            name="kategori"
-            value={form.kategori}
-            onChange={(e) =>
-              setForm({
-                ...form,
-                kategori: e.target.value,
-                nama: "",
-                nomorUnik: "",
-              })
-            }
-            className="border rounded-lg px-3 py-2"
-          >
-            <option value="">-- Pilih Kategori --</option>
-            <option value="siswa">Siswa</option>
-            <option value="guru">Guru</option>
-            <option value="karyawan">Karyawan</option>
-          </select>
-
-          {/* Nama */}
-          <select
-            name="nama"
-            onChange={handleNamaSelect}
-            value={form.nama}
-            className="border rounded-lg px-3 py-2"
-            disabled={loadingKategori || !form.kategori}
-          >
-            <option value="">
-              {!form.kategori
-                ? "Pilih kategori dulu"
-                : loadingKategori
-                ? "Memuat daftar..."
-                : "-- Pilih Nama --"}
-            </option>
-
-            {filteredNamaList.map((item, index) => (
-              <option key={index} value={String(item.nama || "")}>
-                {String(item.nama || "")}
-              </option>
-            ))}
-          </select>
-
-          {/* Nomor Unik */}
           <input
             type="text"
-            placeholder="Nomor Unik"
+            placeholder="Masukkan Nomor Unik"
             value={form.nomorUnik}
+            onChange={(e) =>
+              setForm({ ...form, nomorUnik: e.target.value.trim() })
+            }
+            className="border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400"
+          />
+
+          <input
+            type="text"
+            placeholder="Nama otomatis"
+            value={form.nama}
             readOnly
-            className="border rounded-lg px-3 py-2 bg-gray-200 text-gray-600"
+            className="border rounded-lg px-3 py-2 bg-gray-100 text-gray-600"
           />
 
-          {/* JENIS IZIN DARI kategori_izin */}
-          <select
-            name="jenisIzin"
-            value={form.jenisIzin}
-            onChange={(e) => setForm({ ...form, jenisIzin: e.target.value })}
-            className="border rounded-lg px-3 py-2"
-          >
-            <option value="" disabled hidden>
-              -- Pilih Jenis Izin --
-            </option>
+          {step === 2 && (
+  <>
+    <select
+      value={form.jenisIzin}
+      onChange={(e) =>
+        setForm({ ...form, jenisIzin: e.target.value })
+      }
+      className="border rounded-lg px-3 py-2"
+    >
+      <option value="">-- Pilih Jenis Izin --</option>
+      {jenisIzinList.map((item, index) => (
+        <option key={item?.id ?? index} value={item?.nama || ""}>
+          {item?.nama || "-"}
+        </option>
+      ))}
+    </select>
 
-            {jenisIzinList.map((item) => (
-              <option key={item.id} value={item.nama}>
-                {item.nama}
-              </option>
-            ))}
-          </select>
-
-          {/* Keterangan */}
-          <textarea
-            name="keterangan"
-            placeholder="Tuliskan keterangan izin..."
-            value={form.keterangan}
-            onChange={(e) => setForm({ ...form, keterangan: e.target.value })}
-            className="border rounded-lg px-3 py-2 h-24 resize-none"
-          />
-
-          {/* Button Submit */}
+    <textarea
+      placeholder="Keterangan (opsional)"
+      value={form.keterangan}
+      onChange={(e) =>
+        setForm({ ...form, keterangan: e.target.value })
+      }
+      className="border rounded-lg px-3 py-2 h-24 resize-none"
+    />
+  </>
+)}
           <button
             onClick={submitIzin}
             disabled={submitting}
-            className={`bg-blue-600 text-white py-2 rounded-lg font-bold hover:bg-blue-700 transition ${
+            className={`bg-blue-600 text-white py-2 rounded-lg font-bold hover:bg-blue-700 ${
               submitting ? "opacity-70 cursor-not-allowed" : ""
             }`}
           >
-            {submitting ? "Mengirim..." : "Kirim Izin Presensi"}
+            {submitting ? "Mengirim..." : "Kirim Izin"}
           </button>
 
-          {/* Batal */}
           <button
-            onClick={batal}
+            onClick={() => navigate("/presensi")}
             className="bg-gray-400 text-white py-2 rounded-lg font-bold hover:bg-gray-500"
           >
             Batal

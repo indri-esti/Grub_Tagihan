@@ -10,10 +10,13 @@ const RekapPresensi = () => {
   const [filteredData, setFilteredData] = useState([]);
   const [filter, setFilter] = useState("semua");
   const [loading, setLoading] = useState(true);
-  const [masterUser, setMasterUser] = useState([]); // ✅ tambahan
+  const [masterUser, setMasterUser] = useState([]);
 
+  const [statusFilter, setStatusFilter] = useState("semua");
+  const [roleFilter, setRoleFilter] = useState("semua");
   const Navigate = useNavigate();
 
+  // ================= MASTER USER =================
   const FetchMasterUser = async () => {
     try {
       const res = await axios.get("http://localhost:5000/kategori_data");
@@ -35,25 +38,40 @@ const RekapPresensi = () => {
     return found?.nama || "-";
   };
 
+  const getRoleFromNomor = (nomor) => {
+    
+  if (!nomor) return "";
+  const found = masterUser.find(
+    (x) =>
+      x.nomorUnik === nomor ||
+      x.nomorUniqe === nomor ||
+      x.nomor_unique === nomor ||
+      x.nomor_unik === nomor
+  );
+  return (found?.role || found?.kategori || "").toLowerCase();
+};
+
+
+  // ================= STATUS =================
   const GetStatusFromData = (item) => {
-    const explicitStatus = (item?.status || "").toLowerCase();
+  const explicitStatus = (item?.status || "")
+    .toLowerCase()
+    .replace(" ", "_");
 
-    // PRIORITAS UTAMA = status yg dikirim dari izin
-    if (explicitStatus === "terlambat") return "Terlambat";
-    if (explicitStatus === "sakit") return "Sakit";
-    if (explicitStatus === "izin") return "Izin";
-    if (explicitStatus === "dispensasi") return "Dispensasi";
-    if (explicitStatus === "pulang_awal") return "Pulang Awal";
-    if (explicitStatus === "alpa") return "Alpa";
+  if (explicitStatus === "terlambat") return "Terlambat";
+  if (explicitStatus === "sakit") return "Sakit";
+  if (explicitStatus === "izin") return "Izin";
+  if (explicitStatus === "dispensasi") return "Dispensasi";
+  if (explicitStatus === "pulang_awal") return "Pulang Awal";
+  if (explicitStatus === "alpa") return "Alpa";
+  if (explicitStatus === "hadir") return "Hadir";
 
-    // Kalau tidak ada jam masuk/pulang → Alpa
-    if (!item?.jamMasuk && !item?.jamPulang) return "Alpa";
+  if (!item?.jamMasuk && !item?.jamPulang) return "Alpa";
+  if (item?.jamMasuk || item?.jamPulang) return "Hadir";
 
-    // Jika ada jam → Hadir
-    if (item?.jamMasuk || item?.jamPulang) return "Hadir";
+  return "-";
+};
 
-    return "-";
-  };
 
   const getStatusColor = (status) => {
     const s = status?.toLowerCase() || "";
@@ -69,16 +87,27 @@ const RekapPresensi = () => {
     return "bg-gray-300 text-gray-800";
   };
 
+  // ================= FETCH DATA (🔥 DITAMBAHKAN IZIN) =================
   const FetchData = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:5000/presensi");
-      const hasil = res.data || [];
 
-      hasil.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
+      const [presensiRes, izinRes] = await Promise.all([
+        axios.get("http://localhost:5000/presensi"),
+        axios.get("http://localhost:5000/izinpresensi"),
+      ]);
 
-      setData(hasil);
-      setFilteredData(hasil);
+      const presensiData = presensiRes.data || [];
+      const izinData = izinRes.data || [];
+
+      const gabunganData = [...presensiData, ...izinData];
+
+      gabunganData.sort(
+        (a, b) => new Date(b.tanggal) - new Date(a.tanggal)
+      );
+      
+      setData(gabunganData);
+      setFilteredData(gabunganData);
     } catch (error) {
       console.error("Gagal mengambil data:", error);
       Swal.fire({
@@ -91,9 +120,44 @@ const RekapPresensi = () => {
     }
   };
 
+ // ================= DELETE =================
+const handleDelete = (item) => {
+  Swal.fire({
+    title: "Hapus Data?",
+    text: "Data presensi akan dihapus!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#d33",
+    cancelButtonColor: "#3085d6",
+    confirmButtonText: "Hapus",
+    cancelButtonText: "Batal",
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      try {
+        // 🔥 COBA HAPUS KE PRESENSI DULU
+        try {
+          await axios.delete(`http://localhost:5000/presensi/${item.id}`);
+        } catch {
+          // 🔥 JIKA GAGAL → COBA KE IZIN
+          await axios.delete(
+            `http://localhost:5000/izinpresensi/${item.id}`
+          );
+        }
+
+        Swal.fire("Terhapus!", "Data berhasil dihapus.", "success");
+        FetchData();
+      } catch (error) {
+        console.error("Hapus error:", error);
+        Swal.fire("Gagal!", "Tidak dapat menghapus data.", "error");
+      }
+    }
+  });
+};
+
+
   useEffect(() => {
     FetchData();
-    FetchMasterUser(); // ✅ panggil master user juga
+    FetchMasterUser();
   }, []);
 
   const formatTanggal = (tgl) => {
@@ -105,6 +169,7 @@ const RekapPresensi = () => {
     ).padStart(2, "0")}/${d.getFullYear()}`;
   };
 
+  // ================= FILTER =================
   useEffect(() => {
     let hasil = Array.isArray(data) ? [...data] : [];
 
@@ -118,7 +183,8 @@ const RekapPresensi = () => {
     if (filter === "hari-ini") {
       hasil = hasil.filter(
         (item) =>
-          typeof item.tanggal === "string" && item.tanggal.startsWith(todayStr)
+          typeof item.tanggal === "string" &&
+          item.tanggal.startsWith(todayStr)
       );
     }
 
@@ -146,8 +212,23 @@ const RekapPresensi = () => {
       });
     }
 
+    if (statusFilter !== "semua") {
+      hasil = hasil.filter(
+        (item) => GetStatusFromData(item).toLowerCase() === statusFilter
+      );
+    }
+
+    if (roleFilter !== "semua") {
+  hasil = hasil.filter((item) => {
+    const nomor =
+      item.nomorUnik || item.nomor_unik || item.nomorunik;
+    return getRoleFromNomor(nomor) === roleFilter;
+  });
+}
+
     setFilteredData(hasil);
-  }, [filter, data]);
+  }, [filter, statusFilter, roleFilter, data]);
+
 
   const cleanedData = filteredData.filter(
     (item) => item?.nomorUnik || item?.nomor_unik || item?.nomorunik
@@ -166,12 +247,14 @@ const RekapPresensi = () => {
             </h2>
           </div>
 
+          {/* FILTER */}
           <div className="flex flex-col sm:flex-row gap-3 mb-5 items-start sm:items-center">
             <label className="font-medium text-gray-700">Filter Rekapan:</label>
+
             <select
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
-              className="border border-gray-300 rounded-lg px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all"
+              className="border border-gray-300 rounded-lg px-3 py-2 shadow-sm"
             >
               <option value="semua">Semua</option>
               <option value="hari-ini">Hari Ini</option>
@@ -179,8 +262,36 @@ const RekapPresensi = () => {
               <option value="bulan-ini">Bulan Ini</option>
               <option value="tahun-ini">Tahun Ini</option>
             </select>
+
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="border border-gray-300 rounded-lg px-3 py-2 shadow-sm"
+            >
+              <option value="semua">Semua Status</option>
+              <option value="hadir">Hadir</option>
+              <option value="sakit">Sakit</option>
+              <option value="izin">Izin</option>
+              <option value="dispensasi">Dispensasi</option>
+              <option value="terlambat">Terlambat</option>
+              <option value="alpa">Alpa</option>
+              <option value="pulang awal">Pulang Awal</option>
+            </select>
+
+<select
+  value={roleFilter}
+  onChange={(e) => setRoleFilter(e.target.value)}
+  className="border border-gray-300 rounded-lg px-3 py-2 shadow-sm"
+>
+  <option value="semua">Semua Data</option>
+  <option value="siswa">Siswa</option>
+  <option value="guru">Guru</option>
+  <option value="karyawan">Karyawan</option>
+</select>
+
           </div>
 
+          {/* TABLE */}
           {loading ? (
             <p className="text-center py-4 text-gray-500">Memuat data...</p>
           ) : (
@@ -196,6 +307,7 @@ const RekapPresensi = () => {
                     <th className="px-4 py-3 text-center">Jam Pulang</th>
                     <th className="px-4 py-3 text-center">Tanggal</th>
                     <th className="px-4 py-3 text-center">Status</th>
+                    <th className="px-4 py-3 text-center">Aksi</th>
                   </tr>
                 </thead>
 
@@ -208,15 +320,13 @@ const RekapPresensi = () => {
                       return (
                         <tr key={item.id || i}>
                           <td className="px-4 py-3 text-center">{i + 1}</td>
-
                           <td className="px-4 py-3 text-left">
                             {item.nama && item.nama !== ""
                               ? item.nama
                               : getNamaFromNomor(nomor)}
                           </td>
-
                           <td className="px-4 py-3 text-center">{nomor}</td>
-                          <td className="px-4 py-3 text-center">
+                          <td className="px-4 py-3 text-left">
                             {item.keterangan || ""}
                           </td>
                           <td className="px-4 py-3 text-center">
@@ -237,16 +347,33 @@ const RekapPresensi = () => {
                               {GetStatusFromData(item)}
                             </span>
                           </td>
+                          <td className="px-4 py-2 flex justify-center gap-2">
+                           <button
+  onClick={() => Navigate(`/editpresensi/${item.id}`)}
+  className="bg-gray-700 text-white px-3 py-2 rounded-md hover:bg-gray-600"
+>
+  ✏
+</button>
+
+
+                           <button
+  onClick={() => handleDelete(item)}
+  className="bg-red-700 text-white px-3 py-2 rounded-md hover:bg-red-600"
+>
+  🗑
+</button>
+
+                          </td>
                         </tr>
                       );
                     })
                   ) : (
                     <tr>
                       <td
-                        colSpan="7"
+                        colSpan="9"
                         className="text-center py-4 text-gray-500 italic"
                       >
-                        Tidak ada data presensi di temukan
+                        Tidak ada data presensi ditemukan
                       </td>
                     </tr>
                   )}

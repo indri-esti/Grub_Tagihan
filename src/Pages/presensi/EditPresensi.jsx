@@ -16,11 +16,33 @@ const EditPresensi = () => {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
 
+  const getEndpoint = (data = {}) => {
+  const status = String(data.status || "").toLowerCase();
+  const kategori = String(data.kategori || "").toLowerCase();
+
+  if (status === "izin" || status === "dispensasi" || kategori === "izin") {
+    return "http://localhost:5000/izinpresensi";
+  }
+
+  return "http://localhost:5000/presensi";
+};
+
   // FETCH DATA PRESENSI BY ID
   const fetchData = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`http://localhost:5000/presensi/${id}`);
+     const presensiRes = await axios.get(
+  `http://localhost:5000/presensi/${id}`
+).catch(() => null);
+
+const izinRes = await axios.get(
+  `http://localhost:5000/izinpresensi/${id}`
+).catch(() => null);
+
+const res = presensiRes || izinRes;
+
+if (!res) throw new Error("Data tidak ditemukan");
+
 
       // support API yang mengembalikan object atau array
       let data = res.data;
@@ -72,7 +94,12 @@ const EditPresensi = () => {
         status: String(form.status).toLowerCase(),
       };
 
-      await axios.put(`http://localhost:5000/presensi/${id}`, updated, {
+      const endpoint = getEndpoint(existingData);
+
+await axios.put(`${endpoint}/${id}`, updated, {
+  headers: { "Content-Type": "application/json" },
+});
+      await axios.put(`${endpoint}/${id}`, updated, {
         headers: { "Content-Type": "application/json" },
       });
 
@@ -80,7 +107,7 @@ const EditPresensi = () => {
         "Berhasil!",
         "Data presensi berhasil diperbarui!",
         "success"
-      ).then(() => navigate("/presensisemua"));
+      ).then(() => navigate("/rekappresensi"));
     } catch (err) {
       console.error("Gagal update:", err);
       Swal.fire("Error", "Gagal menyimpan perubahan.", "error");
@@ -89,7 +116,7 @@ const EditPresensi = () => {
     }
   };
 
-  const batal = () => navigate("/presensisemua");
+  const batal = () => navigate("/rekappresensi");
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">

@@ -18,19 +18,6 @@ const TambahDatamaster = () => {
   const [dataKelas, setDataKelas] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // === AUTO GENERATE RFID NOMOR UNIQUE (8 HEX DIGIT) ===
- // === AUTO GENERATE RFID NOMOR UNIQUE (NUK-RANDOM) ===
-useEffect(() => {
-  const randomNumber = Math.floor(10000000 + Math.random() * 90000000); // 8 digit random
-  const rfid = `NUK-${randomNumber}`;
-
-  setFormData((prev) => ({
-    ...prev,
-    nomorUnik: rfid, 
-  }));
-}, []);
-  // ====================================================
-
   // 🔹 Ambil data level dan data_kelas
   useEffect(() => {
     const fetchData = async () => {
@@ -175,12 +162,15 @@ useEffect(() => {
           <div>
             <label className="text-gray-700 text-sm mb-1 block">Nomor Unik</label>
             <input
-              type="text"
-              name="nomorUnik" // <-- name sesuai key
-              value={formData.nomorUnik}
-              readOnly
-              className="w-full border border-gray-300 bg-gray-200 rounded-md p-2 cursor-not-allowed outline-none"
-            />
+  type="text"
+  name="nomorUnik"
+  placeholder="Masukan nomor unik"
+  value={formData.nomorUnik}
+  onChange={handleChange}
+  required
+  className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
+/>
+
           </div>
 
           {/* Pilih Level */}

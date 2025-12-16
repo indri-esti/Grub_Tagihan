@@ -18,7 +18,6 @@ const PresensiPulang = () => {
   useEffect(() => {
     const timer = setInterval(() => {
       const now = new Date();
-
       setBlink((prev) => !prev);
 
       const hh = now.getHours().toString().padStart(2, "0");
@@ -26,7 +25,6 @@ const PresensiPulang = () => {
       const ss = now.getSeconds().toString().padStart(2, "0");
 
       const separator = blink ? ":" : " ";
-
       setJam(`${hh}${separator}${mm}${separator}${ss}`);
     }, 1000);
 
@@ -34,18 +32,11 @@ const PresensiPulang = () => {
   }, [blink]);
 
   // ==============================
-  // SUARA NOTIFIKASI
+  // SUARA
   // ==============================
   const playSound = () => {
     const audio = new Audio("/sound/berhasil.mp3");
     audio.play();
-  };
-
-  // ==============================
-  // FULLSCREEN MODE
-  // ==============================
-  const Fullscreen = () => {
-    document.documentElement.requestFullscreen();
   };
 
   // ==============================
@@ -56,7 +47,7 @@ const PresensiPulang = () => {
       const res = await axios.get("http://localhost:5000/presensi");
       setData(res.data || []);
     } catch (err) {
-      console.error("Gagal mengambil data:", err);
+      console.error(err);
     }
   };
 
@@ -65,19 +56,18 @@ const PresensiPulang = () => {
   }, []);
 
   // ==============================
-  // SUBMIT PRESENSI PULANG
+  // SUBMIT PULANG
   // ==============================
   const submitPulang = async () => {
     const today = new Date().toISOString().split("T")[0];
 
     const presensiHariIni = data.find((d) => {
       const nomor = d.nomorUnik || d.nomorunik || d.nomor_unik || "";
-      const tanggal = d.tanggal || "";
-      return nomor === nomorUnik && tanggal.startsWith(today);
+      return nomor === nomorUnik && (d.tanggal || "").startsWith(today);
     });
 
     if (!presensiHariIni) {
-      Swal.fire("Tidak ditemukan!", "Siswa belum presensi masuk.", "warning");
+      Swal.fire("Tidak ditemukan!", "Belum presensi masuk.", "warning");
       return;
     }
 
@@ -92,14 +82,10 @@ const PresensiPulang = () => {
         }
       );
 
-      playSound(); // 🔊 bunyi
+      playSound();
 
-      Swal.fire(
-        "Berhasil!",
-        "Presensi Pulang berhasil dicatat.",
-        "success"
-      ).then(() => {
-        navigate("/presensisemua");
+      Swal.fire("Berhasil!", "Presensi Pulang dicatat.", "success").then(() => {
+        navigate("/presensipulang");
       });
 
       setNomorUnik("");
@@ -109,42 +95,52 @@ const PresensiPulang = () => {
     }
   };
 
-  const batal = () => navigate("/presensisemua");
+  const batal = () => navigate("/presensi");
 
   // ==============================
-  // UI LED CLASSIC
+  // UI FINAL
   // ==============================
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-      <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl border border-gray-200">
+      <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-gray-200 p-8">
+
         {/* HEADER */}
-        <h2 className="text-3xl font-bold mb-4 flex flex-col items-center text-red-700">
-          <FaDoorClosed className="text-4xl mb-2" />
-          Presensi Pulang
-        </h2>
+        <div className="flex flex-col items-center mb-7">
+          <div className="w-16 h-16 flex items-center justify-center rounded-full border-2 border-red-600 mb-3">
+            <FaDoorClosed className="text-3xl text-red-600" />
+          </div>
+          <h2 className="text-3xl font-extrabold text-gray-800 tracking-wide">
+            Presensi Pulang
+          </h2>
+          <p className="text-sm text-gray-500 mt-1">
+            Sistem Pulang Digital
+          </p>
+        </div>
 
         {/* JAM LED */}
-        <p
-          className="text-center text-4xl font-mono tracking-widest mb-8 select-none"
-          style={{
-            background: "#000",
-            color: "#ff3333",
-            padding: "14px 0",
-            borderRadius: "12px",
-            fontWeight: "bold",
-            letterSpacing: "6px",
-            border: "2px solid #ff0000",
-            boxShadow: "0 0 12px #ff0000",
-          }}
-        >
-          {jam}
-        </p>
+        <div className="mb-8">
+          <div
+            className="text-center text-4xl font-mono tracking-widest select-none"
+            style={{
+              background: "#000",
+              color: "#ff3333",
+              padding: "18px 0",
+              borderRadius: "16px",
+              fontWeight: "bold",
+              letterSpacing: "6px",
+              border: "2px solid #ff0000",
+              boxShadow:
+                "inset 0 0 12px rgba(255,0,0,0.8), 0 0 10px rgba(255,0,0,0.6)",
+            }}
+          >
+            {jam}
+          </div>
+        </div>
 
-        {/* FULLSCREEN BUTTON */}
-        <div className="flex flex-col gap-5">
-          {/* Input Nomor Unik */}
+        {/* FORM */}
+        <div className="space-y-6">
           <div>
-            <label className="text-sm text-gray-600 font-medium">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
               Nomor Unik
             </label>
             <input
@@ -152,21 +148,20 @@ const PresensiPulang = () => {
               placeholder="Masukkan Nomor Unik"
               value={nomorUnik}
               onChange={(e) => setNomorUnik(e.target.value)}
-              className="w-full mt-1 border border-gray-300 rounded-xl px-4 py-3 text-lg focus:ring-2 focus:ring-red-400 focus:outline-none transition"
+              className="w-full px-5 py-3 text-lg rounded-2xl border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition shadow-sm"
             />
           </div>
 
-          {/* Tombol */}
           <button
             onClick={submitPulang}
-            className="w-full py-3 rounded-xl font-bold text-white text-lg bg-red-600 hover:bg-red-700 transition shadow-md"
+            className="w-full py-3 rounded-2xl text-lg font-bold text-white bg-red-600 hover:bg-red-700 active:scale-[0.98] transition-all shadow-md"
           >
             Simpan Presensi Pulang
           </button>
 
           <button
             onClick={batal}
-            className="w-full py-3 rounded-xl font-semibold text-gray-700 bg-gray-200 hover:bg-gray-300 transition"
+            className="w-full py-3 rounded-2xl text-lg font-semibold bg-gray-200 hover:bg-gray-300 text-gray-700 transition"
           >
             Batal
           </button>
