@@ -14,6 +14,12 @@ const RekapPresensi = () => {
 
   const [statusFilter, setStatusFilter] = useState("semua");
   const [roleFilter, setRoleFilter] = useState("semua");
+
+
+  // =================== TANGGAL FILTER =================
+  const [tanggalFilter, setTanggalFilter] = useState("");
+
+  // ================= NAVIGATE =================
   const Navigate = useNavigate();
 
   // ================= MASTER USER =================
@@ -194,6 +200,7 @@ const handleDelete = (item) => {
     ).padStart(2, "0")}/${d.getFullYear()}`;
   };
 
+
   // ================= FILTER =================
   useEffect(() => {
     let hasil = Array.isArray(data) ? [...data] : [];
@@ -237,6 +244,16 @@ const handleDelete = (item) => {
         return t.getFullYear() === today.getFullYear();
       });
     }
+
+    //=================== TANGGAL FILTER =================
+    if (tanggalFilter) {
+      hasil = hasil.filter(
+        (item) =>
+          typeof item.tanggal === "string" &&
+          item.tanggal.startsWith(tanggalFilter)
+      );
+    }
+
 
     if (statusFilter !== "semua") {
       hasil = hasil.filter(
@@ -315,6 +332,13 @@ const handleDelete = (item) => {
   <option value="guru">Guru</option>
   <option value="karyawan">Karyawan</option>
 </select>
+
+            <input
+              type="date"
+              value={tanggalFilter}
+              onChange={(e) => setTanggalFilter(e.target.value)}
+              className="border border-gray-300 rounded-lg px-3 py-2 shadow-sm"
+              />
 
           </div>
 
