@@ -159,7 +159,32 @@ const handleDelete = (item) => {
     FetchData();
     FetchMasterUser();
   }, []);
+  // ================= FORMAT DATA ================= //
 
+  const statusBaru = (status) => {
+    if (!status) return "Alpa";
+    const s = status.toLowerCase();
+    if (s === "hadir" || s === "izin" || s === "sakit" || s === "dispensasi" || s === "terlambat" || s === "pulang awal" || s === "alpa") {
+      return status.charAt(0).toUpperCase() + status.slice(1);
+    }
+    return "Alpa";
+  };
+
+  const finalKeterangan = (keterangan) => {
+    if (!keterangan || keterangan.trim() === "") {
+      return "-";
+    }
+    return keterangan;
+  };
+
+  const FinalStatus = (status) => {
+    if (!status) return "Alpa";
+    const s = status.toLowerCase();
+    if (s === "hadir" || s === "izin" || s === "sakit" || s === "dispensasi" || s === "terlambat" || s === "pulang awal" || s === "alpa") {
+      return status.charAt(0).toUpperCase() + status.slice(1);
+    }
+    return "Alpa";
+  };
   const formatTanggal = (tgl) => {
     if (!tgl) return "-";
     const d = new Date(tgl);
@@ -175,6 +200,7 @@ const handleDelete = (item) => {
 
     const today = new Date();
     const todayStr = today.toISOString().split("T")[0];
+
 
     const startOfWeek = new Date();
     startOfWeek.setDate(today.getDate() - 6);
@@ -225,6 +251,7 @@ const handleDelete = (item) => {
     return getRoleFromNomor(nomor) === roleFilter;
   });
 }
+
 
     setFilteredData(hasil);
   }, [filter, statusFilter, roleFilter, data]);
@@ -347,7 +374,33 @@ const handleDelete = (item) => {
                               {GetStatusFromData(item)}
                             </span>
                           </td>
+
                           <td className="px-4 py-2 flex justify-center gap-2">
+                            <div className="flex justify-center gap-2">
+                              <button
+  onClick={() =>
+    Swal.fire({
+      title: "Detail Presensi",
+      html: `
+        <div style="text-align: left; font-size: 15px; line-height: 1.6;">
+          <b>Nama:</b> ${item?.nama || getNamaFromNomor(nomor)} <br/>
+          <b>Nomor Unik:</b> ${nomor} <br/>
+          <b>Keterangan:</b> ${finalKeterangan(item?.keterangan)} <br/>
+          <b>Jam Masuk:</b> ${item?.jamMasuk ?? "-"} <br/>
+          <b>Jam Pulang:</b> ${item?.jamPulang ?? "-"} <br/>
+          <b>Tanggal:</b> ${formatTanggal(item?.tanggal)} <br/>
+          <b>Status:</b> ${statusBaru(GetStatusFromData(item))}
+        </div>
+      `,
+      confirmButtonText: "Tutup",
+      width: 450,
+    })
+  }
+  className="bg-blue-600 text-white px-3 py-2 rounded-md hover:bg-blue-500"
+>
+  📝
+</button>
+
                            <button
   onClick={() => Navigate(`/editpresensi/${item.id}`)}
   className="bg-gray-700 text-white px-3 py-2 rounded-md hover:bg-gray-600"
@@ -363,6 +416,7 @@ const handleDelete = (item) => {
   🗑
 </button>
 
+                            </div>
                           </td>
                         </tr>
                       );

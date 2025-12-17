@@ -162,12 +162,12 @@
       "jabatan_kelas": "XI AKL 1"
     },
     {
-      "id": "2913",
       "nama": "Zilong",
       "email": "Zilong@gmail.com",
-      "nomorUnik": "NUK-82075301",
       "kategori": "Siswa",
-      "jabatan_kelas": "X TSM"
+      "jabatan_kelas": "X TSM",
+      "nomorUnik": "NUK-820753089",
+      "id": "2913"
     },
     {
       "id": "3d61",
@@ -341,6 +341,20 @@
       "jamMasuk": "14.54",
       "jamPulang": "",
       "tanggal": "2025-12-16T07:54:06.154Z"
+    },
+    {
+      "id": "4547",
+      "nomorUnik": "NUK-820753089",
+      "jamMasuk": "10.38",
+      "jamPulang": "",
+      "tanggal": "2025-12-17T03:38:11.105Z"
+    },
+    {
+      "id": "09c3",
+      "nomorUnik": "NUK-82362969",
+      "jamMasuk": "10.39",
+      "jamPulang": "",
+      "tanggal": "2025-12-17T03:39:35.563Z"
     }
   ],
   "izinpresensi": [
@@ -373,7 +387,7 @@
       "kategori": "izin",
       "nama": "Alicia",
       "nomorUnik": "NUK-10576909",
-      "keterangan": "Karena Bangun siang",
+      "keterangan": "Karena Bangun kesiangan",
       "jamMasuk": "12.56",
       "jamPulang": "",
       "tanggal": "2025-12-16",
@@ -385,7 +399,7 @@
       "kategori": "izin",
       "nama": "Bobi",
       "nomorUnik": "NUK-124453588",
-      "keterangan": "Ambil Ijazah",
+      "keterangan": "Ada Urusan dengan Manajer",
       "jamMasuk": "",
       "jamPulang": "14.03",
       "tanggal": "2025-12-16",

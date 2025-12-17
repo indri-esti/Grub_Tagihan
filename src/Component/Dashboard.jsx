@@ -317,7 +317,7 @@ const GetStatusFromData = (item) => {
                         {GetNamaByNomor(nomorUnik)}
                       </td>
                       <td className="py-2 px-4 text-center">{nomorUnik}</td>
-                      <td className="py-2 px-4 text-center">{p.keterangan}</td>
+                      <td className="py-2 px-4 text-left">{p.keterangan}</td>
                       <td className="py-2 px-4 text-center">{p.jamMasuk}</td>
                       <td className="py-2 px-4 text-center">{p.jamPulang}</td>
                       <td className="py-2 px-4 text-center">{tanggalIndo}</td>
