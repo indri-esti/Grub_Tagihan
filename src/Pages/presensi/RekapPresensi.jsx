@@ -58,25 +58,35 @@ const RekapPresensi = () => {
 };
 
 
-  // ================= STATUS =================
-  const GetStatusFromData = (item) => {
-  const explicitStatus = (item?.status || "")
+ // ================= STATUS =================
+const GetStatusFromData = (item) => {
+  // 🔹 NORMALISASI JAM
+  const jamMasuk = item?.jamMasuk || item?.jam_masuk || "";
+  const jamPulang = item?.jamPulang || item?.jam_pulang || "";
+
+  // 🔹 NORMALISASI STATUS (AMAN UNTUK SEMUA VARIASI)
+  const statusText = (item?.status || "")
+    .toString()
     .toLowerCase()
-    .replace(" ", "_");
+    .replace(/_/g, " ")
+    .trim();
 
-  if (explicitStatus === "terlambat") return "Terlambat";
-  if (explicitStatus === "sakit") return "Sakit";
-  if (explicitStatus === "izin") return "Izin";
-  if (explicitStatus === "dispensasi") return "Dispensasi";
-  if (explicitStatus === "pulang_awal") return "Pulang Awal";
-  if (explicitStatus === "alpa") return "Alpa";
-  if (explicitStatus === "hadir") return "Hadir";
+  // ================= PRIORITAS STATUS =================
+  if (statusText.includes("terlambat")) return "Terlambat";
+  if (statusText.includes("izin")) return "Izin";
+  if (statusText.includes("sakit")) return "Sakit";
+  if (statusText.includes("dispensasi")) return "Dispensasi";
+  if (statusText.includes("pulang")) return "Pulang Awal";
+  if (statusText.includes("alpa")) return "Alpa";
+  if (statusText.includes("hadir")) return "Hadir";
 
-  if (!item?.jamMasuk && !item?.jamPulang) return "Alpa";
-  if (item?.jamMasuk || item?.jamPulang) return "Hadir";
+  // ================= AUTO HITUNG =================
+  if (!jamMasuk && !jamPulang) return "Alpa";
+  
 
-  return "-";
+  return "Hadir";
 };
+  // ================= STATUS COLOR =================
 
 
   const getStatusColor = (status) => {
@@ -381,11 +391,11 @@ const handleDelete = (item) => {
                             {item.keterangan || ""}
                           </td>
                           <td className="px-4 py-3 text-center">
-                            {item.jamMasuk ?? "-"}
-                          </td>
-                          <td className="px-4 py-3 text-center">
-                            {item.jamPulang ?? "-"}
-                          </td>
+                  {item.jam_masuk}
+</td>
+<td className="px-4 py-3 text-center">
+                  {item.jam_pulang}
+</td>
                           <td className="px-4 py-3 text-center">
                             {formatTanggal(item.tanggal)}
                           </td>
@@ -410,8 +420,8 @@ const handleDelete = (item) => {
           <b>Nama:</b> ${item?.nama || getNamaFromNomor(nomor)} <br/>
           <b>Nomor Unik:</b> ${nomor} <br/>
           <b>Keterangan:</b> ${finalKeterangan(item?.keterangan)} <br/>
-          <b>Jam Masuk:</b> ${item?.jamMasuk ?? "-"} <br/>
-          <b>Jam Pulang:</b> ${item?.jamPulang ?? "-"} <br/>
+         <b>Jam Masuk:</b> ${item?.jamMasuk || item?.jam_masuk || "-"} <br/>
+<b>Jam Pulang:</b> ${item?.jamPulang || item?.jam_pulang || "-"} <br/>
           <b>Tanggal:</b> ${formatTanggal(item?.tanggal)} <br/>
           <b>Status:</b> ${statusBaru(GetStatusFromData(item))}
         </div>

@@ -58,11 +58,11 @@ const PresensiMasuk = () => {
 
     const payload = {
       nomorUnik: form.nomorUnik,
-      jamMasuk: new Date().toLocaleTimeString("id-ID", {
+      jam_masuk: new Date().toLocaleTimeString("id-ID", {
         hour: "2-digit",
         minute: "2-digit",
       }),
-      jamPulang: "",
+      jam_pulang: "",
       tanggal: new Date().toISOString(),
     };
 

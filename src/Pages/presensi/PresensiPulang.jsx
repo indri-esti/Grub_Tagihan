@@ -75,7 +75,7 @@ const PresensiPulang = () => {
       await axios.patch(
         `http://localhost:5000/presensi/${presensiHariIni.id}`,
         {
-          jamPulang: new Date().toLocaleTimeString("id-ID", {
+          jam_pulang: new Date().toLocaleTimeString("id-ID", {
             hour: "2-digit",
             minute: "2-digit",
           }),

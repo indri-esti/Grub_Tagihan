@@ -3,13 +3,25 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { useParams, useNavigate } from "react-router-dom";
 
+/* ================= HELPER JAM ================= */
+const dotToColon = (jam) => {
+  if (!jam) return "";
+  return String(jam).replace(".", ":");
+};
+
+const colonToDot = (jam) => {
+  if (!jam) return "";
+  return String(jam).replace(":", ".");
+};
+/* ============================================= */
+
 const EditPresensi = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
-    keterangan: "",
-    status: "",
+    jam_masuk: "",
+    jam_pulang: "",
   });
 
   const [existingData, setExistingData] = useState(null);
@@ -17,48 +29,46 @@ const EditPresensi = () => {
   const [saving, setSaving] = useState(false);
 
   const getEndpoint = (data = {}) => {
-  const status = String(data.status || "").toLowerCase();
-  const kategori = String(data.kategori || "").toLowerCase();
+    const status = String(data.status || "").toLowerCase();
+    const kategori = String(data.kategori || "").toLowerCase();
 
-  if (status === "izin" || status === "dispensasi" || kategori === "izin") {
-    return "http://localhost:5000/izinpresensi";
-  }
+    if (status === "izin" || status === "dispensasi" || kategori === "izin") {
+      return "http://localhost:5000/izinpresensi";
+    }
 
-  return "http://localhost:5000/presensi";
-};
+    return "http://localhost:5000/presensi";
+  };
 
-  // FETCH DATA PRESENSI BY ID
+  /* ================= FETCH DATA ================= */
   const fetchData = async () => {
     try {
       setLoading(true);
-     const presensiRes = await axios.get(
-  `http://localhost:5000/presensi/${id}`
-).catch(() => null);
 
-const izinRes = await axios.get(
-  `http://localhost:5000/izinpresensi/${id}`
-).catch(() => null);
+      const presensiRes = await axios
+        .get(`http://localhost:5000/presensi/${id}`)
+        .catch(() => null);
 
-const res = presensiRes || izinRes;
+      const izinRes = await axios
+        .get(`http://localhost:5000/izinpresensi/${id}`)
+        .catch(() => null);
 
-if (!res) throw new Error("Data tidak ditemukan");
+      const res = presensiRes || izinRes;
+      if (!res) throw new Error("Data tidak ditemukan");
 
-
-      // support API yang mengembalikan object atau array
       let data = res.data;
       if (Array.isArray(data)) data = data[0] || null;
 
       if (!data) {
         Swal.fire("Error", "Data presensi tidak ditemukan.", "error");
         setExistingData(null);
-        setForm({ keterangan: "", status: "" });
+        setForm({ jam_masuk: "", jam_pulang: "" });
         return;
       }
 
       setExistingData(data);
       setForm({
-        keterangan: data.keterangan || "",
-        status: data.status || "",
+        jam_masuk: dotToColon(data.jam_masuk),
+        jam_pulang: dotToColon(data.jam_pulang),
       });
     } catch (error) {
       console.error("Gagal mengambil data:", error);
@@ -72,10 +82,10 @@ if (!res) throw new Error("Data tidak ditemukan");
     if (id) fetchData();
   }, [id]);
 
-  // UPDATE DATA PRESENSI (merge agar field lain tidak hilang)
+  /* ================= UPDATE DATA ================= */
   const updatePresensi = async () => {
-    if (!form.status || !form.keterangan) {
-      Swal.fire("Oops!", "Semua form harus diisi.", "warning");
+    if (!form.jam_masuk || !form.jam_pulang) {
+      Swal.fire("Oops!", "Jam masuk dan jam pulang harus diisi.", "warning");
       return;
     }
 
@@ -87,18 +97,14 @@ if (!res) throw new Error("Data tidak ditemukan");
     try {
       setSaving(true);
 
-      // merge perubahan ke object existingData supaya field lain tidak hilang
       const updated = {
         ...existingData,
-        keterangan: form.keterangan,
-        status: String(form.status).toLowerCase(),
+        jam_masuk: colonToDot(form.jam_masuk),
+        jam_pulang: colonToDot(form.jam_pulang),
       };
 
       const endpoint = getEndpoint(existingData);
 
-await axios.put(`${endpoint}/${id}`, updated, {
-  headers: { "Content-Type": "application/json" },
-});
       await axios.put(`${endpoint}/${id}`, updated, {
         headers: { "Content-Type": "application/json" },
       });
@@ -139,30 +145,35 @@ await axios.put(`${endpoint}/${id}`, updated, {
           </div>
         ) : (
           <div className="flex flex-col gap-4">
-            <select
-              name="status"
-              value={form.status}
-              onChange={(e) => setForm({ ...form, status: e.target.value })}
-              className="border rounded-lg px-3 py-2"
-              disabled={saving}
-            >
-              <option value="">-- Pilih Status Presensi --</option>
-              <option value="sakit">Sakit</option>
-              <option value="izin">Izin</option>
-              <option value="dispensasi">Dispensasi</option>
-              <option value="terlambat">Terlambat</option>
-              <option value="pulang_awal">Pulang Awal</option>
-              <option value="alpa">Alpa</option>
-            </select>
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                Jam Masuk
+              </label>
+              <input
+                type="time"
+                value={form.jam_masuk}
+                onChange={(e) =>
+                  setForm({ ...form, jam_masuk: e.target.value })
+                }
+                className="border rounded-lg px-3 py-2 w-full"
+                disabled={saving}
+              />
+            </div>
 
-            <textarea
-              name="keterangan"
-              value={form.keterangan}
-              placeholder="Tuliskan keterangan..."
-              onChange={(e) => setForm({ ...form, keterangan: e.target.value })}
-              className="border rounded-lg px-3 py-2 h-24 resize-none"
-              disabled={saving}
-            />
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                Jam Pulang
+              </label>
+              <input
+                type="time"
+                value={form.jam_pulang}
+                onChange={(e) =>
+                  setForm({ ...form, jam_pulang: e.target.value })
+                }
+                className="border rounded-lg px-3 py-2 w-full"
+                disabled={saving}
+              />
+            </div>
 
             <button
               onClick={updatePresensi}

@@ -19,9 +19,6 @@ const IzinPresensi = () => {
   const [submitting, setSubmitting] = useState(false);
   const [step, setStep] = useState(1);
 
-  // ============================================
-  // FETCH DATA
-  // ============================================
   const fetchKategori = async () => {
     try {
       const res = await axios.get("http://localhost:5000/kategori_data");
@@ -50,9 +47,6 @@ const IzinPresensi = () => {
     fetchJenisIzin();
   }, []);
 
-  // ============================================
-  // AUTO ISI NAMA DARI NOMOR UNIK
-  // ============================================
   useEffect(() => {
     if (!form.nomorUnik) {
       setForm((prev) => ({ ...prev, nama: "" }));
@@ -73,72 +67,72 @@ const IzinPresensi = () => {
     }));
   }, [form.nomorUnik, kategoriList]);
 
-  // ============================================
-  // SUBMIT IZIN
-  // ============================================
   const submitIzin = async () => {
-  // STEP 1 → hanya cek nomor unik
-  if (step === 1) {
-    if (!form.nomorUnik) {
-      Swal.fire("Oops!", "Nomor unik wajib diisi.", "warning");
+    if (step === 1) {
+      if (!form.nomorUnik) {
+        Swal.fire("Oops!", "Nomor unik wajib diisi.", "warning");
+        return;
+      }
+      setStep(2);
       return;
     }
 
-    // lanjut ke step 2 (tampilkan jenis izin & keterangan)
-    setStep(2);
-    return;
-  }
+    if (!form.jenisIzin) {
+      Swal.fire("Oops!", "Jenis izin wajib dipilih.", "warning");
+      return;
+    }
 
-  // STEP 2 → kirim izin
-  if (!form.jenisIzin) {
-    Swal.fire("Oops!", "Jenis izin wajib dipilih.", "warning");
-    return;
-  }
+    const jenisLower = String(form.jenisIzin).toLowerCase();
 
-  const jenisLower = String(form.jenisIzin).toLowerCase();
+    const now = new Date();
+    const jamNow = now.toLocaleTimeString("id-ID", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
 
-  const now = new Date();
-  const jamNow = now.toLocaleTimeString("id-ID", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+    const tanggalNow = new Date().toISOString().split("T")[0];
 
-  const tanggalNow = new Date().toISOString().split("T")[0];
+    let jamMasuk = "";
+    let jamPulang = "";
+    let statusFinal = "izin";
 
-  let autoKet = form.keterangan;
-  if (jenisLower === "alpa" && !autoKet) {
-    autoKet = "Tanpa keterangan";
-  }
+    // 🔥 LOGIKA OTOMATIS
+    if (jenisLower === "terlambat") {
+      jamMasuk = jamNow;
+      statusFinal = "hadir";
+    }
 
-  const payloadPresensi = {
-    kategori: "izin",
-    nama: form.nama || "-",
-    nomorUnik: form.nomorUnik,
-    keterangan: autoKet,
-    jamMasuk: jenisLower === "terlambat" ? jamNow : "",
-    jamPulang: jenisLower === "izin" ? jamNow : "",
-    tanggal: tanggalNow,
-    status: jenisLower,
-  };
+    if (jenisLower === "dispensasi") statusFinal = "dispensasi";
+    if (jenisLower === "sakit") statusFinal = "sakit";
+    if (jenisLower === "alpa") statusFinal = "alpa";
 
-  try {
-    setSubmitting(true);
-
-    // IZIN → SIMPAN KE IZIN PRESENSI SAJA
-await axios.post("http://localhost:5000/izinpresensi", {
-  ...payloadPresensi,
+    const payloadPresensi = {
+  kategori: "izin",
+  nama: form.nama || "-",
+  nomorUnik: form.nomorUnik,
+  keterangan: form.keterangan || "-",
+  jamMasuk: jamMasuk,
+  jamPulang: jamPulang,
+  tanggal: tanggalNow,
+  status: statusFinal,
   jenisIzin: form.jenisIzin,
-});
-
-    Swal.fire("Berhasil", "Izin presensi berhasil dikirim", "success").then(
-      () => navigate("/presensi")
-    );
-  } catch {
-    Swal.fire("Error", "Gagal menyimpan izin", "error");
-  } finally {
-    setSubmitting(false);
-  }
 };
+
+
+    try {
+      setSubmitting(true);
+
+      await axios.post("http://localhost:5000/izinpresensi", payloadPresensi);
+
+      Swal.fire("Berhasil", "Izin presensi berhasil dikirim", "success").then(
+        () => navigate("/presensi")
+      );
+    } catch {
+      Swal.fire("Error", "Gagal menyimpan izin", "error");
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 to-cyan-100 px-4">
@@ -156,7 +150,7 @@ await axios.post("http://localhost:5000/izinpresensi", {
             onChange={(e) =>
               setForm({ ...form, nomorUnik: e.target.value.trim() })
             }
-            className="border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400"
+            className="border rounded-lg px-3 py-2"
           />
 
           <input
@@ -164,51 +158,43 @@ await axios.post("http://localhost:5000/izinpresensi", {
             placeholder="Nama otomatis"
             value={form.nama}
             readOnly
-            className="border rounded-lg px-3 py-2 bg-gray-100 text-gray-600"
+            className="border rounded-lg px-3 py-2 bg-gray-100"
           />
 
           {step === 2 && (
-  <>
-    <select
-      value={form.jenisIzin}
-      onChange={(e) =>
-        setForm({ ...form, jenisIzin: e.target.value })
-      }
-      className="border rounded-lg px-3 py-2"
-    >
-      <option value="">-- Pilih Jenis Izin --</option>
-      {jenisIzinList.map((item, index) => (
-        <option key={item?.id ?? index} value={item?.nama || ""}>
-          {item?.nama || "-"}
-        </option>
-      ))}
-    </select>
+            <>
+              <select
+                value={form.jenisIzin}
+                onChange={(e) =>
+                  setForm({ ...form, jenisIzin: e.target.value })
+                }
+                className="border rounded-lg px-3 py-2"
+              >
+                <option value="">-- Pilih Jenis Izin --</option>
+                {jenisIzinList.map((item, index) => (
+                  <option key={item?.id ?? index} value={item?.nama || ""}>
+                    {item?.nama || "-"}
+                  </option>
+                ))}
+              </select>
 
-    <textarea
-      placeholder="Keterangan (opsional)"
-      value={form.keterangan}
-      onChange={(e) =>
-        setForm({ ...form, keterangan: e.target.value })
-      }
-      className="border rounded-lg px-3 py-2 h-24 resize-none"
-    />
-  </>
-)}
+              <textarea
+                placeholder="Keterangan (opsional)"
+                value={form.keterangan}
+                onChange={(e) =>
+                  setForm({ ...form, keterangan: e.target.value })
+                }
+                className="border rounded-lg px-3 py-2 h-24 resize-none"
+              />
+            </>
+          )}
+
           <button
             onClick={submitIzin}
             disabled={submitting}
-            className={`bg-blue-600 text-white py-2 rounded-lg font-bold hover:bg-blue-700 ${
-              submitting ? "opacity-70 cursor-not-allowed" : ""
-            }`}
+            className="bg-blue-600 text-white py-2 rounded-lg font-bold"
           >
             {submitting ? "Mengirim..." : "Kirim Izin"}
-          </button>
-
-          <button
-            onClick={() => navigate("/presensi")}
-            className="bg-gray-400 text-white py-2 rounded-lg font-bold hover:bg-gray-500"
-          >
-            Batal
           </button>
         </div>
       </div>

@@ -62,12 +62,12 @@
       "status": "Lunas"
     },
     {
-      "id": "1568",
       "nama": "Miya",
       "keterangan": "Seragam",
-      "harga": "200000",
+      "harga": "2000000",
       "tanggal": "07/11/2025",
-      "status": "Lunas"
+      "status": "Lunas",
+      "id": "1568"
     },
     {
       "id": "c395",
@@ -311,100 +311,104 @@
   ],
   "presensi": [
     {
-      "id": "60fd",
-      "nomorUnik": "NUK-76694514",
-      "jamMasuk": "10.51",
-      "jamPulang": "12.37",
-      "tanggal": "2025-12-16T03:51:00.572Z"
+      "id": "653d",
+      "nomorUnik": "NUK-23456781",
+      "jam_masuk": "14.27",
+      "jam_pulang": "",
+      "tanggal": "2025-12-18T07:27:51.469Z"
     },
     {
-      "id": "0ce7",
-      "kategori": "izin",
-      "nama": "ixia",
-      "nomorUnik": "NUK-79755687",
-      "keterangan": "demam",
-      "jamMasuk": "",
-      "jamPulang": "",
-      "tanggal": "2025-12-16",
-      "status": "sakit"
-    },
-    {
-      "id": "8b81",
-      "nomorUnik": "NUK-62140693",
-      "jamMasuk": "12.36",
-      "jamPulang": "",
-      "tanggal": "2025-12-16T05:36:17.576Z"
-    },
-    {
-      "id": "9be1",
-      "nomorUnik": "NUK-99851442",
-      "jamMasuk": "14.54",
-      "jamPulang": "",
-      "tanggal": "2025-12-16T07:54:06.154Z"
-    },
-    {
-      "id": "4547",
-      "nomorUnik": "NUK-820753089",
-      "jamMasuk": "10.38",
-      "jamPulang": "",
-      "tanggal": "2025-12-17T03:38:11.105Z"
-    },
-    {
-      "id": "09c3",
-      "nomorUnik": "NUK-82362969",
-      "jamMasuk": "10.39",
-      "jamPulang": "",
-      "tanggal": "2025-12-17T03:39:35.563Z"
+      "id": "a732",
+      "nomorUnik": "NUK-97800900",
+      "jam_masuk": "14.39",
+      "jam_pulang": "",
+      "tanggal": "2025-12-18T07:39:56.511Z"
     }
   ],
   "izinpresensi": [
     {
-      "id": "a952",
+      "id": "67a2",
       "kategori": "izin",
-      "nama": "Amel",
-      "nomorUnik": "NUK-97800900",
-      "keterangan": "Lomba Tingkat Kabupaten",
+      "nama": "Miya",
+      "nomorUnik": "NUK-76694514",
+      "keterangan": "dg",
       "jamMasuk": "",
       "jamPulang": "",
-      "tanggal": "2025-12-16",
+      "tanggal": "2025-12-18",
+      "status": "sakit",
+      "jenisIzin": "Sakit"
+    },
+    {
+      "id": "cb34",
+      "kategori": "izin",
+      "nama": "ixia",
+      "nomorUnik": "NUK-79755687",
+      "keterangan": "ds",
+      "jamMasuk": "",
+      "jamPulang": "",
+      "tanggal": "2025-12-18",
+      "status": "izin",
+      "jenisIzin": "Izin"
+    },
+    {
+      "id": "5a6b",
+      "kategori": "izin",
+      "nama": "Zilong",
+      "nomorUnik": "NUK-820753089",
+      "keterangan": "fdg",
+      "jamMasuk": "",
+      "jamPulang": "",
+      "tanggal": "2025-12-18",
       "status": "dispensasi",
       "jenisIzin": "Dispensasi"
     },
     {
-      "id": "5f30",
+      "id": "e54b",
       "kategori": "izin",
-      "nama": "Doni",
-      "nomorUnik": "NUK-51192140",
-      "keterangan": "ada keperluan",
-      "jamMasuk": "",
+      "nama": "Amel",
+      "nomorUnik": "NUK-97800900",
+      "keterangan": "dsd",
+      "jamMasuk": "14.33",
       "jamPulang": "",
-      "tanggal": "2025-12-16",
-      "status": "pulang_awal",
-      "jenisIzin": "Pulang Awal"
-    },
-    {
-      "id": "c1c1",
-      "kategori": "izin",
-      "nama": "Alicia",
-      "nomorUnik": "NUK-10576909",
-      "keterangan": "Karena Bangun kesiangan",
-      "jamMasuk": "12.56",
-      "jamPulang": "",
-      "tanggal": "2025-12-16",
-      "status": "terlambat",
+      "tanggal": "2025-12-18",
+      "status": "hadir",
       "jenisIzin": "Terlambat"
     },
     {
-      "id": "bf65",
+      "id": "d790",
       "kategori": "izin",
-      "nama": "Bobi",
-      "nomorUnik": "NUK-124453588",
-      "keterangan": "Ada Urusan dengan Manajer",
+      "nama": "Adit",
+      "nomorUnik": "NUK-62140693",
+      "keterangan": "gsdb",
+      "jamMasuk": "14.47",
+      "jamPulang": "",
+      "tanggal": "2025-12-18",
+      "status": "hadir",
+      "jenisIzin": "Terlambat"
+    },
+    {
+      "id": "c4b6",
+      "kategori": "izin",
+      "nama": "Adit",
+      "nomorUnik": "NUK-62140693",
+      "keterangan": "-",
       "jamMasuk": "",
-      "jamPulang": "14.03",
-      "tanggal": "2025-12-16",
+      "jamPulang": "",
+      "tanggal": "2025-12-18",
       "status": "izin",
       "jenisIzin": "Izin"
+    },
+    {
+      "id": "23aa",
+      "kategori": "izin",
+      "nama": "Fedrin",
+      "nomorUnik": "NUK-82362969",
+      "keterangan": "karena bangun siang",
+      "jamMasuk": "14.55",
+      "jamPulang": "",
+      "tanggal": "2025-12-18",
+      "status": "hadir",
+      "jenisIzin": "Terlambat"
     }
   ],
   "kategori_izin": [
@@ -426,7 +430,7 @@
     {
       "id": "6a0c",
       "nama": "Dispensasi",
-      "status": "Nonaktif"
+      "status": "Aktif"
     },
     {
       "id": "db8c",
@@ -436,7 +440,7 @@
     {
       "id": "1d7d",
       "nama": "Alpa",
-      "status": "Nonaktif"
+      "status": "Aktif"
     },
     {
       "id": "c83b",
