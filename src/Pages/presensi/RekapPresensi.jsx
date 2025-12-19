@@ -5,6 +5,7 @@ import { FaRegCalendarCheck } from "react-icons/fa";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 
+
 const RekapPresensi = () => {
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
@@ -18,6 +19,23 @@ const RekapPresensi = () => {
 
   // =================== TANGGAL FILTER =================
   const [tanggalFilter, setTanggalFilter] = useState("");
+
+const isValidDate = (value) => {
+    if (!/^\d{2}\/\d{2}\/\d{4}$/.test(value)) return false;
+    const [dd, mm, yyyy] = value.split("/").map(Number);
+    const date = new Date(yyyy, mm - 1, dd);
+    return (
+      date.getFullYear() === yyyy &&
+      date.getMonth() === mm - 1 &&
+      date.getDate() === dd
+    );
+  };
+
+  const convertToISODate = (value) => {
+    const [dd, mm, yyyy] = value.split("/");
+    return `${yyyy}-${mm}-${dd}`;
+  };
+
 
   // ================= NAVIGATE =================
   const Navigate = useNavigate();
@@ -60,32 +78,30 @@ const RekapPresensi = () => {
 
  // ================= STATUS =================
 const GetStatusFromData = (item) => {
-  // 🔹 NORMALISASI JAM
   const jamMasuk = item?.jamMasuk || item?.jam_masuk || "";
   const jamPulang = item?.jamPulang || item?.jam_pulang || "";
 
-  // 🔹 NORMALISASI STATUS (AMAN UNTUK SEMUA VARIASI)
-  const statusText = (item?.status || "")
+  const statusRaw = (item?.status || "")
     .toString()
     .toLowerCase()
     .replace(/_/g, " ")
     .trim();
 
-  // ================= PRIORITAS STATUS =================
-  if (statusText.includes("terlambat")) return "Terlambat";
-  if (statusText.includes("izin")) return "Izin";
-  if (statusText.includes("sakit")) return "Sakit";
-  if (statusText.includes("dispensasi")) return "Dispensasi";
-  if (statusText.includes("pulang")) return "Pulang Awal";
-  if (statusText.includes("alpa")) return "Alpa";
-  if (statusText.includes("hadir")) return "Hadir";
+  // 🔥 PRIORITAS ABSOLUT (TIDAK BOLEH KETIMPA)
+  if (statusRaw === "izin") return "Izin";
+  if (statusRaw === "sakit") return "Sakit";
+  if (statusRaw === "dispensasi") return "Dispensasi";
+  if (statusRaw === "alpa") return "Alpa";
+  if (statusRaw === "pulang awal") return "Pulang Awal";
+  if (statusRaw === "terlambat") return "Terlambat";
 
-  // ================= AUTO HITUNG =================
-  if (!jamMasuk && !jamPulang) return "Alpa";
-  
+  // 🔥 HADIR NORMAL
+  if (jamMasuk && !jamPulang) return "Hadir";
+  if (jamMasuk && jamPulang) return "Hadir";
 
-  return "Hadir";
+  return "Alpa";
 };
+
   // ================= STATUS COLOR =================
 
 
@@ -188,7 +204,7 @@ const handleDelete = (item) => {
 
   const finalKeterangan = (keterangan) => {
     if (!keterangan || keterangan.trim() === "") {
-      return "-";
+      return "";
     }
     return keterangan;
   };
@@ -202,87 +218,58 @@ const handleDelete = (item) => {
     return "Alpa";
   };
   const formatTanggal = (tgl) => {
-    if (!tgl) return "-";
-    const d = new Date(tgl);
-    if (isNaN(d)) return tgl;
-    return `${String(d.getDate()).padStart(2, "0")}/${String(
-      d.getMonth() + 1
-    ).padStart(2, "0")}/${d.getFullYear()}`;
-  };
+  if (!tgl) return "-";
+  const d = new Date(tgl);
+  return d.toLocaleDateString("id-ID"); // dd/mm/yyyy
+};
+
 
 
   // ================= FILTER =================
   useEffect(() => {
-    let hasil = Array.isArray(data) ? [...data] : [];
+  let hasil = [...data];
 
-    const today = new Date();
-    const todayStr = today.toISOString().split("T")[0];
+  // ================= TANGGAL MANUAL dd/mm/yyyy =================
+  if (tanggalFilter) {
+  // ⛔ JANGAN VALIDASI SAAT MASIH NGETIK
+  if (tanggalFilter.length < 10) {
+    setFilteredData([]);
+    return;
+  }
 
+  // ❌ FORMAT SALAH BARU MUNCUL SETELAH LENGKAP
+  if (!isValidDate(tanggalFilter)) {
+    Swal.fire("Format Salah", "Gunakan dd/mm/yyyy", "warning");
+    setFilteredData([]);
+    return;
+  }
 
-    const startOfWeek = new Date();
-    startOfWeek.setDate(today.getDate() - 6);
-    startOfWeek.setHours(0, 0, 0, 0);
-
-    if (filter === "hari-ini") {
-      hasil = hasil.filter(
-        (item) =>
-          typeof item.tanggal === "string" &&
-          item.tanggal.startsWith(todayStr)
-      );
-    }
-
-    if (filter === "minggu-ini") {
-      hasil = hasil.filter((item) => {
-        const t = new Date(item.tanggal);
-        return t >= startOfWeek && t <= today;
-      });
-    }
-
-    if (filter === "bulan-ini") {
-      hasil = hasil.filter((item) => {
-        const t = new Date(item.tanggal);
-        return (
-          t.getMonth() === today.getMonth() &&
-          t.getFullYear() === today.getFullYear()
-        );
-      });
-    }
-
-    if (filter === "tahun-ini") {
-      hasil = hasil.filter((item) => {
-        const t = new Date(item.tanggal);
-        return t.getFullYear() === today.getFullYear();
-      });
-    }
-
-    //=================== TANGGAL FILTER =================
-    if (tanggalFilter) {
-      hasil = hasil.filter(
-        (item) =>
-          typeof item.tanggal === "string" &&
-          item.tanggal.startsWith(tanggalFilter)
-      );
-    }
-
-
-    if (statusFilter !== "semua") {
-      hasil = hasil.filter(
-        (item) => GetStatusFromData(item).toLowerCase() === statusFilter
-      );
-    }
-
-    if (roleFilter !== "semua") {
-  hasil = hasil.filter((item) => {
-    const nomor =
-      item.nomorUnik || item.nomor_unik || item.nomorunik;
-    return getRoleFromNomor(nomor) === roleFilter;
-  });
+  const isoDate = convertToISODate(tanggalFilter);
+  hasil = hasil.filter(
+    (item) =>
+      typeof item.tanggal === "string" &&
+      item.tanggal.startsWith(isoDate)
+  );
 }
 
+  // ================= STATUS =================
+  if (statusFilter !== "semua") {
+    hasil = hasil.filter(
+      (item) => GetStatusFromData(item).toLowerCase() === statusFilter
+    );
+  }
 
-    setFilteredData(hasil);
-  }, [filter, statusFilter, roleFilter, data]);
+  // ================= ROLE =================
+  if (roleFilter !== "semua") {
+    hasil = hasil.filter((item) => {
+      const nomor =
+        item.nomorUnik || item.nomor_unik || item.nomorunik;
+      return getRoleFromNomor(nomor) === roleFilter;
+    });
+  }
 
+  setFilteredData(hasil);
+}, [tanggalFilter, statusFilter, roleFilter, data]);
 
   const cleanedData = filteredData.filter(
     (item) => item?.nomorUnik || item?.nomor_unik || item?.nomorunik
@@ -344,8 +331,9 @@ const handleDelete = (item) => {
 </select>
 
             <input
-              type="date"
-              value={tanggalFilter}
+              type="text"
+              placeholder="dd/mm/yyyy"
+              value={tanggalFilter}  
               onChange={(e) => setTanggalFilter(e.target.value)}
               className="border border-gray-300 rounded-lg px-3 py-2 shadow-sm"
               />
@@ -391,10 +379,10 @@ const handleDelete = (item) => {
                             {item.keterangan || ""}
                           </td>
                           <td className="px-4 py-3 text-center">
-                  {item.jam_masuk}
+                  {item.jamMasuk ? item.jamMasuk : ""}
 </td>
 <td className="px-4 py-3 text-center">
-                  {item.jam_pulang}
+                  {item.jamPulang ? item.jamPulang : ""}
 </td>
                           <td className="px-4 py-3 text-center">
                             {formatTanggal(item.tanggal)}

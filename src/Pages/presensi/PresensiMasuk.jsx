@@ -13,17 +13,17 @@ const PresensiMasuk = () => {
 
   const [submitting, setSubmitting] = useState(false);
 
+  // 🔧 REVISI: DATA SISWA
+  const [siswaList, setSiswaList] = useState([]);
+
   // ==============================
   // JAM DIGITAL LED + BLINK
   // ==============================
   const [jam, setJam] = useState("");
-  const [Blink, setBlink] = useState(true);
 
   useEffect(() => {
     const timer = setInterval(() => {
       const now = new Date();
-
-      setBlink((prev) => !prev);
 
       const hh = now.getHours().toString().padStart(2, "0");
       const mm = now.getMinutes().toString().padStart(2, "0");
@@ -39,6 +39,16 @@ const PresensiMasuk = () => {
   }, []);
 
   // ==============================
+  // 🔧 REVISI: FETCH DATA SISWA
+  // ==============================
+  useEffect(() => {
+    axios
+      .get("http://localhost:5000/kategori_data")
+      .then((res) => setSiswaList(res.data || []))
+      .catch((err) => console.error(err));
+  }, []);
+
+  // ==============================
   // SUARA NOTIFIKASI
   // ==============================
   const playSound = () => {
@@ -50,20 +60,34 @@ const PresensiMasuk = () => {
     setForm({ nomorUnik: e.target.value });
   };
 
+  // ==============================
+  // SUBMIT MASUK
+  // ==============================
   const submitMasuk = async () => {
     if (!form.nomorUnik) {
       Swal.fire("Oops!", "Nomor Unik wajib diisi!", "warning");
       return;
     }
 
+    const now = new Date();
+
+    // 🔧 REVISI: CARI SISWA BERDASARKAN NOMOR UNIK
+    const found = siswaList.find(
+      (s) =>
+        s.nomorUnik === form.nomorUnik ||
+        s.nomor_unik === form.nomorUnik
+    );
+
     const payload = {
+      nama: found?.nama || "-",
       nomorUnik: form.nomorUnik,
-      jam_masuk: new Date().toLocaleTimeString("id-ID", {
+      jamMasuk: now.toLocaleTimeString("id-ID", {
         hour: "2-digit",
         minute: "2-digit",
       }),
-      jam_pulang: "",
-      tanggal: new Date().toISOString(),
+      jamPulang: "",
+      tanggal: now.toISOString().split("T")[0],
+      status: "hadir",
     };
 
     try {
@@ -87,6 +111,9 @@ const PresensiMasuk = () => {
 
   const batal = () => navigate("/presensi");
 
+  // ==============================
+  // UI
+  // ==============================
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
       <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-gray-200 p-8">

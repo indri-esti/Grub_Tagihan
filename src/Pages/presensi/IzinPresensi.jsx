@@ -68,6 +68,7 @@ const IzinPresensi = () => {
   }, [form.nomorUnik, kategoriList]);
 
   const submitIzin = async () => {
+    // ================= STEP VALIDATION (TIDAK DIUBAH) =================
     if (step === 1) {
       if (!form.nomorUnik) {
         Swal.fire("Oops!", "Nomor unik wajib diisi.", "warning");
@@ -82,7 +83,8 @@ const IzinPresensi = () => {
       return;
     }
 
-    const jenisLower = String(form.jenisIzin).toLowerCase();
+    // ================= LOGIKA JAM & STATUS =================
+    const jenisLower = String(form.jenisIzin).toLowerCase().trim();
 
     const now = new Date();
     const jamNow = now.toLocaleTimeString("id-ID", {
@@ -94,34 +96,55 @@ const IzinPresensi = () => {
 
     let jamMasuk = "";
     let jamPulang = "";
-    let statusFinal = "izin";
+    let statusFinal = "";
 
-    // 🔥 LOGIKA OTOMATIS
-    if (jenisLower === "terlambat") {
+    // ===== IZIN =====
+    if (jenisLower === "izin") {
+  jamMasuk = jamNow; // JAM KELUAR IZIN
+  jamPulang = "";
+  statusFinal = "izin";
+}
+
+    // ===== TERLAMBAT =====
+    else if (jenisLower.includes("terlambat")) {
+  jamMasuk = jamNow; // jam real datang
+  jamPulang = "";
+  statusFinal = "terlambat";
+}
+
+    // ===== HADIR (jika suatu saat dipakai) =====
+    else if (jenisLower === "hadir") {
       jamMasuk = jamNow;
+      jamPulang = "";
       statusFinal = "hadir";
     }
 
-    if (jenisLower === "dispensasi") statusFinal = "dispensasi";
-    if (jenisLower === "sakit") statusFinal = "sakit";
-    if (jenisLower === "alpa") statusFinal = "alpa";
+// ====== PULANG AWAL ======
+else if (jenisLower === "pulang awal") {
+  jamMasuk = "";              // jam masuk tetap dari presensi masuk
+  jamPulang = jamNow;         // 🔥 JAM PULANG OTOMATIS
+  statusFinal = "pulang awal";
+}
+
+    // ===== LAINNYA =====
+    else if (jenisLower === "dispensasi") statusFinal = "dispensasi";
+    else if (jenisLower === "sakit") statusFinal = "sakit";
+    else if (jenisLower === "alpa") statusFinal = "alpa";
 
     const payloadPresensi = {
-  kategori: "izin",
-  nama: form.nama || "-",
-  nomorUnik: form.nomorUnik,
-  keterangan: form.keterangan || "-",
-  jamMasuk: jamMasuk,
-  jamPulang: jamPulang,
-  tanggal: tanggalNow,
-  status: statusFinal,
-  jenisIzin: form.jenisIzin,
-};
-
+      kategori: "izin",
+      nama: form.nama || "-",
+      nomorUnik: form.nomorUnik,
+      keterangan: form.keterangan || "-",
+      jamMasuk,
+      jamPulang,
+      tanggal: tanggalNow,
+      status: statusFinal,
+      jenisIzin: form.jenisIzin,
+    };
 
     try {
       setSubmitting(true);
-
       await axios.post("http://localhost:5000/izinpresensi", payloadPresensi);
 
       Swal.fire("Berhasil", "Izin presensi berhasil dikirim", "success").then(

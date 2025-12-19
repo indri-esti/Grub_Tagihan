@@ -113,14 +113,14 @@ const PresensiSiswa = () => {
           {/* PULANG */}
           <div
             onClick={() => navigate("/presensipulang")}
-            className="cursor-pointer group bg-gradient-to-br from-orange-500 to-orange-700 text-white rounded-2xl p-6 flex flex-col items-center justify-center shadow-lg hover:scale-[1.03] hover:shadow-2xl transition-all"
+            className="cursor-pointer group bg-gradient-to-br from-red-500 to-red-700 text-white rounded-2xl p-6 flex flex-col items-center justify-center shadow-lg hover:scale-[1.03] hover:shadow-2xl transition-all"
           >
             <FaDoorClosed className="text-4xl mb-3 group-hover:scale-110 transition" />
             <p className="text-lg font-semibold">Presensi Pulang</p>
             <span className="text-sm opacity-90 mt-1">
              Absen Pulang / selesai kerja
             </span>
-          </div>
+          </div>  
 
         </div>
 

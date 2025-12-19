@@ -61,14 +61,14 @@ const EditPresensi = () => {
       if (!data) {
         Swal.fire("Error", "Data presensi tidak ditemukan.", "error");
         setExistingData(null);
-        setForm({ jam_masuk: "", jam_pulang: "" });
+        setForm({ jamMasuk: "", jamPulang: "" });
         return;
       }
 
       setExistingData(data);
       setForm({
-        jam_masuk: dotToColon(data.jam_masuk),
-        jam_pulang: dotToColon(data.jam_pulang),
+        jamMasuk: dotToColon(data.jamMasuk),
+        jamPulang: dotToColon(data.jamPulang),
       });
     } catch (error) {
       console.error("Gagal mengambil data:", error);
@@ -84,7 +84,7 @@ const EditPresensi = () => {
 
   /* ================= UPDATE DATA ================= */
   const updatePresensi = async () => {
-    if (!form.jam_masuk || !form.jam_pulang) {
+    if (!form.jamMasuk || !form.jamPulang) {
       Swal.fire("Oops!", "Jam masuk dan jam pulang harus diisi.", "warning");
       return;
     }
@@ -99,8 +99,8 @@ const EditPresensi = () => {
 
       const updated = {
         ...existingData,
-        jam_masuk: colonToDot(form.jam_masuk),
-        jam_pulang: colonToDot(form.jam_pulang),
+        jamMasuk: colonToDot(form.jamMasuk),
+        jamPulang: colonToDot(form.jamPulang),
       };
 
       const endpoint = getEndpoint(existingData);
@@ -151,9 +151,9 @@ const EditPresensi = () => {
               </label>
               <input
                 type="time"
-                value={form.jam_masuk}
+                value={form.jamMasuk}
                 onChange={(e) =>
-                  setForm({ ...form, jam_masuk: e.target.value })
+                  setForm({ ...form, jamMasuk: e.target.value })
                 }
                 className="border rounded-lg px-3 py-2 w-full"
                 disabled={saving}
@@ -166,9 +166,9 @@ const EditPresensi = () => {
               </label>
               <input
                 type="time"
-                value={form.jam_pulang}
+                value={form.jamPulang}
                 onChange={(e) =>
-                  setForm({ ...form, jam_pulang: e.target.value })
+                  setForm({ ...form, jamPulang: e.target.value })
                 }
                 className="border rounded-lg px-3 py-2 w-full"
                 disabled={saving}
