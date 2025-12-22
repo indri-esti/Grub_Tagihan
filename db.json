@@ -142,120 +142,136 @@
       "email": "indriesti4@gmail.com",
       "kategori": "Siswa",
       "jabatan_kelas": "X TKJ",
-      "nomorUnik": "NUK-23456781",
+      "nomorUnik": "23456781",
       "id": "2876"
     },
     {
-      "id": "9ed5",
       "nama": "Miya",
       "email": "Miya@gmail.com",
-      "nomorUnik": "NUK-76694514",
       "kategori": "Siswa",
-      "jabatan_kelas": "XII RPL 1"
+      "jabatan_kelas": "XII RPL 1",
+      "nomorUnik": "76694514",
+      "id": "9ed5"
     },
     {
-      "id": "2b08",
       "nama": "ixia",
       "email": "ixia@gmail.com",
-      "nomorUnik": "NUK-79755687",
       "kategori": "Siswa",
-      "jabatan_kelas": "XI AKL 1"
+      "jabatan_kelas": "XI AKL 1",
+      "nomorUnik": "79755687",
+      "id": "2b08"
     },
     {
       "nama": "Zilong",
       "email": "Zilong@gmail.com",
       "kategori": "Siswa",
       "jabatan_kelas": "X TSM",
-      "nomorUnik": "NUK-820753089",
+      "nomorUnik": "820753089",
       "id": "2913"
     },
     {
-      "id": "3d61",
       "nama": "Amel",
       "email": "Amel@gmail.com",
-      "nomorUnik": "NUK-97800900",
       "kategori": "Siswa",
-      "jabatan_kelas": "XII TKJ"
+      "jabatan_kelas": "XII TKJ",
+      "nomorUnik": "9780090789",
+      "id": "3d61"
     },
     {
-      "id": "9fa6",
       "nama": "Doni",
       "email": "Doni@gmail.com",
-      "nomorUnik": "NUK-51192140",
       "kategori": "Guru",
-      "jabatan_kelas": "Matematika"
+      "jabatan_kelas": "Matematika",
+      "nomorUnik": "51192140",
+      "id": "9fa6"
     },
     {
-      "id": "e472",
       "nama": "Miska",
       "email": "Miska@gmail.com",
-      "nomorUnik": "NUK-64079973",
       "kategori": "Guru",
-      "jabatan_kelas": "PPKN"
+      "jabatan_kelas": "PPKN",
+      "nomorUnik": "97676407",
+      "id": "e472"
     },
     {
-      "id": "15a8",
       "nama": "Adit",
       "email": "Adit@gmail.com",
-      "nomorUnik": "NUK-62140693",
       "kategori": "Karyawan",
-      "jabatan_kelas": "Administrasi"
+      "jabatan_kelas": "Administrasi",
+      "nomorUnik": "62140693",
+      "id": "15a8"
     },
     {
       "nama": "Maria",
       "email": "Maria@gmail.com",
       "kategori": "Karyawan",
       "jabatan_kelas": "Manajer",
-      "nomorUnik": "NUK-18618513",
+      "nomorUnik": "18618513",
       "id": "1353"
     },
     {
-      "id": "02df",
       "nama": "Alicia",
       "email": "Alicia@gmail.com",
-      "nomorUnik": "NUK-10576909",
       "kategori": "Guru",
-      "jabatan_kelas": "Agama Islam"
+      "jabatan_kelas": "Agama Islam",
+      "nomorUnik": "10576909",
+      "id": "02df"
     },
     {
-      "id": "39b1",
       "nama": "Fedrin",
       "email": "Fedrin@gmail.com",
-      "nomorUnik": "NUK-82362969",
       "kategori": "Guru",
-      "jabatan_kelas": "IPAS"
+      "jabatan_kelas": "IPAS",
+      "nomorUnik": "82362969",
+      "id": "39b1"
     },
     {
-      "id": "226c",
       "nama": "Hilda",
       "email": "Hilda@gmail.com",
-      "nomorUnik": "NUK-99851442",
       "kategori": "Guru",
-      "jabatan_kelas": "Bahasa indonesia"
+      "jabatan_kelas": "Bahasa indonesia",
+      "nomorUnik": "99851442",
+      "id": "226c"
     },
     {
-      "id": "3b2a",
       "nama": "Riska",
       "email": "Riska@gmail.com",
-      "nomorUnik": "NUK-23874657",
       "kategori": "Karyawan",
-      "jabatan_kelas": "Dosen"
+      "jabatan_kelas": "Dosen",
+      "nomorUnik": "23874657",
+      "id": "3b2a"
     },
     {
-      "id": "c007",
       "nama": "Lolita",
       "email": "Lolita@gmail.com",
-      "nomorUnik": "NUK-4557357566",
       "kategori": "Karyawan",
-      "jabatan_kelas": "Pengacara"
+      "jabatan_kelas": "Pengacara",
+      "nomorUnik": "4557357566",
+      "id": "c007"
     },
     {
       "nama": "Bobi",
       "email": "Bobi@gmail.com",
       "kategori": "Karyawan",
       "jabatan_kelas": "Pegawai bank",
-      "nomorUnik": "NUK-124453588",
+      "nomorUnik": "124453588",
       "id": "6573"
+    },
+    {
+      "nama": "Brody",
+      "email": "Brody@gmail.com",
+      "kategori": "Siswa",
+      "jabatan_kelas": "X AKL 2",
+      "nomorUnik": "0954357652",
+      "id": "da6a"
+    },
+    {
+      "nama": "indra ",
+      "email": "indra@gmail.com",
+      "kategori": "Siswa",
+      "jabatan_kelas": "X DPB",
+      "nomorUnik": "878678746",
+      "id": "9a1d"
     }
   ],
   "data_kelas": [
@@ -311,120 +327,168 @@
   ],
   "presensi": [
     {
-      "id": "dcfb",
-      "nama": "Amel",
-      "nomorUnik": "NUK-97800900",
-      "jamMasuk": "10.18",
-      "jamPulang": "14.25",
-      "tanggal": "2025-12-19",
+      "id": "47a2",
+      "nama": "indra ",
+      "nomorUnik": "878678746",
+      "jamMasuk": "11.22",
+      "jamPulang": "",
+      "tanggal": "2025-12-22",
       "status": "hadir"
     },
     {
-      "id": "de27",
+      "id": "eee7",
       "nama": "Hilda",
-      "nomorUnik": "NUK-99851442",
-      "jamMasuk": "10.19",
-      "jamPulang": "14.26",
-      "tanggal": "2025-12-19",
+      "nomorUnik": "99851442",
+      "jamMasuk": "11.23",
+      "jamPulang": "",
+      "tanggal": "2025-12-22",
       "status": "hadir"
     },
     {
-      "id": "49e7",
+      "id": "f238",
       "nama": "Bobi",
-      "nomorUnik": "NUK-124453588",
-      "jamMasuk": "10.20",
-      "jamPulang": "14.30",
-      "tanggal": "2025-12-19",
+      "nomorUnik": "124453588",
+      "jamMasuk": "11.24",
+      "jamPulang": "",
+      "tanggal": "2025-12-22",
       "status": "hadir"
     },
     {
-      "id": "e121",
+      "id": "97c7",
       "nama": "Fedrin",
-      "nomorUnik": "NUK-82362969",
-      "jamMasuk": "14.10",
-      "jamPulang": "14.35",
-      "tanggal": "2025-12-19",
+      "nomorUnik": "82362969",
+      "jamMasuk": "11.28",
+      "jamPulang": "",
+      "tanggal": "2025-12-22",
       "status": "hadir"
     },
     {
-      "id": "a948",
+      "id": "79a1",
       "nama": "Lolita",
-      "nomorUnik": "NUK-4557357566",
-      "jamMasuk": "14.14",
-      "jamPulang": "14.40",
-      "tanggal": "2025-12-19",
+      "nomorUnik": "4557357566",
+      "jamMasuk": "11.29",
+      "jamPulang": "",
+      "tanggal": "2025-12-22",
       "status": "hadir"
     },
     {
-      "id": "710a",
+      "id": "68d4",
+      "nama": "Zilong",
+      "nomorUnik": "820753089",
+      "jamMasuk": "11.42",
+      "jamPulang": "",
+      "tanggal": "2025-12-22",
+      "status": "hadir"
+    },
+    {
+      "id": "cb1d",
       "nama": "Alicia",
-      "nomorUnik": "NUK-10576909",
-      "jamMasuk": "14.19",
-      "jamPulang": "14.43",
-      "tanggal": "2025-12-19",
+      "nomorUnik": "10576909",
+      "jamMasuk": "11.43",
+      "jamPulang": "",
+      "tanggal": "2025-12-22",
+      "status": "hadir"
+    },
+    {
+      "id": "7c26",
+      "nama": "Riska",
+      "nomorUnik": "23874657",
+      "jamMasuk": "11.43",
+      "jamPulang": "",
+      "tanggal": "2025-12-22",
+      "status": "hadir"
+    },
+    {
+      "id": "e60a",
+      "nama": "Miska",
+      "nomorUnik": "97676407",
+      "jamMasuk": "11.49",
+      "jamPulang": "",
+      "tanggal": "2025-12-22",
+      "status": "hadir"
+    },
+    {
+      "id": "3b48",
+      "nama": "Lolita",
+      "nomorUnik": "4557357566",
+      "jamMasuk": "11.51",
+      "jamPulang": "",
+      "tanggal": "2025-12-22",
       "status": "hadir"
     }
   ],
   "izinpresensi": [
     {
-      "id": "3461",
+      "id": "9e0a",
       "kategori": "izin",
-      "nama": "Zilong",
-      "nomorUnik": "NUK-820753089",
-      "keterangan": "Karena Demam ama Batuk",
+      "nama": "Brody",
+      "nomorUnik": "0954357652",
+      "keterangan": "Batuk ama demam",
       "jamMasuk": "",
       "jamPulang": "",
-      "tanggal": "2025-12-19",
+      "tanggal": "2025-12-22",
       "status": "sakit",
-      "jenisIzin": "Sakit"
+      "jenisIzin": "sakit"
     },
     {
-      "id": "9b7d",
+      "id": "e125",
       "kategori": "izin",
-      "nama": "Lolita",
-      "nomorUnik": "NUK-4557357566",
-      "keterangan": "Di ajak makan siang sama bos",
-      "jamMasuk": "14.15",
+      "nama": "Amel",
+      "nomorUnik": "9780090789",
+      "keterangan": "Karena bangun kesiangan",
+      "jamMasuk": "11.41",
       "jamPulang": "",
-      "tanggal": "2025-12-19",
-      "status": "izin",
-      "jenisIzin": "Izin"
+      "tanggal": "2025-12-22",
+      "status": "terlambat",
+      "jenisIzin": "Terlambat"
     },
     {
-      "id": "0cad",
+      "id": "a2c5",
       "kategori": "izin",
       "nama": "ixia",
-      "nomorUnik": "NUK-79755687",
-      "keterangan": "Lomba antar sekolah tingkat kabupaten",
+      "nomorUnik": "79755687",
+      "keterangan": "-",
       "jamMasuk": "",
       "jamPulang": "",
-      "tanggal": "2025-12-19",
-      "status": "dispensasi",
-      "jenisIzin": "Dispensasi"
+      "tanggal": "2025-12-22",
+      "status": "alpa",
+      "jenisIzin": "Alpa"
     },
     {
-      "id": "1dd3",
+      "id": "f34e",
       "kategori": "izin",
-      "nama": "Alicia",
-      "nomorUnik": "NUK-10576909",
+      "nama": "Miska",
+      "nomorUnik": "97676407",
       "keterangan": "Ada keperluan mendadak",
       "jamMasuk": "",
-      "jamPulang": "14.21",
-      "tanggal": "2025-12-19",
+      "jamPulang": "11.50",
+      "tanggal": "2025-12-22",
       "status": "pulang awal",
       "jenisIzin": "Pulang Awal"
     },
     {
-      "id": "549d",
+      "id": "cb45",
       "kategori": "izin",
-      "nama": "Miya",
-      "nomorUnik": "NUK-76694514",
-      "keterangan": "Karena bangun kesiangan",
-      "jamMasuk": "14.23",
+      "nama": "Lolita",
+      "nomorUnik": "4557357566",
+      "keterangan": "Di ajak makan siang ama bos",
+      "jamMasuk": "11.52",
       "jamPulang": "",
-      "tanggal": "2025-12-19",
-      "status": "terlambat",
-      "jenisIzin": "Terlambat"
+      "tanggal": "2025-12-22",
+      "status": "izin",
+      "jenisIzin": "Izin"
+    },
+    {
+      "id": "db57",
+      "kategori": "izin",
+      "nama": "Doni",
+      "nomorUnik": "51192140",
+      "keterangan": "Mengikuti kegiatan rapat",
+      "jamMasuk": "",
+      "jamPulang": "",
+      "tanggal": "2025-12-22",
+      "status": "dispensasi",
+      "jenisIzin": "Dispensasi"
     }
   ],
   "kategori_izin": [

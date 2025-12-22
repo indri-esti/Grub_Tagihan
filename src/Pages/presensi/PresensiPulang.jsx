@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 const PresensiPulang = () => {
   const navigate = useNavigate();
   const [nomorUnik, setNomorUnik] = useState("");
+  const [nama, setNama] = useState("");
   const [data, setData] = useState([]);
 
   // ==============================
@@ -56,49 +57,100 @@ const PresensiPulang = () => {
   }, []);
 
   // ==============================
-  // SUBMIT PULANG
+  // AUTO DETEKSI + AUTO SUBMIT
   // ==============================
-  const submitPulang = async () => {
+  useEffect(() => {
+    if (!nomorUnik || data.length === 0) {
+      setNama("");
+      return;
+    }
+
     const today = new Date().toISOString().split("T")[0];
 
     const presensiHariIni = data.find((d) => {
-      const nomor = d.nomorUnik || d.nomorunik || d.nomor_unik || "";
+      const nomor =
+        d.nomorUnik || d.nomorunik || d.nomor_unik || "";
       return nomor === nomorUnik && (d.tanggal || "").startsWith(today);
     });
 
     if (!presensiHariIni) {
-      Swal.fire("Tidak ditemukan!", "Belum presensi masuk.", "warning");
+      setNama("");
       return;
     }
 
-    try {
-      await axios.patch(
-        `http://localhost:5000/presensi/${presensiHariIni.id}`,
-        {
-          jamPulang: new Date().toLocaleTimeString("id-ID", {
-            hour: "2-digit",
-            minute: "2-digit",
-          }),
-        }
+    // ✅ ISI NAMA OTOMATIS
+    setNama(presensiHariIni.nama || "");
+
+    // ❌ BELUM MASUK
+    if (!presensiHariIni.jamMasuk) {
+      Swal.fire(
+        "Ditolak!",
+        "Anda belum melakukan presensi masuk.",
+        "warning"
       );
-
-      playSound();
-
-      Swal.fire("Berhasil!", "Presensi Pulang dicatat.", "success").then(() => {
-        navigate("/presensipulang");
-      });
-
-      setNomorUnik("");
-      fetchData();
-    } catch {
-      Swal.fire("Error", "Gagal menyimpan presensi pulang!", "error");
+      return;
     }
-  };
+
+    // ℹ️ SUDAH PULANG
+    if (presensiHariIni.jamPulang) {
+      Swal.fire(
+        "Info",
+        "Anda sudah melakukan presensi pulang.",
+        "info"
+      );
+      return;
+    }
+
+    // 🔥 AUTO SUBMIT PULANG
+   // 🔥 AUTO SUBMIT PULANG
+const submitPulang = async () => {
+  try {
+    const now = new Date();
+
+    // ⛔ VALIDASI JAM PULANG (MINIMAL JAM 15:00)
+    const jamSekarang =
+      now.getHours() * 60 + now.getMinutes();
+    const batasPulang = 15 * 60; // 15:00
+
+    if (jamSekarang < batasPulang) {
+      Swal.fire(
+        "Ditolak!",
+        "Presensi pulang hanya bisa dilakukan setelah jam 15.00",
+        "warning"
+      );
+      return;
+    }
+
+    const jamPulangFix = now.toLocaleTimeString("id-ID", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
+    await axios.patch(
+      `http://localhost:5000/presensi/${presensiHariIni.id}`,
+      {
+        jamPulang: jamPulangFix,
+      }
+    );
+
+    playSound();
+    Swal.fire("Berhasil!", "Presensi Pulang dicatat.", "success");
+
+    setNomorUnik("");
+    setNama("");
+    fetchData();
+  } catch {
+    Swal.fire("Error", "Gagal menyimpan presensi pulang!", "error");
+  }
+};
+
+    submitPulang();
+  }, [nomorUnik, data]);
 
   const batal = () => navigate("/presensi");
 
   // ==============================
-  // UI FINAL
+  // UI FINAL (TIDAK DIUBAH)
   // ==============================
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
@@ -144,20 +196,34 @@ const PresensiPulang = () => {
               Nomor Unik
             </label>
             <input
+  type="text"
+  inputMode="numeric"
+  pattern="[0-9]*"
+  placeholder="Masukkan Nomor Unik"
+  value={nomorUnik}
+  onChange={(e) => {
+    const onlyNumber = e.target.value.replace(/\D/g, "");
+    setNomorUnik(onlyNumber);
+  }}
+  className="w-full px-5 py-3 text-lg rounded-2xl border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition shadow-sm"
+/>
+          </div>
+
+          {/* NAMA OTOMATIS */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Nama Siswa
+            </label>
+            <input
               type="text"
-              placeholder="Masukkan Nomor Unik"
-              value={nomorUnik}
-              onChange={(e) => setNomorUnik(e.target.value)}
-              className="w-full px-5 py-3 text-lg rounded-2xl border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition shadow-sm"
+              value={nama}
+              readOnly
+              placeholder="Nama otomatis"
+              className="w-full px-5 py-3 text-lg rounded-2xl border border-gray-300 bg-gray-100 text-gray-700 cursor-not-allowed"
             />
           </div>
 
-          <button
-            onClick={submitPulang}
-            className="w-full py-3 rounded-2xl text-lg font-bold text-white bg-red-600 hover:bg-red-700 active:scale-[0.98] transition-all shadow-md"
-          >
-            Simpan Presensi Pulang
-          </button>
+          {/* TOMBOL SUBMIT (TETAP ADA, TIDAK DIPAKAI) */}
 
           <button
             onClick={batal}
@@ -166,7 +232,7 @@ const PresensiPulang = () => {
             Batal
           </button>
         </div>
-      </div>
+      </div>  
     </div>
   );
 };

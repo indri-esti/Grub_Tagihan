@@ -218,39 +218,88 @@ const handleDelete = (item) => {
     return "Alpa";
   };
   const formatTanggal = (tgl) => {
-  if (!tgl) return "-";
+  if (!tgl) return "";
   const d = new Date(tgl);
   return d.toLocaleDateString("id-ID"); // dd/mm/yyyy
 };
 
 
+const isSameDay = (dateStr) => {
+  const d = new Date(dateStr);
+  const today = new Date();
+  return (
+    d.getDate() === today.getDate() &&
+    d.getMonth() === today.getMonth() &&
+    d.getFullYear() === today.getFullYear()
+  );
+};
+
+const isThisWeek = (dateStr) => {
+  const d = new Date(dateStr);
+  const today = new Date();
+
+  const firstDayOfWeek = new Date(today);
+  firstDayOfWeek.setDate(today.getDate() - today.getDay());
+
+  const lastDayOfWeek = new Date(firstDayOfWeek);
+  lastDayOfWeek.setDate(firstDayOfWeek.getDate() + 6);
+
+  return d >= firstDayOfWeek && d <= lastDayOfWeek;
+};
+
+const isThisMonth = (dateStr) => {
+  const d = new Date(dateStr);
+  const today = new Date();
+  return (
+    d.getMonth() === today.getMonth() &&
+    d.getFullYear() === today.getFullYear()
+  );
+};
+
+const isThisYear = (dateStr) => {
+  const d = new Date(dateStr);
+  return d.getFullYear() === new Date().getFullYear();
+};
+
 
   // ================= FILTER =================
-  useEffect(() => {
+ useEffect(() => {
   let hasil = [...data];
+
+  // ================= FILTER WAKTU =================
+  if (filter !== "semua") {
+    hasil = hasil.filter((item) => {
+      if (!item?.tanggal) return false;
+
+      if (filter === "hari-ini") return isSameDay(item.tanggal);
+      if (filter === "minggu-ini") return isThisWeek(item.tanggal);
+      if (filter === "bulan-ini") return isThisMonth(item.tanggal);
+      if (filter === "tahun-ini") return isThisYear(item.tanggal);
+
+      return true;
+    });
+  }
 
   // ================= TANGGAL MANUAL dd/mm/yyyy =================
   if (tanggalFilter) {
-  // ⛔ JANGAN VALIDASI SAAT MASIH NGETIK
-  if (tanggalFilter.length < 10) {
-    setFilteredData([]);
-    return;
-  }
+    if (tanggalFilter.length < 10) {
+      setFilteredData([]);
+      return;
+    }
 
-  // ❌ FORMAT SALAH BARU MUNCUL SETELAH LENGKAP
-  if (!isValidDate(tanggalFilter)) {
-    Swal.fire("Format Salah", "Gunakan dd/mm/yyyy", "warning");
-    setFilteredData([]);
-    return;
-  }
+    if (!isValidDate(tanggalFilter)) {
+      Swal.fire("Format Salah", "Gunakan dd/mm/yyyy", "warning");
+      setFilteredData([]);
+      return;
+    }
 
-  const isoDate = convertToISODate(tanggalFilter);
-  hasil = hasil.filter(
-    (item) =>
-      typeof item.tanggal === "string" &&
-      item.tanggal.startsWith(isoDate)
-  );
-}
+    const isoDate = convertToISODate(tanggalFilter);
+    hasil = hasil.filter(
+      (item) =>
+        typeof item.tanggal === "string" &&
+        item.tanggal.startsWith(isoDate)
+    );
+  }
 
   // ================= STATUS =================
   if (statusFilter !== "semua") {
@@ -269,7 +318,8 @@ const handleDelete = (item) => {
   }
 
   setFilteredData(hasil);
-}, [tanggalFilter, statusFilter, roleFilter, data]);
+}, [filter, tanggalFilter, statusFilter, roleFilter, data]);
+
 
   const cleanedData = filteredData.filter(
     (item) => item?.nomorUnik || item?.nomor_unik || item?.nomorunik

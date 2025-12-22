@@ -11,9 +11,8 @@ const PresensiMasuk = () => {
     nomorUnik: "",
   });
 
+  const [nama, setNama] = useState("");
   const [submitting, setSubmitting] = useState(false);
-
-  // 🔧 REVISI: DATA SISWA
   const [siswaList, setSiswaList] = useState([]);
 
   // ==============================
@@ -24,7 +23,6 @@ const PresensiMasuk = () => {
   useEffect(() => {
     const timer = setInterval(() => {
       const now = new Date();
-
       const hh = now.getHours().toString().padStart(2, "0");
       const mm = now.getMinutes().toString().padStart(2, "0");
       const ss = now.getSeconds().toString().padStart(2, "0");
@@ -39,7 +37,7 @@ const PresensiMasuk = () => {
   }, []);
 
   // ==============================
-  // 🔧 REVISI: FETCH DATA SISWA
+  // FETCH DATA SISWA
   // ==============================
   useEffect(() => {
     axios
@@ -49,7 +47,7 @@ const PresensiMasuk = () => {
   }, []);
 
   // ==============================
-  // SUARA NOTIFIKASI
+  // SUARA
   // ==============================
   const playSound = () => {
     const audio = new Audio("/sound/berhasil.mp3");
@@ -57,62 +55,68 @@ const PresensiMasuk = () => {
   };
 
   const handleNomorChange = (e) => {
-    setForm({ nomorUnik: e.target.value });
+    const onlyNumber = e.target.value.replace(/\D/g, "");
+    setForm({ nomorUnik: onlyNumber });
   };
 
   // ==============================
-  // SUBMIT MASUK
+  // AUTO ISI NAMA + AUTO SUBMIT
   // ==============================
-  const submitMasuk = async () => {
-    if (!form.nomorUnik) {
-      Swal.fire("Oops!", "Nomor Unik wajib diisi!", "warning");
+  useEffect(() => {
+    if (!form.nomorUnik || submitting) {
+      setNama("");
       return;
     }
 
-    const now = new Date();
-
-    // 🔧 REVISI: CARI SISWA BERDASARKAN NOMOR UNIK
     const found = siswaList.find(
       (s) =>
         s.nomorUnik === form.nomorUnik ||
         s.nomor_unik === form.nomorUnik
     );
 
-    const payload = {
-      nama: found?.nama || "-",
-      nomorUnik: form.nomorUnik,
-      jamMasuk: now.toLocaleTimeString("id-ID", {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-      jamPulang: "",
-      tanggal: now.toISOString().split("T")[0],
-      status: "hadir",
+    setNama(found?.nama || "");
+
+    if (!found) return;
+
+    const submitMasuk = async () => {
+      const now = new Date();
+
+      const payload = {
+        nama: found?.nama || "-",
+        nomorUnik: form.nomorUnik,
+        jamMasuk: now.toLocaleTimeString("id-ID", {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+        jamPulang: "",
+        tanggal: now.toISOString().split("T")[0],
+        status: "hadir",
+      };
+
+      try {
+        setSubmitting(true);
+        await axios.post("http://localhost:5000/presensi", payload);
+
+        playSound();
+        Swal.fire("Berhasil!", "Presensi Masuk Tercatat!", "success");
+
+        setForm({ nomorUnik: "" });
+        setNama("");
+      } catch (err) {
+        console.error(err);
+        Swal.fire("Error", "Gagal menyimpan data!", "error");
+      } finally {
+        setSubmitting(false);
+      }
     };
 
-    try {
-      setSubmitting(true);
-      await axios.post("http://localhost:5000/presensi", payload);
-
-      playSound();
-
-      Swal.fire("Berhasil!", "Presensi Masuk Tercatat!", "success").then(() => {
-        navigate("/presensimasuk");
-      });
-
-      setForm({ nomorUnik: "" });
-    } catch (err) {
-      console.error("Gagal menyimpan presensi:", err);
-      Swal.fire("Error", "Gagal menyimpan data!", "error");
-    } finally {
-      setSubmitting(false);
-    }
-  };
+    submitMasuk();
+  }, [form.nomorUnik, siswaList]);
 
   const batal = () => navigate("/presensi");
 
   // ==============================
-  // UI
+  // UI (TAMPILAN TETAP)
   // ==============================
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
@@ -131,7 +135,7 @@ const PresensiMasuk = () => {
           </p>
         </div>
 
-        {/* JAM LED */}
+        {/* JAM */}
         <div className="mb-8">
           <div
             className="text-center text-4xl font-mono tracking-widest select-none"
@@ -166,15 +170,21 @@ const PresensiMasuk = () => {
             />
           </div>
 
-          <button
-            onClick={submitMasuk}
-            disabled={submitting}
-            className={`w-full py-3 rounded-2xl text-lg font-bold text-white bg-green-600 hover:bg-green-700 active:scale-[0.98] transition-all shadow-md ${
-              submitting ? "opacity-70 cursor-not-allowed" : ""
-            }`}
-          >
-            {submitting ? "Menyimpan..." : "Simpan Presensi"}
-          </button>
+          {/* NAMA OTOMATIS */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Nama Siswa
+            </label>
+            <input
+              type="text"
+              value={nama}
+              readOnly
+              placeholder="Nama otomatis"
+              className="w-full px-5 py-3 text-lg rounded-2xl border border-gray-300 bg-gray-100 text-gray-700 cursor-not-allowed"
+            />
+          </div>
+
+          {/* TOMBOL SIMPAN DIHILANGKAN */}
 
           <button
             onClick={batal}
