@@ -78,37 +78,62 @@ const PresensiMasuk = () => {
 
     if (!found) return;
 
-    const submitMasuk = async () => {
-      const now = new Date();
+   const submitMasuk = async () => {
+  const now = new Date();
+  const tanggalHariIni = now.toISOString().split("T")[0];
 
-      const payload = {
-        nama: found?.nama || "-",
+  try {
+    setSubmitting(true);
+
+    // 🔒 CEK DOBEL PRESENSI MASUK
+    const cek = await axios.get("http://localhost:5000/presensi", {
+      params: {
         nomorUnik: form.nomorUnik,
-        jamMasuk: now.toLocaleTimeString("id-ID", {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-        jamPulang: "",
-        tanggal: now.toISOString().split("T")[0],
-        status: "hadir",
-      };
+        tanggal: tanggalHariIni,
+      },
+    });
 
-      try {
-        setSubmitting(true);
-        await axios.post("http://localhost:5000/presensi", payload);
+    const sudahMasuk = cek.data.find(
+      (p) => p.jamMasuk && !p.jamPulang
+    );
 
-        playSound();
-        Swal.fire("Berhasil!", "Presensi Masuk Tercatat!", "success");
+    if (sudahMasuk) {
+      Swal.fire(
+        "Ditolak!",
+        "Siswa ini sudah melakukan presensi masuk hari ini.",
+        "warning"
+      );
+      return;
+    }
 
-        setForm({ nomorUnik: "" });
-        setNama("");
-      } catch (err) {
-        console.error(err);
-        Swal.fire("Error", "Gagal menyimpan data!", "error");
-      } finally {
-        setSubmitting(false);
-      }
+    // ✅ LANJUT SIMPAN
+    const payload = {
+      nama: found?.nama || "-",
+      nomorUnik: form.nomorUnik,
+      jamMasuk: now.toLocaleTimeString("id-ID", {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+      jamPulang: "",
+      tanggal: tanggalHariIni,
+      status: "hadir",
     };
+
+    await axios.post("http://localhost:5000/presensi", payload);
+
+    playSound();
+    Swal.fire("Berhasil!", "Presensi Masuk Tercatat!", "success");
+
+    setForm({ nomorUnik: "" });
+    setNama("");
+  } catch (err) {
+    console.error(err);
+    Swal.fire("Error", "Gagal menyimpan data!", "error");
+  } finally {
+    setSubmitting(false);
+  }
+};
+
 
     submitMasuk();
   }, [form.nomorUnik, siswaList]);
