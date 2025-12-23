@@ -83,44 +83,52 @@ const EditPresensi = () => {
   }, [id]);
 
   /* ================= UPDATE DATA ================= */
-  const updatePresensi = async () => {
-    if (!form.jamMasuk || !form.jamPulang) {
-      Swal.fire("Oops!", "Jam masuk dan jam pulang harus diisi.", "warning");
-      return;
-    }
+ const updatePresensi = async () => {
+  if (!existingData) {
+    Swal.fire("Error", "Data asli belum dimuat. Coba kembali.", "error");
+    return;
+  }
 
-    if (!existingData) {
-      Swal.fire("Error", "Data asli belum dimuat. Coba kembali.", "error");
-      return;
-    }
+  // Kalau dua-duanya kosong, baru dicegah
+  if (!form.jamMasuk && !form.jamPulang) {
+    Swal.fire("Oops!", "Minimal salah satu jam harus diisi.", "warning");
+    return;
+  }
 
-    try {
-      setSaving(true);
+  try {
+    setSaving(true);
 
-      const updated = {
-        ...existingData,
-        jamMasuk: colonToDot(form.jamMasuk),
-        jamPulang: colonToDot(form.jamPulang),
-      };
+    const updated = {
+  ...existingData,
+  jamMasuk: form.jamMasuk
+    ? colonToDot(form.jamMasuk)
+    : existingData.jamMasuk,
+  jamPulang: form.jamPulang
+    ? colonToDot(form.jamPulang)
+    : existingData.jamPulang,
 
-      const endpoint = getEndpoint(existingData);
+  // 🔥 PENANDA DATA TERBARU
+  updatedAt: new Date().toISOString(),
+};
 
-      await axios.put(`${endpoint}/${id}`, updated, {
-        headers: { "Content-Type": "application/json" },
-      });
+    const endpoint = getEndpoint(existingData);
 
-      Swal.fire(
-        "Berhasil!",
-        "Data presensi berhasil diperbarui!",
-        "success"
-      ).then(() => navigate("/rekappresensi"));
-    } catch (err) {
-      console.error("Gagal update:", err);
-      Swal.fire("Error", "Gagal menyimpan perubahan.", "error");
-    } finally {
-      setSaving(false);
-    }
-  };
+    await axios.put(`${endpoint}/${id}`, updated, {
+      headers: { "Content-Type": "application/json" },
+    });
+
+    Swal.fire(
+      "Berhasil!",
+      "Data presensi berhasil diperbarui!",
+      "success"
+    ).then(() => navigate("/rekappresensi"));
+  } catch (err) {
+    console.error("Gagal update:", err);
+    Swal.fire("Error", "Gagal menyimpan perubahan.", "error");
+  } finally {
+    setSaving(false);
+  }
+};
 
   const batal = () => navigate("/rekappresensi");
 

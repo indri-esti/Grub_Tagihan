@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { FaDoorClosed } from "react-icons/fa";
@@ -6,9 +6,14 @@ import { useNavigate } from "react-router-dom";
 
 const PresensiPulang = () => {
   const navigate = useNavigate();
+
   const [nomorUnik, setNomorUnik] = useState("");
   const [nama, setNama] = useState("");
   const [data, setData] = useState([]);
+  const [triggerSubmit, setTriggerSubmit] = useState(false);
+
+  // 🔒 PENGAMAN (ANTI DOBEL EFFECT & SWEETALERT KEDIP)
+  const isProcessing = useRef(false);
 
   // ==============================
   // JAM DIGITAL LED + BLINK
@@ -57,96 +62,115 @@ const PresensiPulang = () => {
   }, []);
 
   // ==============================
-  // AUTO DETEKSI + AUTO SUBMIT
+  // AUTO DETEKSI + SUBMIT (FIX)
   // ==============================
   useEffect(() => {
-    if (!nomorUnik || data.length === 0) {
-      setNama("");
-      return;
-    }
+    const processPresensi = async () => {
+      if (
+        !triggerSubmit ||
+        !nomorUnik ||
+        data.length === 0 ||
+        isProcessing.current
+      ) return;
 
-    const today = new Date().toISOString().split("T")[0];
+      // 🔒 KUNCI PROSES
+      isProcessing.current = true;
+      setTriggerSubmit(false);
 
-    const presensiHariIni = data.find((d) => {
-      const nomor =
-        d.nomorUnik || d.nomorunik || d.nomor_unik || "";
-      return nomor === nomorUnik && (d.tanggal || "").startsWith(today);
-    });
+      const today = new Date().toISOString().split("T")[0];
 
-    if (!presensiHariIni) {
-      setNama("");
-      return;
-    }
+      const presensiHariIni = data.find((d) => {
+        const nomor =
+          d.nomorUnik || d.nomorunik || d.nomor_unik || "";
+        return nomor === nomorUnik && (d.tanggal || "").startsWith(today);
+      });
 
-    // ✅ ISI NAMA OTOMATIS
-    setNama(presensiHariIni.nama || "");
-
-    // ❌ BELUM MASUK
-    if (!presensiHariIni.jamMasuk) {
-      Swal.fire(
-        "Ditolak!",
-        "Anda belum melakukan presensi masuk.",
-        "warning"
-      );
-      return;
-    }
-
-    // ℹ️ SUDAH PULANG
-    if (presensiHariIni.jamPulang) {
-      Swal.fire(
-        "Info",
-        "Anda sudah melakukan presensi pulang.",
-        "info"
-      );
-      return;
-    }
-
-    // 🔥 AUTO SUBMIT PULANG
-   // 🔥 AUTO SUBMIT PULANG
-const submitPulang = async () => {
-  try {
-    const now = new Date();
-
-    // ⛔ VALIDASI JAM PULANG (MINIMAL JAM 15:00)
-    const jamSekarang =
-      now.getHours() * 60 + now.getMinutes();
-    const batasPulang = 15 * 60; // 15:00
-
-    if (jamSekarang < batasPulang) {
-      Swal.fire(
-        "Ditolak!",
-        "Presensi pulang hanya bisa dilakukan setelah jam 15.00",
-        "warning"
-      );
-      return;
-    }
-
-    const jamPulangFix = now.toLocaleTimeString("id-ID", {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-
-    await axios.patch(
-      `http://localhost:5000/presensi/${presensiHariIni.id}`,
-      {
-        jamPulang: jamPulangFix,
+      if (!presensiHariIni) {
+        setNama("");
+        isProcessing.current = false;
+        return;
       }
-    );
 
-    playSound();
-    Swal.fire("Berhasil!", "Presensi Pulang dicatat.", "success");
+      setNama(presensiHariIni.nama || "");
 
-    setNomorUnik("");
-    setNama("");
-    fetchData();
-  } catch {
-    Swal.fire("Error", "Gagal menyimpan presensi pulang!", "error");
-  }
-};
+      // ❌ BELUM MASUK
+      if (!presensiHariIni.jamMasuk) {
+        await Swal.fire(
+          "Ditolak!",
+          "Anda belum melakukan presensi masuk.",
+          "warning"
+        );
+        isProcessing.current = false;
+        return;
+      }
 
-    submitPulang();
-  }, [nomorUnik, data]);
+      // ℹ️ SUDAH PULANG
+      if (presensiHariIni.jamPulang) {
+        await Swal.fire(
+          "Info",
+          "Anda sudah melakukan presensi pulang.",
+          "info"
+        );
+        isProcessing.current = false;
+        return;
+      }
 
+      try {
+        const now = new Date();
+
+        const jamSekarang =
+          now.getHours() * 60 + now.getMinutes();
+        const batasPulang = 15 * 60;
+
+        if (jamSekarang < batasPulang) {
+          await Swal.fire(
+            "Ditolak!",
+            "Presensi pulang hanya bisa dilakukan setelah jam 15.00",
+            "warning"
+          );
+          isProcessing.current = false;
+          return;
+        }
+
+        const jamPulangFix = now.toLocaleTimeString("id-ID", {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+
+        await axios.patch(
+          `http://localhost:5000/presensi/${presensiHariIni.id}`,
+          { jamPulang: jamPulangFix }
+        );
+
+        playSound();
+
+        await Swal.fire(
+          "Berhasil!",
+          "Presensi Pulang dicatat.",
+          "success"
+        );
+
+        setNomorUnik("");
+        setNama("");
+        fetchData();
+      } catch {
+        await Swal.fire(
+          "Error",
+          "Gagal menyimpan presensi pulang!",
+          "error"
+        );
+      }
+
+      // 🔓 BUKA KUNCI
+      isProcessing.current = false;
+    };
+
+    processPresensi();
+  }, [triggerSubmit, nomorUnik, data]);
+
+  // ==============================
+  // TOMBOL BATAL
+  // ==============================
   const batal = () => navigate("/presensi");
 
   // ==============================
@@ -156,7 +180,6 @@ const submitPulang = async () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
       <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-gray-200 p-8">
 
-        {/* HEADER */}
         <div className="flex flex-col items-center mb-7">
           <div className="w-16 h-16 flex items-center justify-center rounded-full border-2 border-red-600 mb-3">
             <FaDoorClosed className="text-3xl text-red-600" />
@@ -169,7 +192,6 @@ const submitPulang = async () => {
           </p>
         </div>
 
-        {/* JAM LED */}
         <div className="mb-8">
           <div
             className="text-center text-4xl font-mono tracking-widest select-none"
@@ -189,27 +211,31 @@ const submitPulang = async () => {
           </div>
         </div>
 
-        {/* FORM */}
         <div className="space-y-6">
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
               Nomor Unik
             </label>
             <input
-  type="text"
-  inputMode="numeric"
-  pattern="[0-9]*"
-  placeholder="Masukkan Nomor Unik"
-  value={nomorUnik}
-  onChange={(e) => {
-    const onlyNumber = e.target.value.replace(/\D/g, "");
-    setNomorUnik(onlyNumber);
-  }}
-  className="w-full px-5 py-3 text-lg rounded-2xl border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition shadow-sm"
-/>
+              type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              placeholder="Masukkan Nomor Unik"
+              value={nomorUnik}
+              onChange={(e) => {
+                const onlyNumber = e.target.value.replace(/\D/g, "");
+                setNomorUnik(onlyNumber);
+              }}
+              onKeyDown={(e) => {
+  if (e.key === "Enter") {
+    e.preventDefault(); // ⬅️ INI KUNCINYA
+    setTriggerSubmit(true);
+  }
+}}
+              className="w-full px-5 py-3 text-lg rounded-2xl border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition shadow-sm"
+            />
           </div>
 
-          {/* NAMA OTOMATIS */}
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
               Nama Siswa
@@ -223,8 +249,6 @@ const submitPulang = async () => {
             />
           </div>
 
-          {/* TOMBOL SUBMIT (TETAP ADA, TIDAK DIPAKAI) */}
-
           <button
             onClick={batal}
             className="w-full py-3 rounded-2xl text-lg font-semibold bg-gray-200 hover:bg-gray-300 text-gray-700 transition"
@@ -232,7 +256,7 @@ const submitPulang = async () => {
             Batal
           </button>
         </div>
-      </div>  
+      </div>
     </div>
   );
 };

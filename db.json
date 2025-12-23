@@ -92,6 +92,14 @@
       "harga": "900000",
       "tanggal": "09/11/2025",
       "status": "Belum Lunas"
+    },
+    {
+      "nama": "Roihan",
+      "keterangan": "Uang Semester 2",
+      "harga": "1500000",
+      "tanggal": "25/12/2025",
+      "status": "Lunas",
+      "id": "88b2"
     }
   ],
   "kategori_tagihan": [
@@ -134,6 +142,11 @@
       "id": "0ed3",
       "nama": "Biaya UKT",
       "status": "Nonaktif"
+    },
+    {
+      "id": "40f4",
+      "nama": "Uang Semester 2",
+      "status": "Aktif"
     }
   ],
   "kategori_data": [
@@ -272,6 +285,14 @@
       "jabatan_kelas": "X DPB",
       "nomorUnik": "878678746",
       "id": "9a1d"
+    },
+    {
+      "nama": "Roihan",
+      "email": "roihan@gmail.com",
+      "kategori": "Siswa",
+      "jabatan_kelas": "XII TKJ",
+      "nomorUnik": "2666152251",
+      "id": "4ed7"
     }
   ],
   "data_kelas": [
@@ -309,6 +330,11 @@
       "id": "48ac",
       "kelas": "X",
       "jurusan": "AKL 2"
+    },
+    {
+      "kelas": "X",
+      "jurusan": "TKJ 2",
+      "id": "024d"
     }
   ],
   "level": [
@@ -323,6 +349,10 @@
     {
       "level": "Karyawan",
       "id": "f2e2"
+    },
+    {
+      "level": "satpam",
+      "id": "1e32"
     }
   ],
   "presensi": [
@@ -408,15 +438,6 @@
       "status": "hadir"
     },
     {
-      "id": "f121",
-      "nama": "Miya",
-      "nomorUnik": "76694514",
-      "jamMasuk": "07.52",
-      "jamPulang": "",
-      "tanggal": "2025-12-23",
-      "status": "hadir"
-    },
-    {
       "id": "1e10",
       "nama": "Maria",
       "nomorUnik": "18618513",
@@ -426,22 +447,23 @@
       "status": "hadir"
     },
     {
-      "id": "5de2",
-      "nama": "indri esti",
-      "nomorUnik": "23456781",
-      "jamMasuk": "09.01",
+      "id": "8806",
+      "nama": "Roihan",
+      "nomorUnik": "2666152251",
+      "jamMasuk": "09.49",
       "jamPulang": "",
       "tanggal": "2025-12-23",
       "status": "hadir"
     },
     {
-      "id": "0db9",
-      "nama": "indri esti",
-      "nomorUnik": "23456781",
-      "jamMasuk": "09.01",
+      "id": "83e1",
+      "nama": "Miya",
+      "nomorUnik": "76694514",
+      "jamMasuk": "06.50",
       "jamPulang": "",
       "tanggal": "2025-12-23",
-      "status": "hadir"
+      "status": "hadir",
+      "updatedAt": "2025-12-23T06:22:36.433Z"
     }
   ],
   "izinpresensi": [
@@ -552,6 +574,11 @@
     {
       "id": "c83b",
       "nama": "Pulang Awal",
+      "status": "Aktif"
+    },
+    {
+      "id": "0c61",
+      "nama": "Lomba Náional",
       "status": "Aktif"
     }
   ]

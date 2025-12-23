@@ -112,9 +112,9 @@ const RekapTagihan = () => {
 
   return (
     <div className="pl-[calc(15rem+1%)] pr-[5%] pt-[5%] md:pt-10 transition-all duration-300">
+      <div className="flex flex-col gap-6">
       <SidebarT />
 
-      <div className="flex flex-col gap-6">
         <div className="flex-1 flex flex-col gap-3 md:ml-6 bg-white shadow-md rounded-2xl p-6">
           {/* Judul */}
           <div className="flex items-center justify-between mb-4">
@@ -143,8 +143,8 @@ const RekapTagihan = () => {
           {loading ? (
             <p className="text-center py-4 text-gray-500">Memuat data...</p>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full text-sm text-gray-700 border border-gray-200 rounded-lg">
+           <div className="overflow-x-auto shadow-md rounded-lg">
+              <table className="table-auto w-full text-sm border-collapse">
                 <thead>
                   <tr className="bg-blue-700 text-white">
                     <th className="px-4 py-3 text-center font-semibold border-b border-gray-200">

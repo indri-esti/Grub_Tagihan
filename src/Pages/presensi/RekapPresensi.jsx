@@ -4,6 +4,7 @@ import SidebarT from "../../Component/Sidebar";
 import { FaRegCalendarCheck } from "react-icons/fa";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 
 const RekapPresensi = () => {
@@ -134,9 +135,36 @@ const GetStatusFromData = (item) => {
 
       const gabunganData = [...presensiData, ...izinData];
 
-      gabunganData.sort(
-        (a, b) => new Date(b.tanggal) - new Date(a.tanggal)
-      );
+     gabunganData.sort((a, b) => {
+  const updatedA = a.updatedAt ? new Date(a.updatedAt).getTime() : 0;
+  const updatedB = b.updatedAt ? new Date(b.updatedAt).getTime() : 0;
+
+  // 🔥 1. DATA YANG BARU DIEDIT SELALU DI ATAS
+  if (updatedA !== updatedB) {
+    return updatedB - updatedA;
+  }
+
+  // 🔥 2. JIKA SAMA-SAMA BELUM DIEDIT → SORT TANGGAL
+  const dateA = new Date(a.tanggal).getTime();
+  const dateB = new Date(b.tanggal).getTime();
+
+  if (dateA !== dateB) {
+    return dateB - dateA;
+  }
+
+  // 🔥 3. TERAKHIR → SORT JAM
+  const toMinutes = (t) => {
+    if (!t) return 0;
+    const [h, m] = t.replace(".", ":").split(":").map(Number);
+    return h * 60 + m;
+  };
+
+  const timeA = toMinutes(a.jamPulang || a.jamMasuk);
+  const timeB = toMinutes(b.jamPulang || b.jamMasuk);
+
+  return timeB - timeA;
+});
+
       
       setData(gabunganData);
       setFilteredData(gabunganData);
@@ -325,6 +353,9 @@ const isThisYear = (dateStr) => {
     (item) => item?.nomorUnik || item?.nomor_unik || item?.nomorunik
   );
 
+  const [showNomor, setShowNomor] = useState({});
+
+
   return (
     <div className="pl-[calc(15rem+1%)] pr-[5%] pt-[5%] md:pt-10 transition-all duration-300">
       <SidebarT />
@@ -424,7 +455,31 @@ const isThisYear = (dateStr) => {
                               ? item.nama
                               : getNamaFromNomor(nomor)}
                           </td>
-                          <td className="px-4 py-3 text-center">{nomor}</td>
+                          <td className="px-4 py-3 text-center">
+  <div className="flex items-center justify-center gap-2">
+    <span className="font-mono tracking-widest">
+      {showNomor[item.id] ? nomor : "••••••••"}
+    </span>
+
+    <button
+      onClick={() =>
+        setShowNomor((prev) => ({
+          ...prev,
+          [item.id]: !prev[item.id],
+        }))
+      }
+      className="text-gray-600 hover:text-gray-900 transition"
+      title={showNomor[item.id] ? "Sembunyikan" : "Tampilkan"}
+    >
+      {showNomor[item.id] ? (
+        <FaEye size={18} /> 
+      ) : (
+        <FaEyeSlash size={18} />
+      )}
+    </button>
+  </div>
+</td>
+
                           <td className="px-4 py-3 text-left">
                             {item.keterangan || ""}
                           </td>
