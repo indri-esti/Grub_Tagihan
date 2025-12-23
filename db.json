@@ -331,7 +331,7 @@
       "nama": "indra ",
       "nomorUnik": "878678746",
       "jamMasuk": "11.22",
-      "jamPulang": "",
+      "jamPulang": "15.00",
       "tanggal": "2025-12-22",
       "status": "hadir"
     },
@@ -340,7 +340,7 @@
       "nama": "Hilda",
       "nomorUnik": "99851442",
       "jamMasuk": "11.23",
-      "jamPulang": "",
+      "jamPulang": "15.00",
       "tanggal": "2025-12-22",
       "status": "hadir"
     },
@@ -349,7 +349,7 @@
       "nama": "Bobi",
       "nomorUnik": "124453588",
       "jamMasuk": "11.24",
-      "jamPulang": "",
+      "jamPulang": "15.03",
       "tanggal": "2025-12-22",
       "status": "hadir"
     },
@@ -358,7 +358,7 @@
       "nama": "Fedrin",
       "nomorUnik": "82362969",
       "jamMasuk": "11.28",
-      "jamPulang": "",
+      "jamPulang": "15.00",
       "tanggal": "2025-12-22",
       "status": "hadir"
     },
@@ -367,7 +367,7 @@
       "nama": "Lolita",
       "nomorUnik": "4557357566",
       "jamMasuk": "11.29",
-      "jamPulang": "",
+      "jamPulang": "15.00",
       "tanggal": "2025-12-22",
       "status": "hadir"
     },
@@ -376,7 +376,7 @@
       "nama": "Zilong",
       "nomorUnik": "820753089",
       "jamMasuk": "11.42",
-      "jamPulang": "",
+      "jamPulang": "15.00",
       "tanggal": "2025-12-22",
       "status": "hadir"
     },
@@ -385,7 +385,7 @@
       "nama": "Alicia",
       "nomorUnik": "10576909",
       "jamMasuk": "11.43",
-      "jamPulang": "",
+      "jamPulang": "15.00",
       "tanggal": "2025-12-22",
       "status": "hadir"
     },
@@ -394,7 +394,7 @@
       "nama": "Riska",
       "nomorUnik": "23874657",
       "jamMasuk": "11.43",
-      "jamPulang": "",
+      "jamPulang": "15.00",
       "tanggal": "2025-12-22",
       "status": "hadir"
     },
@@ -403,17 +403,44 @@
       "nama": "Miska",
       "nomorUnik": "97676407",
       "jamMasuk": "11.49",
-      "jamPulang": "",
+      "jamPulang": "15.00",
       "tanggal": "2025-12-22",
       "status": "hadir"
     },
     {
-      "id": "3b48",
-      "nama": "Lolita",
-      "nomorUnik": "4557357566",
-      "jamMasuk": "11.51",
+      "id": "f121",
+      "nama": "Miya",
+      "nomorUnik": "76694514",
+      "jamMasuk": "07.52",
       "jamPulang": "",
-      "tanggal": "2025-12-22",
+      "tanggal": "2025-12-23",
+      "status": "hadir"
+    },
+    {
+      "id": "1e10",
+      "nama": "Maria",
+      "nomorUnik": "18618513",
+      "jamMasuk": "07.54",
+      "jamPulang": "",
+      "tanggal": "2025-12-23",
+      "status": "hadir"
+    },
+    {
+      "id": "5de2",
+      "nama": "indri esti",
+      "nomorUnik": "23456781",
+      "jamMasuk": "09.01",
+      "jamPulang": "",
+      "tanggal": "2025-12-23",
+      "status": "hadir"
+    },
+    {
+      "id": "0db9",
+      "nama": "indri esti",
+      "nomorUnik": "23456781",
+      "jamMasuk": "09.01",
+      "jamPulang": "",
+      "tanggal": "2025-12-23",
       "status": "hadir"
     }
   ],

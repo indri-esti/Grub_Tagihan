@@ -136,7 +136,7 @@ const PresensiMasuk = () => {
 
 
     submitMasuk();
-  }, [form.nomorUnik, siswaList]);
+ }, [form.nomorUnik, siswaList, submitting]);
 
   const batal = () => navigate("/presensi");
 
