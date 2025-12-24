@@ -120,7 +120,7 @@ const PresensiPulang = () => {
 
         const jamSekarang =
           now.getHours() * 60 + now.getMinutes();
-        const batasPulang = 15 * 60;
+        const batasPulang = 9 * 60;
 
         if (jamSekarang < batasPulang) {
           await Swal.fire(

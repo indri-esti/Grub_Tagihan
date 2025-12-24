@@ -4,6 +4,8 @@ import Swal from "sweetalert2";
 import axios from "axios";
 import SidebarT from "../../Component/Sidebar";
 import { FaArchive } from "react-icons/fa";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+
 
 const KategoriData = () => {
   const [data, setData] = useState([]);
@@ -77,6 +79,8 @@ const KategoriData = () => {
       (item.kategori || "").toLowerCase() === filter.toLowerCase();
     return matchSearch && matchFilter;
   });
+
+  const [showNomor, setShowNomor] = useState({});
 
   return (
     <div className="pl-[calc(15rem+1%)] pr-[5%] pt-[5%] md:pt-10 transition-all duration-300">
@@ -175,8 +179,27 @@ const KategoriData = () => {
 
                         {/* ⭐ KOLOM BARU */}
                         <td className="px-4 py-2 text-center text-gray-700">
-                          {item.nomorUnik || "-"}
-                        </td>
+  <div className="flex items-center justify-center gap-2">
+    <span className="font-mono tracking-widest">
+      {showNomor[index]
+        ? item.nomorUnik || item.nomorUnik || item.nomor || "-"
+        : "••••••••"}
+    </span>
+
+    <button
+      onClick={() =>
+        setShowNomor((prev) => ({
+          ...prev,
+          [index]: !prev[index],
+        }))
+      }
+      className="text-gray-600 hover:text-gray-900 transition"
+      title={showNomor[index] ? "Sembunyikan Nomor" : "Tampilkan Nomor"}
+    >
+      {showNomor[index] ? <FaEye size={18} /> : <FaEyeSlash size={18} />}
+    </button>
+  </div>
+</td>
 
                         <td className="px-4 py-2 text-left text-gray-700">
                           {item.kategori || "-"}

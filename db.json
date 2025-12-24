@@ -290,7 +290,7 @@
       "nama": "Roihan",
       "email": "roihan@gmail.com",
       "kategori": "Siswa",
-      "jabatan_kelas": "XII TKJ",
+      "jabatan_kelas": "X TKJ 2",
       "nomorUnik": "2666152251",
       "id": "4ed7"
     }
@@ -456,14 +456,14 @@
       "status": "hadir"
     },
     {
-      "id": "83e1",
+      "id": "4912",
       "nama": "Miya",
       "nomorUnik": "76694514",
-      "jamMasuk": "06.50",
-      "jamPulang": "",
-      "tanggal": "2025-12-23",
+      "jamMasuk": "07.20",
+      "jamPulang": "15.00",
+      "tanggal": "2025-12-24",
       "status": "hadir",
-      "updatedAt": "2025-12-23T06:22:36.433Z"
+      "updatedAt": "2025-12-24T02:43:34.451Z"
     }
   ],
   "izinpresensi": [

@@ -11,6 +11,8 @@ import {
   FaChartBar,
   FaUserCheck,
 } from "react-icons/fa";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+
 
 export default function Dashboard() {
   const [kategoriData, setKategoriData] = useState([]);
@@ -29,27 +31,37 @@ export default function Dashboard() {
     totalBelumLunas: 0,
   });
 
+  const [showNomor, setShowNomor] = useState({});
+
+
   // ============================
   // STATUS PRESENSI FIX
   // ============================
 const GetStatusFromData = (item) => {
-  const explicitStatus = (item?.status || "")
+  const jamMasuk = item?.jamMasuk || item?.jam_masuk || "";
+  const jamPulang = item?.jamPulang || item?.jam_pulang || "";
+
+  const statusRaw = (item?.status || "")
+    .toString()
     .toLowerCase()
-    .replace(" ", "_");
+    .replace(/_/g, " ")
+    .trim();
 
-  if (explicitStatus === "terlambat") return "Terlambat";
-  if (explicitStatus === "sakit") return "Sakit";
-  if (explicitStatus === "izin") return "Izin";
-  if (explicitStatus === "dispensasi") return "Dispensasi";
-  if (explicitStatus === "pulang_awal") return "Pulang Awal";
-  if (explicitStatus === "alpa") return "Alpa";
-  if (explicitStatus === "hadir") return "Hadir";
+  // 🔥 PRIORITAS ABSOLUT (SAMA DENGAN REKAP PRESENSI)
+  if (statusRaw === "izin") return "Izin";
+  if (statusRaw === "sakit") return "Sakit";
+  if (statusRaw === "dispensasi") return "Dispensasi";
+  if (statusRaw === "alpa") return "Alpa";
+  if (statusRaw === "pulang awal") return "Pulang Awal";
+  if (statusRaw === "terlambat") return "Terlambat";
 
-  if (!item?.jamMasuk && !item?.jamPulang) return "Alpa";
-  if (item?.jamMasuk || item?.jamPulang) return "Hadir";
+  // 🔥 HADIR
+  if (jamMasuk && !jamPulang) return "Hadir";
+  if (jamMasuk && jamPulang) return "Hadir";
 
-  return "-";
+  return "Alpa";
 };
+
 
  const GetStatusColor = (status) => {
     const s = status?.toLowerCase() || "";
@@ -120,9 +132,38 @@ const GetStatusFromData = (item) => {
         const izinData = izinRes.data || [];
 
         /* === GABUNG PRESENSI + IZIN === */
-        const gabunganPresensi = [...presensiData, ...izinData].sort(
-          (a, b) => new Date(b.tanggal) - new Date(a.tanggal)
-        );
+        const gabunganPresensi = [...presensiData, ...izinData];
+
+gabunganPresensi.sort((a, b) => {
+  const updatedA = a.updatedAt ? new Date(a.updatedAt).getTime() : 0;
+  const updatedB = b.updatedAt ? new Date(b.updatedAt).getTime() : 0;
+
+  // 🔥 1. DATA TERAKHIR DIEDIT SELALU DI ATAS
+  if (updatedA !== updatedB) {
+    return updatedB - updatedA;
+  }
+
+  // 🔥 2. SORT TANGGAL
+  const dateA = new Date(a.tanggal).getTime();
+  const dateB = new Date(b.tanggal).getTime();
+
+  if (dateA !== dateB) {
+    return dateB - dateA;
+  }
+
+  // 🔥 3. SORT JAM (PULANG > MASUK)
+  const toMinutes = (t) => {
+    if (!t) return 0;
+    const [h, m] = t.replace(".", ":").split(":").map(Number);
+    return h * 60 + m;
+  };
+
+  const timeA = toMinutes(a.jamPulang || a.jamMasuk);
+  const timeB = toMinutes(b.jamPulang || b.jamMasuk);
+
+  return timeB - timeA;
+});
+
 
         setKategoriData(kategori);
         setTagihan(tagihanData);
@@ -316,7 +357,27 @@ const GetStatusFromData = (item) => {
                       <td className="py-2 px-4 text-left">
                         {GetNamaByNomor(nomorUnik)}
                       </td>
-                      <td className="py-2 px-4 text-center">{nomorUnik}</td>
+                      <td className="px-4 py-3 text-center">
+  <div className="flex items-center justify-center gap-2">
+    <span className="font-mono tracking-widest">
+      {showNomor[i] ? nomorUnik : "••••••••"}
+    </span>
+
+    <button
+      onClick={() =>
+        setShowNomor((prev) => ({
+          ...prev,
+          [i]: !prev[i],
+        }))
+      }
+      className="text-gray-600 hover:text-gray-900 transition"
+      title={showNomor[i] ? "Sembunyikan Nomor" : "Tampilkan Nomor"}
+    >
+      {showNomor[i] ? <FaEye size={18} /> : <FaEyeSlash size={18} />}
+    </button>
+  </div>
+</td>
+
                       <td className="py-2 px-4 text-left">{p.keterangan}</td>
                       <td className="py-2 px-4 text-center">{p.jamMasuk}</td>
                       <td className="py-2 px-4 text-center">{p.jamPulang}</td>
