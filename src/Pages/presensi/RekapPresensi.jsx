@@ -136,15 +136,7 @@ const GetStatusFromData = (item) => {
       const gabunganData = [...presensiData, ...izinData];
 
      gabunganData.sort((a, b) => {
-  const updatedA = a.updatedAt ? new Date(a.updatedAt).getTime() : 0;
-  const updatedB = b.updatedAt ? new Date(b.updatedAt).getTime() : 0;
-
-  // 🔥 1. DATA YANG BARU DIEDIT SELALU DI ATAS
-  if (updatedA !== updatedB) {
-    return updatedB - updatedA;
-  }
-
-  // 🔥 2. JIKA SAMA-SAMA BELUM DIEDIT → SORT TANGGAL
+  // 🔥 1. SORT TANGGAL (PALING PENTING)
   const dateA = new Date(a.tanggal).getTime();
   const dateB = new Date(b.tanggal).getTime();
 
@@ -152,18 +144,27 @@ const GetStatusFromData = (item) => {
     return dateB - dateA;
   }
 
-  // 🔥 3. TERAKHIR → SORT JAM
+  // 🔥 2. SORT JAM (TERBARU DI ATAS)
   const toMinutes = (t) => {
     if (!t) return 0;
     const [h, m] = t.replace(".", ":").split(":").map(Number);
     return h * 60 + m;
   };
 
-  const timeA = toMinutes(a.jamPulang || a.jamMasuk);
-  const timeB = toMinutes(b.jamPulang || b.jamMasuk);
+  const timeA = toMinutes(a.jamMasuk || a.jamPulang);
+  const timeB = toMinutes(b.jamMasuk || b.jamPulang);
 
-  return timeB - timeA;
+  if (timeA !== timeB) {
+    return timeB - timeA;
+  }
+
+  // 🔥 3. TERAKHIR BARU updatedAt (OPSIONAL)
+  const updatedA = a.updatedAt ? new Date(a.updatedAt).getTime() : 0;
+  const updatedB = b.updatedAt ? new Date(b.updatedAt).getTime() : 0;
+
+  return updatedB - updatedA;
 });
+
 
       
       setData(gabunganData);

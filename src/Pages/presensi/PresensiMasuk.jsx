@@ -155,9 +155,17 @@ const PresensiMasuk = () => {
           <h2 className="text-3xl font-extrabold text-gray-800 tracking-wide">
             Presensi Masuk
           </h2>
-          <p className="text-sm text-gray-500 mt-1">
-            Sistem Kehadiran Digital
-          </p>
+          <div className="w-full overflow-hidden mt-2 rounded-lg border border-green-500 bg-black">
+  <div
+    className="whitespace-nowrap text-green-400 text-sm font-mono py-2"
+    style={{
+      animation: "marquee 12s linear infinite",
+    }}
+  >
+    ⏱️ SISTEM KEHADIRAN DIGITAL • PRESENSI OTOMATIS • REALTIME • AMAN • AKURAT •
+  </div>
+</div>
+
         </div>
 
         {/* JAM */}

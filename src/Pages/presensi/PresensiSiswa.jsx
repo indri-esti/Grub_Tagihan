@@ -77,9 +77,13 @@ const PresensiSiswa = () => {
             <h2 className="text-2xl font-bold text-gray-800">
               Presensi
             </h2>
-            <p className="text-sm text-gray-500">
-              Silakan pilih menu presensi di bawah
-            </p>
+          </div>
+        </div>
+
+{/* RUNNING TEXT */}
+        <div className="relative overflow-hidden bg-gradient-to-r from-green-50 to-green-100 rounded-xl py-3">
+          <div className="whitespace-nowrap animate-marquee text-green-700 font-semibold text-sm md:text-base">
+            📢 Selamat datang di sistem presensi — Silakan pilih menu presensi di bawah — Pastikan data presensi Anda benar dan sesuai 
           </div>
         </div>
 

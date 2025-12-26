@@ -135,35 +135,33 @@ const GetStatusFromData = (item) => {
         const gabunganPresensi = [...presensiData, ...izinData];
 
 gabunganPresensi.sort((a, b) => {
-  const updatedA = a.updatedAt ? new Date(a.updatedAt).getTime() : 0;
-  const updatedB = b.updatedAt ? new Date(b.updatedAt).getTime() : 0;
-
-  // 🔥 1. DATA TERAKHIR DIEDIT SELALU DI ATAS
-  if (updatedA !== updatedB) {
-    return updatedB - updatedA;
-  }
-
-  // 🔥 2. SORT TANGGAL
-  const dateA = new Date(a.tanggal).getTime();
+   const dateA = new Date(a.tanggal).getTime();
   const dateB = new Date(b.tanggal).getTime();
 
   if (dateA !== dateB) {
     return dateB - dateA;
   }
 
-  // 🔥 3. SORT JAM (PULANG > MASUK)
+  // 🔥 2. SORT JAM (TERBARU DI ATAS)
   const toMinutes = (t) => {
     if (!t) return 0;
     const [h, m] = t.replace(".", ":").split(":").map(Number);
     return h * 60 + m;
   };
 
-  const timeA = toMinutes(a.jamPulang || a.jamMasuk);
-  const timeB = toMinutes(b.jamPulang || b.jamMasuk);
+  const timeA = toMinutes(a.jamMasuk || a.jamPulang);
+  const timeB = toMinutes(b.jamMasuk || b.jamPulang);
 
-  return timeB - timeA;
+  if (timeA !== timeB) {
+    return timeB - timeA;
+  }
+
+  // 🔥 3. TERAKHIR BARU updatedAt (OPSIONAL)
+  const updatedA = a.updatedAt ? new Date(a.updatedAt).getTime() : 0;
+  const updatedB = b.updatedAt ? new Date(b.updatedAt).getTime() : 0;
+
+  return updatedB - updatedA;
 });
-
 
         setKategoriData(kategori);
         setTagihan(tagihanData);
@@ -280,6 +278,7 @@ gabunganPresensi.sort((a, b) => {
   return (
     <div className="pl-[calc(15rem+2%)] pr-[4%] pt-[4%] bg-gray-100 min-h-screen transition-all duration-300">
       <SidebarT />
+      
 
       <div className="p-6 md:p-10 max-w-10xl mx-auto">
         <h1 className="text-3xl font-bold text-gray-800 text-center mb-10 flex items-center justify-center gap-2">

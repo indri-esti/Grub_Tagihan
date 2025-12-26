@@ -120,7 +120,7 @@ const PresensiPulang = () => {
 
         const jamSekarang =
           now.getHours() * 60 + now.getMinutes();
-        const batasPulang = 9 * 60;
+        const batasPulang = 15 * 60;
 
         if (jamSekarang < batasPulang) {
           await Swal.fire(
@@ -187,9 +187,18 @@ const PresensiPulang = () => {
           <h2 className="text-3xl font-extrabold text-gray-800 tracking-wide">
             Presensi Pulang
           </h2>
-          <p className="text-sm text-gray-500 mt-1">
-            Sistem Pulang Digital
-          </p>
+         <div className="w-full overflow-hidden mt-2 rounded-lg border border-red-500 bg-black">
+
+  <div
+    className="whitespace-nowrap text-red-400 text-sm font-mono py-2"
+    style={{
+      animation: "marquee 12s linear infinite",
+    }}
+  >
+    ⏰ SISTEM PULANG DIGITAL • PRESENSI PULANG OTOMATIS • REALTIME • AMAN • AKURAT •
+  </div>
+</div>
+
         </div>
 
         <div className="mb-8">

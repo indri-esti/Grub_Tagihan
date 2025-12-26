@@ -293,6 +293,14 @@
       "jabatan_kelas": "X TKJ 2",
       "nomorUnik": "2666152251",
       "id": "4ed7"
+    },
+    {
+      "id": "8de8",
+      "nama": "Claudia",
+      "email": "Claudia@gmail.com",
+      "nomorUnik": "1324936072",
+      "kategori": "Karyawan",
+      "jabatan_kelas": "Bos Perusahaan"
     }
   ],
   "data_kelas": [
@@ -464,6 +472,16 @@
       "tanggal": "2025-12-24",
       "status": "hadir",
       "updatedAt": "2025-12-24T02:43:34.451Z"
+    },
+    {
+      "id": "5aa0",
+      "nama": "indri esti",
+      "nomorUnik": "23456781",
+      "jamMasuk": "06.41",
+      "jamPulang": "11.41",
+      "tanggal": "2025-12-26",
+      "status": "hadir",
+      "updatedAt": "2025-12-26T04:42:10.174Z"
     }
   ],
   "izinpresensi": [

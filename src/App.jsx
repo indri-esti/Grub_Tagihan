@@ -43,7 +43,6 @@ import EditDataKategori from "./Pages/kategori izin presensi/EditDataKategori";
 
 
 
-
 function App() {
   return ( 
       <Routes>
@@ -86,6 +85,7 @@ function App() {
         <Route path="/kategoriizin" element={<KategoriIzin />} />
         <Route path="/tambahkategoriizin" element={<TambahDataKategori />} />
         <Route path="/editkategoriizin/:id" element={<EditDataKategori />} />
+
         
       </Routes> 
   );
