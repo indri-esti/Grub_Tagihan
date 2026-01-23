@@ -2,33 +2,44 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useNavigate, useParams } from "react-router-dom";
+import { BASE_URL } from "../../config/api";
+
 
 const EditDataKategori = () => {
   const navigate = useNavigate();
   const { id } = useParams();
 
   const [formData, setFormData] = useState({
-    nama: "",
+    jenisIzin: "",
     status: "",
   });
 
   // Ambil data lama berdasarkan ID
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await axios.get(`http://localhost:5000/kategori_izin/${id}`);
-        setFormData(res.data);
-      } catch (error) {
-        console.error("Gagal mengambil data:", error);
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Gagal mengambil data dari server.",
-        });
-      }
-    };
-    fetchData();
-  }, [id]);
+  const fetchData = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/kategoriizin/${id}`);
+
+      const data = res.data;
+
+      setFormData({
+        nama: data.nama || data.nama || "",
+        status: data.status || "",
+      });
+
+    } catch (error) {
+      console.error("Gagal mengambil data:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Gagal mengambil data dari server.",
+      });
+    }
+  };
+
+  fetchData();
+}, [id]);
+
 
   // Saat input berubah
   const handleChange = (e) => {
@@ -42,7 +53,10 @@ const EditDataKategori = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`http://localhost:5000/kategori_izin/${id}`, formData);
+     await axios.put(
+        `${BASE_URL}/kategoriizin/${id}`,
+        formData
+      );
       Swal.fire({
         icon: "success",
         title: "Berhasil!",

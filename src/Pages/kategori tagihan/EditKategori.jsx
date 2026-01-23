@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useNavigate, useParams } from "react-router-dom";
+import { BASE_URL } from "../../config/api";
 
 const EditData = () => {
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ const EditData = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/kategori_tagihan/${id}`);
+       const res = await axios.get(`${BASE_URL}/kategoritagihan/${id}`);
         setFormData(res.data);
       } catch (error) {
         console.error("Gagal mengambil data:", error);
@@ -37,28 +38,43 @@ const EditData = () => {
     });
   };
 
-  // Kirim data update ke API
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await axios.put(`http://localhost:5000/kategori_tagihan/${id}`, formData);
-      Swal.fire({
-        icon: "success",
-        title: "Berhasil!",
-        text: "Data kategori tagihan berhasil diperbarui!",
-        showConfirmButton: false,
-        timer: 2000,
-      });
-      navigate("/kategoritagihan");
-    } catch (error) {
-      console.error("Gagal mengupdate data:", error);
+  e.preventDefault();
+
+  try {
+    await axios.put(`${BASE_URL}/kategoritagihan/${id}`, formData);
+
+    Swal.fire({
+      icon: "success",
+      title: "Berhasil!",
+      text: "Data kategori tagihan berhasil diperbarui!",
+      showConfirmButton: false,
+      timer: 2000,
+    });
+
+    navigate("/kategoritagihan");
+  } catch (error) {
+    console.error("Gagal mengupdate data:", error);
+
+    // 👉 jika server mati / tidak aktif
+    if (!error.response) {
       Swal.fire({
         icon: "error",
-        title: "Gagal!",
-        text: "Terjadi kesalahan saat mengupdate data.",
+        title: "Server Tidak Aktif",
+        text: "Pastikan backend sudah dijalankan.",
       });
+      return;
     }
-  };
+
+    // 👉 jika server aktif tapi error
+    Swal.fire({
+      icon: "error",
+      title: "Gagal!",
+      text: error.response.data?.message || "Terjadi kesalahan saat mengupdate data.",
+    });
+  }
+};
+
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
@@ -91,8 +107,8 @@ const EditData = () => {
               className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
             >
               <option value="">-- Pilih Status --</option>
-              <option value="Aktif">Aktif</option>
-              <option value="Nonaktif">Nonaktif</option>
+              <option value="AKTIF">AKTIF</option>
+              <option value="NONAKTIF">NONAKTIF</option>
             </select>
           </div>
 

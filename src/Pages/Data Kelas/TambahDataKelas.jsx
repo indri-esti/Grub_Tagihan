@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import { BASE_URL } from "../../config/api";
 
 const TambahDataKelas = () => {
   const navigate = useNavigate();
@@ -23,7 +24,7 @@ const TambahDataKelas = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:5000/data_kelas", formData);
+      await axios.post(`${BASE_URL}/datakelas`, formData);
 
       Swal.fire({
         icon: "success",

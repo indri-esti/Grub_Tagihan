@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import { BASE_URL } from "../../config/api";
+
 
 const TambahData = () => {
   const navigate = useNavigate();
@@ -18,8 +20,7 @@ const TambahData = () => {
 
   // Ambil jenis tagihan aktif
   useEffect(() => {
-    axios
-      .get("http://localhost:5000/kategori_tagihan")
+    axios.get(`${BASE_URL}/kategoritagihan`)
       .then((res) => {
         const aktifOnly = res.data.filter(
           (item) => item.status?.toLowerCase() === "aktif"
@@ -33,8 +34,7 @@ const TambahData = () => {
 
  // Ambil daftar siswa dari master data
 useEffect(() => {
-  axios
-    .get("http://localhost:5000/kategori_data")
+  axios.get(`${BASE_URL}/masterdata`)
     .then((res) => {
       const siswaOnly = res.data.filter(
         (item) =>
@@ -62,27 +62,39 @@ useEffect(() => {
 
   // Simpan data ke backend
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await axios.post("http://localhost:5000/tagihan", formData);
+  e.preventDefault();
 
-      Swal.fire({
-        icon: "success",
-        title: "Berhasil!",
-        text: "Data tagihan berhasil ditambahkan!",
-        showConfirmButton: false,
-        timer: 2000,
-      });
-      navigate("/tagihan");
-    } catch (error) {
-      console.error("Gagal menambahkan data:", error);
-      Swal.fire({
-        icon: "error",
-        title: "Gagal!",
-        text: "Terjadi kesalahan saat menambahkan data.",
-      });
-    }
+  const tanggalFix = convertTanggal(formData.tanggal);
+
+  if (!tanggalFix) {
+    Swal.fire("Error", "Format tanggal harus dd/mm/yyyy", "error");
+    return;
+  }
+
+  const payload = {
+    ...formData,
+    tanggal: tanggalFix, // 🔥 sudah yyyy-MM-dd
   };
+
+  try {
+    await axios.post(`${BASE_URL}/tagihan`, payload);
+    Swal.fire("Berhasil", "Data tagihan tersimpan", "success");
+    navigate("/tagihan");
+  } catch (err) {
+    console.error("Gagal simpan data tagihan:", err);
+    Swal.fire("Gagal", "Data tidak tersimpan", "error");
+  }
+};
+
+  const convertTanggal = (tgl) => {
+  // dd/mm/yyyy → yyyy-MM-dd
+  const parts = tgl.split("/");
+  if (parts.length !== 3) return null;
+
+  const [dd, mm, yyyy] = parts;
+  return `${yyyy}-${mm}-${dd}`;
+};
+
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
@@ -170,8 +182,6 @@ useEffect(() => {
             />
           </div>
 
-          {/* 🔥 Status otomatis Belum Lunas (hidden) */}
-          <input type="hidden" name="status" value="Belum Lunas" />
 
           {/* Tombol */}
           <div className="flex justify-between mt-6">

@@ -3,6 +3,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { FaRegFileAlt } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { BASE_URL } from "../../config/api";
 
 const IzinPresensi = () => {
   const navigate = useNavigate();
@@ -14,24 +15,15 @@ const IzinPresensi = () => {
     keterangan: "",
   });
 
-  const [kategoriList, setKategoriList] = useState([]);
   const [jenisIzinList, setJenisIzinList] = useState([]);
+  const [masterUser, setMasterUser] = useState([]); // ✅ FIX UTAMA
   const [submitting, setSubmitting] = useState(false);
   const [step, setStep] = useState(1);
 
-  const fetchKategori = async () => {
-    try {
-      const res = await axios.get("http://localhost:5000/kategori_data");
-      setKategoriList(Array.isArray(res.data) ? res.data : []);
-    } catch {
-      setKategoriList([]);
-      Swal.fire("Error", "Gagal memuat data kategori", "error");
-    }
-  };
 
   const fetchJenisIzin = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/kategori_izin");
+      const res = await axios.get(`${BASE_URL}/kategoriizin`);
       const aktif = (Array.isArray(res.data) ? res.data : []).filter(
         (x) => String(x?.status || "").toLowerCase() === "aktif"
       );
@@ -42,9 +34,19 @@ const IzinPresensi = () => {
     }
   };
 
+  const fetchMasterUser = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/masterdata`);
+      setMasterUser(Array.isArray(res.data) ? res.data : []);
+    } catch (err) {
+      setMasterUser([]);
+      console.error("Gagal ambil master user", err);
+    }
+  };
+
   useEffect(() => {
-    fetchKategori();
     fetchJenisIzin();
+    fetchMasterUser();
   }, []);
 
   useEffect(() => {
@@ -53,22 +55,23 @@ const IzinPresensi = () => {
       return;
     }
 
-    const found = kategoriList.find(
-      (x) =>
-        x?.nomorUnik === form.nomorUnik ||
-        x?.nomorUniqe === form.nomorUnik ||
-        x?.nomor_unique === form.nomorUnik ||
-        x?.nomor_unik === form.nomorUnik
+    const nomor = String(form.nomorUnik).trim();
+
+    const found = masterUser.find(
+      (u) =>
+        String(u.nomorUnik || "").trim() === nomor ||
+        String(u.nomorUniqe || "").trim() === nomor ||
+        String(u.nomor_unik || "").trim() === nomor ||
+        String(u.nomor || "").trim() === nomor
     );
 
     setForm((prev) => ({
       ...prev,
       nama: found?.nama || "",
     }));
-  }, [form.nomorUnik, kategoriList]);
+  }, [form.nomorUnik, masterUser]);
 
   const submitIzin = async () => {
-    // ================= STEP VALIDATION (TIDAK DIUBAH) =================
     if (step === 1) {
       if (!form.nomorUnik) {
         Swal.fire("Oops!", "Nomor unik wajib diisi.", "warning");
@@ -83,69 +86,49 @@ const IzinPresensi = () => {
       return;
     }
 
-    // ================= LOGIKA JAM & STATUS =================
     const jenisLower = String(form.jenisIzin).toLowerCase().trim();
-
     const now = new Date();
     const jamNow = now.toLocaleTimeString("id-ID", {
       hour: "2-digit",
       minute: "2-digit",
     });
-
     const tanggalNow = new Date().toISOString().split("T")[0];
+
 
     let jamMasuk = "";
     let jamPulang = "";
     let statusFinal = "";
 
-    // ===== IZIN =====
     if (jenisLower === "izin") {
-  jamMasuk = jamNow; // JAM KELUAR IZIN
-  jamPulang = "";
-  statusFinal = "izin";
-}
-
-    // ===== TERLAMBAT =====
-    else if (jenisLower.includes("terlambat")) {
-  jamMasuk = jamNow; // jam real datang
-  jamPulang = "";
-  statusFinal = "terlambat";
-}
-
-    // ===== HADIR (jika suatu saat dipakai) =====
-    else if (jenisLower === "hadir") {
       jamMasuk = jamNow;
-      jamPulang = "";
+      statusFinal = "izin";
+    } else if (jenisLower.includes("terlambat")) {
+      jamMasuk = jamNow;
+      statusFinal = "terlambat";
+    } else if (jenisLower === "hadir") {
+      jamMasuk = jamNow;
       statusFinal = "hadir";
-    }
-
-// ====== PULANG AWAL ======
-else if (jenisLower === "pulang awal") {
-  jamMasuk = "";              // jam masuk tetap dari presensi masuk
-  jamPulang = jamNow;         // 🔥 JAM PULANG OTOMATIS
-  statusFinal = "pulang awal";
-}
-
-    // ===== LAINNYA =====
-    else if (jenisLower === "dispensasi") statusFinal = "dispensasi";
+    } else if (jenisLower === "pulang awal") {
+      jamPulang = jamNow;
+      statusFinal = "pulang awal";
+    } else if (jenisLower === "dispensasi") statusFinal = "dispensasi";
     else if (jenisLower === "sakit") statusFinal = "sakit";
     else if (jenisLower === "alpa") statusFinal = "alpa";
 
     const payloadPresensi = {
-      kategori: "izin",
-      nama: form.nama || "-",
-      nomorUnik: form.nomorUnik,
-      keterangan: form.keterangan || "-",
-      jamMasuk,
-      jamPulang,
-      tanggal: tanggalNow,
-      status: statusFinal,
-      jenisIzin: form.jenisIzin,
-    };
+  nomorUnik: form.nomorUnik,
+  nama: form.nama || "-",
+  jamMasuk: jamMasuk || null,
+  jamPulang: jamPulang || null,
+  tanggal: tanggalNow, // yyyy-MM-dd ✔ cocok dengan LocalDate
+  status: statusFinal,
+  keterangan: form.keterangan || "-"
+};
+
 
     try {
       setSubmitting(true);
-      await axios.post("http://localhost:5000/izinpresensi", payloadPresensi);
+      await axios.post(`${BASE_URL}/presensi`, payloadPresensi);
 
       Swal.fire("Berhasil", "Izin presensi berhasil dikirim", "success").then(
         () => navigate("/presensi")
@@ -171,8 +154,8 @@ else if (jenisLower === "pulang awal") {
             placeholder="Masukkan Nomor Unik"
             value={form.nomorUnik}
             onChange={(e) =>
-              setForm({ ...form, nomorUnik: e.target.value.trim() })
-            }
+  setForm({ ...form, nomorUnik: e.target.value })
+}
             className="border rounded-lg px-3 py-2"
           />
 

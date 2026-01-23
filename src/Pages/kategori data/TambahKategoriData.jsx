@@ -3,6 +3,8 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import SidebarT from "../../Component/Sidebar";
+import { BASE_URL } from "../../config/api";
+
 
 const TambahDataKategori = () => {
   const navigate = useNavigate();
@@ -22,7 +24,7 @@ const TambahDataKategori = () => {
     }
 
     try {
-      await axios.post("http://localhost:5000/level", { level });
+      await axios.post(`${BASE_URL}/level`, { level });
 
       Swal.fire({
         icon: "success",

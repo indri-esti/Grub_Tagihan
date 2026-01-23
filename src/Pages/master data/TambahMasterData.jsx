@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import { BASE_URL } from "../../config/api";
 
 const TambahDatamaster = () => {
   const navigate = useNavigate();
@@ -11,7 +12,7 @@ const TambahDatamaster = () => {
     email: "",
     nomorUnik: "", // <-- gunakan "nomorUnik"
     kategori: "",
-    jabatan_kelas: "",
+    jabatankelas: "",
   });
 
   const [levels, setLevels] = useState([]);
@@ -22,9 +23,10 @@ const TambahDatamaster = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true);
         const [resLevel, resDataKelas] = await Promise.all([
-          axios.get("http://localhost:5000/level"),
-          axios.get("http://localhost:5000/data_kelas"),
+          axios.get(`${BASE_URL}/level`),
+          axios.get(`${BASE_URL}/datakelas`),
         ]);
         setLevels(resLevel.data || []);
         setDataKelas(resDataKelas.data || []);
@@ -44,7 +46,7 @@ const TambahDatamaster = () => {
   }, []);
 
   useEffect(() => {
-    setFormData((prev) => ({ ...prev, jabatan_kelas: "" }));
+    setFormData((prev) => ({ ...prev, jabatankelas: "" }));
   }, [formData.kategori]);
 
   const handleChange = (e) => {
@@ -74,7 +76,7 @@ const TambahDatamaster = () => {
 
     const kategori = (formData.kategori || "").toLowerCase();
 
-    if (kategori === "siswa" && !formData.jabatan_kelas) {
+    if (kategori === "siswa" && !formData.jabatankelas) {
       Swal.fire({
         icon: "warning",
         title: "Lengkapi Data!",
@@ -83,7 +85,7 @@ const TambahDatamaster = () => {
       return;
     }
 
-    if (["guru", "karyawan"].includes(kategori) && !formData.jabatan_kelas) {
+    if (["guru", "karyawan"].includes(kategori) && !formData.jabatankelas) {
       Swal.fire({
         icon: "warning",
         title: "Lengkapi Data!",
@@ -93,8 +95,17 @@ const TambahDatamaster = () => {
     }
 
     try {
-      // pastikan mengirim field "nomorUnik" (bukan nomorUniqe)
-      await axios.post("http://localhost:5000/kategori_data", formData);
+      // ✅ PAYLOAD FINAL (BERSIH & SESUAI ENTITY)
+      const payload = {
+        nama: formData.nama,
+        email: formData.email,
+        nomorUnik: formData.nomorUnik,
+        kategori: formData.kategori,
+        jabatankelas: formData.jabatankelas
+      };
+
+      await axios.post(`${BASE_URL}/masterdata`, payload);
+
       Swal.fire({
         icon: "success",
         title: "Berhasil!",
@@ -205,8 +216,8 @@ const TambahDatamaster = () => {
 
               {(formData.kategori || "").toLowerCase() === "siswa" ? (
                 <select
-                  name="jabatan_kelas"
-                  value={formData.jabatan_kelas}
+                  name="jabatankelas"
+                  value={formData.jabatankelas}
                   onChange={handleChange}
                   required
                   className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
@@ -225,13 +236,13 @@ const TambahDatamaster = () => {
               ) : (
                 <input
                   type="text"
-                  name="jabatan_kelas"
+                  name="jabatankelas"
                   placeholder={
                     (formData.kategori || "").toLowerCase() === "guru"
                       ? "Masukkan Mapel (mis. Matematika)"
                       : "Masukkan Jabatan (mis. Staff TU)"
                   }
-                  value={formData.jabatan_kelas}
+                  value={formData.jabatankelas}
                   onChange={handleChange}
                   required
                   className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"

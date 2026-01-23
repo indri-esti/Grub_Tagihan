@@ -301,6 +301,14 @@
       "nomorUnik": "1324936072",
       "kategori": "Karyawan",
       "jabatan_kelas": "Bos Perusahaan"
+    },
+    {
+      "id": "df8c",
+      "nama": "Rido",
+      "email": "Rido@gmail.com",
+      "nomorUnik": "12324573445689",
+      "kategori": "Karyawan",
+      "jabatan_kelas": "Influencer"
     }
   ],
   "data_kelas": [
@@ -482,6 +490,16 @@
       "tanggal": "2025-12-26",
       "status": "hadir",
       "updatedAt": "2025-12-26T04:42:10.174Z"
+    },
+    {
+      "id": "70ae",
+      "nama": "Rido",
+      "nomorUnik": "12324573445689",
+      "jamMasuk": "06.45",
+      "jamPulang": "15.00",
+      "tanggal": "2026-01-13",
+      "status": "hadir",
+      "updatedAt": "2026-01-13T06:19:19.707Z"
     }
   ],
   "izinpresensi": [

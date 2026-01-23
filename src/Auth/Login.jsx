@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import axios from "axios";
+import { BASE_URL } from "../config/api";
 import "./Login.css";
 
 const Login = () => {
@@ -10,26 +12,40 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const storedUsers = JSON.parse(localStorage.getItem("users")) || [];
-    const matchedUser = storedUsers.find(
-      (user) => user.email === email && user.password === password
-    );
+    if (!email || !password) {
+      Swal.fire("Peringatan", "Email dan password wajib diisi", "warning");
+      return;
+    }
 
-    if (matchedUser) {
+    try {
+      const response = await axios.post(`${BASE_URL}/auth/login`, {
+        email,
+        password,
+      });
+
+      const user = response.data;
+
       Swal.fire({
         title: "Login Berhasil!",
-        text: `Selamat datang, ${matchedUser.fullName}!`,
+        text: `Selamat datang, ${user.nama}`,
         icon: "success",
         confirmButtonText: "OK",
       }).then(() => {
-        localStorage.setItem("loggedInUser", JSON.stringify(matchedUser));
+        // simpan token & user
+        localStorage.setItem("token", user.token);
+        localStorage.setItem("user", JSON.stringify(user));
+
         navigate("/dashboard");
       });
-    } else {
-      Swal.fire("Error", "Email atau password salah!", "error");
+    } catch (error) {
+      Swal.fire(
+        "Login Gagal",
+        error.response?.data?.message || "Email atau password salah",
+        "error"
+      );
     }
   };
 
@@ -39,10 +55,10 @@ const Login = () => {
         <h2 className="login-title">Login</h2>
 
         <form onSubmit={handleSubmit}>
-          {/* Input Email */}
+          {/* Email */}
           <div className="input-group">
             <label htmlFor="email" className="input-label">
-            Email
+              Email
             </label>
             <input
               id="email"
@@ -54,7 +70,7 @@ const Login = () => {
             />
           </div>
 
-          {/* Input Password */}
+          {/* Password */}
           <div className="input-group password-wrapper">
             <label htmlFor="password" className="input-label">
               Password

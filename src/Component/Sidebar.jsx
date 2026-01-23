@@ -107,7 +107,6 @@ export default function SidebarT() {
 
   // STYLE
   const sidebarBgClass = darkMode ? "bg-gray-900" : "bg-blue-800";
-  const headerLineClass = "bg-yellow-300";
   const itemHoverClass = darkMode ? "hover:bg-gray-800" : "hover:bg-blue-600";
 
   return (
@@ -122,15 +121,10 @@ export default function SidebarT() {
         `}
       >
         {/* HEADER */}
-        <div className="flex flex-col items-center mb-6 mt-2">
-          <IconSekolahDigital darkMode={darkMode} />
-          <h1 className="text-xl font-bold tracking-wide text-center mt-3">
-            School Web
-          </h1>
-          <div
-            className={`w-12 h-[3px] ${headerLineClass} rounded-full mt-2`}
-          ></div>
-        </div>
+        <div className="flex flex-col items-center py-6 border-b border-white/10">
+        <IconSekolahDigital darkMode={darkMode} />
+        <h1 className="mt-3 font-bold tracking-wide">School Web</h1>
+      </div>
 
         {/* MENU */}
         <nav className="space-y-4 flex-1 pr-2">
@@ -146,7 +140,7 @@ export default function SidebarT() {
             </Link>
 
             {isActive("/dashboard") && (
-              <div className="w-24 h-[3px] bg-white rounded-full ml-12"></div>
+              <div className="w-24 h-[3px] bg-white rounded-full ml-10"></div>
             )}
           </div>
 
@@ -159,13 +153,17 @@ export default function SidebarT() {
               <span className="flex items-center gap-3">
                 <FaServer className="text-[#FFA726]" /> Database
               </span>
-              {openDatabase ? <FaChevronUp /> : <FaChevronDown />}
+              <FaChevronDown
+  className={`transition-transform duration-300 ${
+    openDatabase ? "rotate-180" : ""
+  }`}
+/>
             </button>
 
             {(isActive("/kategoridata") ||
               isActive("/datakelas") ||
               isActive("/masterdata")) && (
-              <div className="w-24 h-[3px] bg-white rounded-full ml-12"></div>
+              <div className="w-24 h-[3px] bg-white rounded-full ml-10"></div>
             )}
 
             {openDatabase && (
@@ -203,13 +201,17 @@ export default function SidebarT() {
               <span className="flex items-center gap-3">
                 <FaCoins className="text-yellow-300" /> Keuangan
               </span>
-              {openKeuangan ? <FaChevronUp /> : <FaChevronDown />}
+              <FaChevronDown
+  className={`transition-transform duration-300 ${
+    openKeuangan ? "rotate-180" : ""
+  }`}
+/>
             </button>
 
             {(isActive("/kategoritagihan") ||
               isActive("/tagihan") ||
               isActive("/rekaptagihan")) && (
-              <div className="w-24 h-[3px] bg-white rounded-full ml-12"></div>
+              <div className="w-24 h-[3px] bg-white rounded-full ml-10"></div>
             )}
 
             {openKeuangan && (
@@ -247,13 +249,17 @@ export default function SidebarT() {
               <span className="flex items-center gap-3">
                 <FaClipboardCheck className="text-purple-200" /> Presensi
               </span>
-              {openPresensi ? <FaChevronUp /> : <FaChevronDown />}
+              <FaChevronDown
+  className={`transition-transform duration-300 ${
+    openPresensi ? "rotate-180" : ""
+  }`}
+/>
             </button>
 
             {(isActive("/kategoriizin") ||
               isActive("/presensisemua") ||
               isActive("/rekappresensi")) && (
-              <div className="w-24 h-[3px] bg-white rounded-full ml-12"></div>
+              <div className="w-24 h-[3px] bg-white rounded-full ml-10"></div>
             )}
 
             {openPresensi && (

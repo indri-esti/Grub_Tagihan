@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useNavigate, useParams } from "react-router-dom";
+import { BASE_URL } from "../../config/api";
 
 const EditData = () => {
   const navigate = useNavigate();
@@ -12,47 +13,73 @@ const EditData = () => {
     keterangan: "",
     harga: "",
     tanggal: "",
-    status: "Belum Lunas",
+    status: "Belum lunas",
   });
 
   const [jenisTagihan, setJenisTagihan] = useState([]);
 
-  // Ambil data kategori aktif
-  useEffect(() => {
-    axios
-      .get("http://localhost:5000/kategori_tagihan")
-      .then((res) => {
-        const aktifOnly = res.data.filter(
-          (item) => item.status?.toLowerCase() === "aktif"
-        );
-        setJenisTagihan(aktifOnly);
-      })
-      .catch((err) => console.error("Gagal mengambil jenis tagihan:", err));
-  }, []);
+useEffect(() => {
+  axios
+    .get(`${BASE_URL}/kategoritagihan`)
+    .then((res) => {
+      console.log("DATA KATEGORI:", res.data); // 🔥 cek ini
 
-  // Ambil data tagihan berdasarkan ID
+      const aktifOnly = res.data.filter(
+        (item) => item.status?.toLowerCase() === "aktif"
+      );
+
+      console.log("HASIL FILTER:", aktifOnly); // 🔥 cek ini
+      setJenisTagihan(aktifOnly);
+    })
+    .catch((err) =>
+      console.error("Gagal mengambil jenis tagihan:", err)
+    );
+}, []);
+
+
+  // Ambil data tagihan berdasarkan ID (BE - Spring Boot)
   useEffect(() => {
-    axios
-      .get(`http://localhost:5000/tagihan/${id}`)
-      .then((res) => {
-        const data = res.data;
-        setFormData({
-          nama: data.nama || "",
-          keterangan: data.keterangan || data.jenis || "",
-          harga: data.harga || "",
-          tanggal: data.tanggal || "",
-          status: data.status || "Belum Lunas",
-        });
-      })
-      .catch((err) => console.error("Gagal mengambil data tagihan:", err));
-  }, [id]);
+  axios
+    .get(`${BASE_URL}/tagihan/${id}`)
+    .then((res) => {
+      const data = res.data;
+
+      // 🔥 KONVERSI yyyy-MM-dd → dd/MM/yyyy
+      let tanggalFix = "";
+
+if (data.tanggal) {
+  // jika backend kirim yyyy-MM-dd atau yyyy-MM-ddTHH:mm:ss
+  if (data.tanggal.includes("-")) {
+    const dateOnly = data.tanggal.split("T")[0];
+    const [year, month, day] = dateOnly.split("-");
+    tanggalFix = `${day}/${month}/${year}`;
+  }
+  // jika sudah dd/MM/yyyy (jaga-jaga)
+  else {
+    tanggalFix = data.tanggal;
+  }
+}
+
+
+      setFormData({
+        nama: data.nama ?? "",
+        keterangan: data.keterangan ?? "",
+        harga: data.harga ?? "",
+        tanggal: tanggalFix,
+        status:
+          data.status === "Lunas" ? "Lunas" : "Belum Lunas",
+      });
+    })
+    .catch(() => {
+      Swal.fire("Error", "Gagal mengambil data", "error");
+    });
+}, [id]);
 
   // Handle perubahan input
   const handleChange = (e) => {
     const { name, value } = e.target;
 
     if (name === "tanggal") {
-      // Hanya izinkan angka dan "/" pada input tanggal
       const cleanValue = value.replace(/[^0-9/]/g, "");
       setFormData({ ...formData, [name]: cleanValue });
     } else {
@@ -62,40 +89,52 @@ const EditData = () => {
 
   // Simpan perubahan
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    // Validasi format tanggal manual (dd/mm/yyyy)
-    const tanggalPattern = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
-    if (!tanggalPattern.test(formData.tanggal)) {
-      Swal.fire({
-        icon: "warning",
-        title: "Format Tanggal Salah",
-        text: "Gunakan format tanggal dd/mm/yyyy, contoh: 11/11/2025",
-      });
-      return;
-    }
+  const tanggalPattern = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
 
-    try {
-      await axios.put(`http://localhost:5000/tagihan/${id}`, formData);
+  if (!tanggalPattern.test(formData.tanggal)) {
+    Swal.fire({
+      icon: "warning",
+      title: "Format Tanggal Salah",
+      text: "Gunakan format dd/mm/yyyy, contoh: 11/11/2025",
+    });
+    return;
+  }
 
-      Swal.fire({
-        icon: "success",
-        title: "Berhasil!",
-        text: "Data tagihan berhasil diperbarui!",
-        showConfirmButton: false,
-        timer: 2000,
-      });
+  // dd/mm/yyyy → yyyy-MM-dd
+  const [day, month, year] = formData.tanggal.split("/");
+  const tanggalFix = `${year}-${month}-${day}`;
 
-      navigate("/tagihan");
-    } catch (error) {
-      console.error("Gagal mengedit data:", error);
-      Swal.fire({
-        icon: "error",
-        title: "Gagal!",
-        text: "Terjadi kesalahan saat mengedit data.",
-      });
-    }
-  };
+  // 🔥 FIX STATUS
+const statusFix =
+  formData.status === "Lunas" ? "Lunas" : "Belum Lunas";
+
+try {
+  await axios.put(`${BASE_URL}/tagihan/${id}`, {
+    ...formData,
+    tanggal: tanggalFix,
+    status: statusFix,
+  });
+
+    Swal.fire({
+      icon: "success",
+      title: "Berhasil!",
+      text: "Data tagihan berhasil diperbarui!",
+      showConfirmButton: false,
+      timer: 2000,
+    });
+
+    navigate("/tagihan");
+  } catch (error) {
+    console.error("Gagal mengedit data:", error);
+    Swal.fire({
+      icon: "error",
+      title: "Gagal!",
+      text: "Terjadi kesalahan saat mengedit data.",
+    });
+  }
+};
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
@@ -114,7 +153,7 @@ const EditData = () => {
               value={formData.nama}
               onChange={handleChange}
               required
-              className="w-full border border-gray-300 rounded-md p-2 outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full border border-gray-300 rounded-md p-2"
             />
           </div>
 
@@ -128,18 +167,14 @@ const EditData = () => {
               value={formData.keterangan}
               onChange={handleChange}
               required
-              className="w-full border border-gray-300 rounded-md p-2 outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full border border-gray-300 rounded-md p-2"
             >
-              <option value="">-- Pilih Jenis Tagihan (Aktif) --</option>
-              {jenisTagihan.length > 0 ? (
-                jenisTagihan.map((item) => (
-                  <option key={item.id} value={item.nama}>
-                    {item.nama}
-                  </option>
-                ))
-              ) : (
-                <option disabled>Tidak ada jenis tagihan aktif</option>
-              )}
+              <option value="">-- Pilih Jenis Tagihan --</option>
+              {jenisTagihan.map((item) => (
+                <option key={item.id} value={item.nama}>
+                  {item.nama}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -152,12 +187,11 @@ const EditData = () => {
               value={formData.harga}
               onChange={handleChange}
               required
-              placeholder="Contoh: 500000"
-              className="w-full border border-gray-300 rounded-md p-2 outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full border border-gray-300 rounded-md p-2"
             />
           </div>
 
-          {/* Tanggal (manual input) */}
+          {/* Tanggal */}
           <div>
             <label className="text-gray-700 text-sm mb-1 block">Tanggal</label>
             <input
@@ -165,10 +199,10 @@ const EditData = () => {
               name="tanggal"
               value={formData.tanggal}
               onChange={handleChange}
-              required
               placeholder="dd/mm/yyyy"
               maxLength={10}
-              className="w-full border border-gray-300 rounded-md p-2 outline-none focus:ring-2 focus:ring-blue-400"
+              required
+              className="w-full border border-gray-300 rounded-md p-2"
             />
           </div>
 
@@ -179,25 +213,25 @@ const EditData = () => {
               name="status"
               value={formData.status}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-md p-2 outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full border border-gray-300 rounded-md p-2"
             >
               <option value="Belum Lunas">Belum Lunas</option>
               <option value="Lunas">Lunas</option>
             </select>
           </div>
 
-          {/* Tombol Aksi */}
+          {/* Tombol */}
           <div className="flex justify-between mt-6">
             <button
               type="button"
               onClick={() => navigate("/tagihan")}
-              className="bg-gray-400 text-white px-4 py-2 rounded-md hover:bg-gray-500 w-[48%]"
+              className="bg-gray-400 text-white px-4 py-2 rounded-md w-[48%]"
             >
               Batal
             </button>
             <button
               type="submit"
-              className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 w-[48%]"
+              className="bg-green-500 text-white px-4 py-2 rounded-md w-[48%]"
             >
               Update
             </button>

@@ -3,6 +3,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { FaDoorOpen } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { BASE_URL } from "../../config/api";
 
 const PresensiMasuk = () => {
   const navigate = useNavigate();
@@ -21,6 +22,7 @@ const PresensiMasuk = () => {
   const [jam, setJam] = useState("");
 
   useEffect(() => {
+
     const timer = setInterval(() => {
       const now = new Date();
       const hh = now.getHours().toString().padStart(2, "0");
@@ -41,7 +43,7 @@ const PresensiMasuk = () => {
   // ==============================
   useEffect(() => {
     axios
-      .get("http://localhost:5000/kategori_data")
+      .get(`${BASE_URL}/masterdata`)
       .then((res) => setSiswaList(res.data || []))
       .catch((err) => console.error(err));
   }, []);
@@ -63,80 +65,77 @@ const PresensiMasuk = () => {
   // AUTO ISI NAMA + AUTO SUBMIT
   // ==============================
   useEffect(() => {
-    if (!form.nomorUnik || submitting) {
-      setNama("");
-      return;
-    }
+     if (submitting) return;
 
-    const found = siswaList.find(
-      (s) =>
-        s.nomorUnik === form.nomorUnik ||
-        s.nomor_unik === form.nomorUnik
-    );
-
-    setNama(found?.nama || "");
-
-    if (!found) return;
-
-   const submitMasuk = async () => {
-  const now = new Date();
-  const tanggalHariIni = now.toISOString().split("T")[0];
-
-  try {
-    setSubmitting(true);
-
-    // 🔒 CEK DOBEL PRESENSI MASUK
-    const cek = await axios.get("http://localhost:5000/presensi", {
-      params: {
-        nomorUnik: form.nomorUnik,
-        tanggal: tanggalHariIni,
-      },
-    });
-
-    const sudahMasuk = cek.data.find(
-      (p) => p.jamMasuk && !p.jamPulang
-    );
-
-    if (sudahMasuk) {
-      Swal.fire(
-        "Ditolak!",
-        "Siswa ini sudah melakukan presensi masuk hari ini.",
-        "warning"
-      );
-      return;
-    }
-
-    // ✅ LANJUT SIMPAN
-    const payload = {
-      nama: found?.nama || "-",
-      nomorUnik: form.nomorUnik,
-      jamMasuk: now.toLocaleTimeString("id-ID", {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-      jamPulang: "",
-      tanggal: tanggalHariIni,
-      status: "hadir",
-    };
-
-    await axios.post("http://localhost:5000/presensi", payload);
-
-    playSound();
-    Swal.fire("Berhasil!", "Presensi Masuk Tercatat!", "success");
-
-    setForm({ nomorUnik: "" });
+  if (!form.nomorUnik) {
     setNama("");
-  } catch (err) {
-    console.error(err);
-    Swal.fire("Error", "Gagal menyimpan data!", "error");
-  } finally {
-    setSubmitting(false);
+    return;
   }
-};
 
+  const found = siswaList.find(
+    (s) =>
+      String(s.nomorUnik) === String(form.nomorUnik) ||
+      String(s.nomor_unik) === String(form.nomorUnik)
+  );
 
-    submitMasuk();
-  }, [form.nomorUnik, siswaList]);
+  setNama(found?.nama || "");
+  if (!found) return;
+
+  const submitMasuk = async () => {
+    const now = new Date();
+    const tanggalHariIni = now.toISOString().split("T")[0];
+
+    try {
+      setSubmitting(true);
+
+      const cek = await axios.get(`${BASE_URL}/presensi`);
+
+      const sudahMasuk = cek.data.find(
+        (p) =>
+          String(p.nomorUnik) === String(form.nomorUnik) &&
+          p.tanggal === tanggalHariIni &&
+          p.jamMasuk &&
+          !p.jamPulang
+      );
+
+      if (sudahMasuk) {
+        Swal.fire(
+          "Ditolak!",
+          "Siswa ini sudah melakukan presensi masuk hari ini.",
+          "warning"
+        );
+        return;
+      }
+
+      const payload = {
+        nama: found.nama,
+        nomorUnik: form.nomorUnik,
+        jamMasuk: now.toLocaleTimeString("id-ID", {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+        jamPulang: "",
+        tanggal: tanggalHariIni,
+        status: "hadir",
+      };
+
+      await axios.post(`${BASE_URL}/presensi`, payload);
+
+      playSound();
+      Swal.fire("Berhasil!", "Presensi Masuk Tercatat!", "success");
+
+      setForm({ nomorUnik: "" });
+      setNama("");
+    } catch (err) {
+      console.error(err);
+      Swal.fire("Error", "Gagal menyimpan data!", "error");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  submitMasuk();
+}, [form.nomorUnik, siswaList, submitting]);
 
   const batal = () => navigate("/presensi");
 
@@ -157,7 +156,7 @@ const PresensiMasuk = () => {
           </h2>
           <div className="w-full overflow-hidden mt-2 rounded-lg border border-green-500 bg-black">
   <div
-    className="whitespace-nowrap text-green-400 text-sm font-mono py-2"
+    className="whitespace-nowrap text-green-400 text-sm font-mono  py-2"
     style={{
       animation: "marquee 12s linear infinite",
     }}

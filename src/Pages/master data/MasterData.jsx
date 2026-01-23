@@ -5,7 +5,7 @@ import axios from "axios";
 import SidebarT from "../../Component/Sidebar";
 import { FaArchive } from "react-icons/fa";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-
+import { BASE_URL } from "../../config/api";
 
 const KategoriData = () => {
   const [data, setData] = useState([]);
@@ -17,7 +17,7 @@ const KategoriData = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:5000/kategori_data");
+      const res = await axios.get(`${BASE_URL}/masterdata`);
       setData(res.data || []);
     } catch (err) {
       console.error("Gagal mengambil data:", err);
@@ -49,7 +49,7 @@ const KategoriData = () => {
 
     if (result.isConfirmed) {
       try {
-        await axios.delete(`http://localhost:5000/kategori_data/${id}`);
+        await axios.delete(`${BASE_URL}/masterdata/${id}`);
         setData((prev) => prev.filter((item) => item.id !== id));
         Swal.fire({
           icon: "success",
@@ -205,7 +205,7 @@ const KategoriData = () => {
                           {item.kategori || "-"}
                         </td>
                         <td className="px-4 py-2 text-left text-gray-700">
-                          {item.jabatan_kelas || "-"}
+                          {item.jabatankelas || "-"}
                         </td>
                         <td className="px-4 py-3 text-left">
                           <div className="flex justify-center gap-2">

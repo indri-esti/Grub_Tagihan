@@ -2,25 +2,28 @@ import React, { useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import { BASE_URL } from "../../config/api";
+
 
 const TambahDataKategori = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    nama: "",
-    status: "Aktif",
-  });
+  nama: "",
+  status: "Aktif",
+});
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:5000/kategori_izin", formData);
+      await axios.post(`${BASE_URL}/kategoriizin`, formData);
       Swal.fire({
         icon: "success",
         title: "Berhasil!",

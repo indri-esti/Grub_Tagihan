@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useNavigate, useParams } from "react-router-dom";
+import { BASE_URL } from "../../config/api";
 
 const EditDataKelas = () => {
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ const EditDataKelas = () => {
   // Ambil data berdasarkan ID
   useEffect(() => {
     axios
-      .get(`http://localhost:5000/data_kelas/${id}`)
+      .get(`${BASE_URL}/datakelas/${id}`)
       .then((res) => {
         const data = res.data;
         setFormData({
@@ -47,7 +48,7 @@ const EditDataKelas = () => {
     e.preventDefault();
 
     try {
-      await axios.put(`http://localhost:5000/data_kelas/${id}`, formData);
+      await axios.put(`${BASE_URL}/datakelas/${id}`, formData);
 
       Swal.fire({
         icon: "success",

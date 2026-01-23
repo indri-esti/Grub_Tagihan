@@ -4,6 +4,8 @@ import Swal from "sweetalert2";
 import axios from "axios";
 import SidebarT from "../../Component/Sidebar";
 import { FaChartPie } from "react-icons/fa";
+import { BASE_URL } from "../../config/api";
+
 
 const KategoriTagihan = () => {
   const [kategori, setKategori] = useState([]);
@@ -14,7 +16,7 @@ const KategoriTagihan = () => {
   // Ambil data dari API
   const fetchData = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/kategori_tagihan");
+      const res = await axios.get(`${BASE_URL}/kategoritagihan`);
       setKategori(res.data);
     } catch (err) {
       console.error("Gagal mengambil data:", err);
@@ -46,7 +48,7 @@ const KategoriTagihan = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.delete(`http://localhost:5000/kategori_tagihan/${id}`);
+          await axios.delete(`${BASE_URL}/kategoritagihan/${id}`);
           setKategori(kategori.filter((item) => item.id !== id));
           Swal.fire({
             icon: "success",
@@ -144,7 +146,7 @@ const KategoriTagihan = () => {
                         <td className="px-4 py-3 text-center">
                           <span
                             className={`px-3 py-1.5 rounded-full text-xs font-semibold ${
-                              item.status === "Aktif"
+                              item.status === "AKTIF"
                                 ? "bg-green-100 text-green-700"
                                 : "bg-red-100 text-red-700"
                             }`}

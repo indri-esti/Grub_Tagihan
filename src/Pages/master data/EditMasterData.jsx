@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useNavigate, useParams } from "react-router-dom";
+import { BASE_URL } from "../../config/api";
 
 const EditMasterData = () => {
   const navigate = useNavigate();
@@ -23,10 +24,11 @@ const EditMasterData = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true);
         const [resLevel, resKelas, resMaster] = await Promise.all([
-          axios.get("http://localhost:5000/level"),
-          axios.get("http://localhost:5000/data_kelas"),
-          axios.get(`http://localhost:5000/kategori_data/${id}`),
+          axios.get(`${BASE_URL}/level`),
+          axios.get(`${BASE_URL}/datakelas`),
+          axios.get(`${BASE_URL}/masterdata/${id}`),
         ]);
 
         setLevels(resLevel.data || []);
@@ -39,7 +41,7 @@ const EditMasterData = () => {
           nama: data.nama || "",
           email: data.email || "",
           kategori: data.kategori || "",
-          jabatan_kelas: data.jabatan_kelas || "",
+          jabatankelas: data.jabatankelas || "",
           nomorUnik: data.nomorUnik || "", // ⬅️ wajib
         });
       } catch (error) {
@@ -61,7 +63,7 @@ const EditMasterData = () => {
   useEffect(() => {
     setFormData((prev) => ({
       ...prev,
-      jabatan_kelas: "",
+      jabatankelas: "",
       nomorUnik: prev.nomorUnik, // ⬅️ Jangan sampai hilang
     }));
   }, [formData.kategori]);
@@ -104,7 +106,7 @@ const EditMasterData = () => {
 
     const kategori = (formData.kategori || "").toLowerCase();
 
-    if (kategori === "siswa" && !formData.jabatan_kelas) {
+    if (kategori === "siswa" && !formData.jabatankelas) {
       Swal.fire({
         icon: "warning",
         title: "Lengkapi Data!",
@@ -123,7 +125,15 @@ const EditMasterData = () => {
     }
 
     try {
-      await axios.put(`http://localhost:5000/kategori_data/${id}`, formData);
+      // ✅ PAYLOAD FINAL (BERSIH & SESUAI ENTITY)
+      const payload = {
+        nama: formData.nama,
+        email: formData.email,
+        kategori: formData.kategori,
+        jabatankelas: formData.jabatankelas,
+        nomorUnik: formData.nomorUnik, // ⬅️ Jangan lupa sertakan
+      };
+      await axios.put(`${BASE_URL}/masterdata/${id}`, payload);
 
       Swal.fire({
         icon: "success",

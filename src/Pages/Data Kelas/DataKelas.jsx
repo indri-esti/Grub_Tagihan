@@ -4,6 +4,8 @@ import Swal from "sweetalert2";
 import axios from "axios";
 import SidebarT from "../../Component/Sidebar";
 import { FaChalkboard } from "react-icons/fa";
+import { BASE_URL } from "../../config/api";
+
 
 const DataKelas = () => {
   const [kelasData, setKelasData] = useState([]);
@@ -15,7 +17,7 @@ const DataKelas = () => {
   // Ambil data dari API
   const fetchData = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/data_kelas");
+      const res = await axios.get(`${BASE_URL}/datakelas`);
       setKelasData(res.data);
     } catch (err) {
       console.error("Gagal mengambil data:", err);
@@ -47,7 +49,7 @@ const DataKelas = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.delete(`http://localhost:5000/data_kelas/${id}`);
+          await axios.delete(`${BASE_URL}/datakelas/${id}`);
           setKelasData(kelasData.filter((item) => item.id !== id));
           Swal.fire({
             icon: "success",

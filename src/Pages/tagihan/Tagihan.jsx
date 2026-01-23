@@ -4,6 +4,8 @@ import Swal from "sweetalert2";
 import axios from "axios";
 import SidebarT from "../../Component/Sidebar";
 import { FaMoneyBillWave } from "react-icons/fa";
+import { BASE_URL } from "../../config/api";
+
 
 const Tagihan = () => {
   const [data, setData] = useState([]);
@@ -11,22 +13,19 @@ const Tagihan = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      const res = await axios.get("http://localhost:5000/tagihan");
-      setData(res.data || []);
-    } catch (err) {
-      console.error("Gagal mengambil data:", err);
-      Swal.fire({
-        icon: "error",
-        title: "Oops!",
-        text: "Gagal mengambil data dari server.",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+ const fetchData = async () => {
+  try {
+    setLoading(true);
+   const res = await axios.get(`${BASE_URL}/tagihan`);
+    setData(res.data || []);
+  } catch (err) {
+    console.error("Gagal ambil data:", err);
+    Swal.fire("Error", "Gagal ambil data dari server", "error");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   useEffect(() => {
     fetchData();
@@ -46,7 +45,7 @@ const Tagihan = () => {
 
     if (result.isConfirmed) {
       try {
-        await axios.delete(`http://localhost:5000/tagihan/${id}`);
+        await axios.delete(`${BASE_URL}/tagihan/${id}`);
         setData((prev) => prev.filter((item) => item.id !== id));
         Swal.fire({
           icon: "success",
@@ -68,46 +67,36 @@ const Tagihan = () => {
 
   // 🔥 Fitur baru: ubah status (Belum Lunas ⇆ Lunas)
   const handleStatusChange = async (item) => {
-    const statusBaru = item.status === "Lunas" ? "Belum Lunas" : "Lunas";
+  const statusBaru = item.status === "Lunas" ? "Belum Lunas" : "Lunas";
 
-    const konfirmasi = await Swal.fire({
-      title: "Ubah Status?",
-      text: `Ubah status dari "${item.status}" menjadi "${statusBaru}"?`,
-      icon: "question",
-      showCancelButton: true,
-      confirmButtonText: "Ya, ubah",
-      cancelButtonText: "Batal",
-    });
+  const konfirmasi = await Swal.fire({
+    title: "Ubah Status?",
+    text: `Ubah status ke ${statusBaru}?`,
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonText: "Ya",
+  });
 
-    if (!konfirmasi.isConfirmed) return;
+  if (!konfirmasi.isConfirmed) return;
 
-    try {
-      await axios.patch(`http://localhost:5000/tagihan/${item.id}`, {
-        status: statusBaru,
-      });
+  try {
+   await axios.put(
+      `${BASE_URL}/tagihan/${item.id}`,
+  { ...item, status: statusBaru }
+);
 
-      setData((prev) =>
-        prev.map((x) =>
-          x.id === item.id ? { ...x, status: statusBaru } : x
-        )
-      );
+    setData(prev =>
+      prev.map(x =>
+        x.id === item.id ? { ...x, status: statusBaru } : x
+      )
+    );
 
-      Swal.fire({
-        icon: "success",
-        title: "Berhasil!",
-        text: "Status berhasil diperbarui.",
-        timer: 1500,
-        showConfirmButton: false,
-      });
-    } catch (err) {
-      console.error("Gagal update status:", err);
-      Swal.fire({
-        icon: "error",
-        title: "Gagal!",
-        text: "Tidak dapat mengubah status.",
-      });
-    }
-  };
+    Swal.fire("Berhasil", "Status diperbarui", "success");
+  } catch (err) {
+    console.error("Gagal update status:", err);
+    Swal.fire("Error", "Gagal update status", "error");
+  }
+};
 
   const getJenis = (item) => {
     return item.jenis || item.keterangan || "-";

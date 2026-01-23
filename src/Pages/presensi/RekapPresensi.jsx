@@ -5,6 +5,8 @@ import { FaRegCalendarCheck } from "react-icons/fa";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { BASE_URL } from "../../config/api";
+
 
 
 const RekapPresensi = () => {
@@ -44,7 +46,7 @@ const isValidDate = (value) => {
   // ================= MASTER USER =================
   const FetchMasterUser = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/kategori_data");
+      const res = await axios.get(`${BASE_URL}/masterdata`);
       setMasterUser(res.data || []);
     } catch (err) {
       console.error("Gagal ambil master user:", err);
@@ -97,10 +99,11 @@ const GetStatusFromData = (item) => {
   if (statusRaw === "terlambat") return "Terlambat";
 
   // 🔥 HADIR NORMAL
-  if (jamMasuk && !jamPulang) return "Hadir";
-  if (jamMasuk && jamPulang) return "Hadir";
 
-  return "Alpa";
+if (jamMasuk && jamPulang) return "Hadir";
+if (jamMasuk && !jamPulang) return "Hadir";
+
+return "Alpa";
 };
 
   // ================= STATUS COLOR =================
@@ -121,65 +124,59 @@ const GetStatusFromData = (item) => {
   };
 
   // ================= FETCH DATA (🔥 DITAMBAHKAN IZIN) =================
-  const FetchData = async () => {
+ const FetchData = async () => {
+  try {
+    setLoading(true);
+
+    let presensiData = [];
+    let izinData = [];
+
+    // ================= PRESENSI =================
     try {
-      setLoading(true);
-
-      const [presensiRes, izinRes] = await Promise.all([
-        axios.get("http://localhost:5000/presensi"),
-        axios.get("http://localhost:5000/izinpresensi"),
-      ]);
-
-      const presensiData = presensiRes.data || [];
-      const izinData = izinRes.data || [];
-
-      const gabunganData = [...presensiData, ...izinData];
-
-     gabunganData.sort((a, b) => {
-  // 🔥 1. SORT TANGGAL (PALING PENTING)
-  const dateA = new Date(a.tanggal).getTime();
-  const dateB = new Date(b.tanggal).getTime();
-
-  if (dateA !== dateB) {
-    return dateB - dateA;
-  }
-
-  // 🔥 2. SORT JAM (TERBARU DI ATAS)
-  const toMinutes = (t) => {
-    if (!t) return 0;
-    const [h, m] = t.replace(".", ":").split(":").map(Number);
-    return h * 60 + m;
-  };
-
-  const timeA = toMinutes(a.jamMasuk || a.jamPulang);
-  const timeB = toMinutes(b.jamMasuk || b.jamPulang);
-
-  if (timeA !== timeB) {
-    return timeB - timeA;
-  }
-
-  // 🔥 3. TERAKHIR BARU updatedAt (OPSIONAL)
-  const updatedA = a.updatedAt ? new Date(a.updatedAt).getTime() : 0;
-  const updatedB = b.updatedAt ? new Date(b.updatedAt).getTime() : 0;
-
-  return updatedB - updatedA;
-});
-
-
-      
-      setData(gabunganData);
-      setFilteredData(gabunganData);
-    } catch (error) {
-      console.error("Gagal mengambil data:", error);
-      Swal.fire({
-        icon: "error",
-        title: "Gagal Memuat Data",
-        text: "Terjadi kesalahan saat mengambil data presensi.",
-      });
-    } finally {
-      setLoading(false);
+      const presensiRes = await axios.get(`${BASE_URL}/presensi`);
+      presensiData = presensiRes.data || [];
+    } catch (err) {
+      console.warn("Presensi gagal:", err);
     }
-  };
+
+    // ================= IZIN =================
+    try {
+      const izinRes = await axios.get(`${BASE_URL}/izinpresensi`);
+      izinData = izinRes.data || [];
+    } catch (err) {
+      console.warn("Izin presensi gagal:", err);
+    }
+
+    const gabunganData = [...presensiData, ...izinData];
+
+    gabunganData.sort((a, b) => {
+      const dateA = a.tanggal ? new Date(a.tanggal).getTime() : 0;
+const dateB = b.tanggal ? new Date(b.tanggal).getTime() : 0;
+      if (dateA !== dateB) return dateB - dateA;
+
+      const toMinutes = (t) => {
+        if (!t) return 0;
+        const [h, m] = t.replace(".", ":").split(":").map(Number);
+        return h * 60 + m;
+      };
+
+      const timeA = toMinutes(a.jamMasuk || a.jamPulang);
+      const timeB = toMinutes(b.jamMasuk || b.jamPulang);
+      if (timeA !== timeB) return timeB - timeA;
+
+      return 0;
+    });
+
+    setData(gabunganData);
+    setFilteredData(gabunganData);
+  } catch (error) {
+    console.error("Gagal mengambil data:", error);
+    Swal.fire("Gagal", "Tidak bisa mengambil data", "error");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
  // ================= DELETE =================
 const handleDelete = (item) => {
@@ -197,12 +194,10 @@ const handleDelete = (item) => {
       try {
         // 🔥 COBA HAPUS KE PRESENSI DULU
         try {
-          await axios.delete(`http://localhost:5000/presensi/${item.id}`);
+          await axios.delete(`${BASE_URL}/presensi/${item.id}`);
         } catch {
           // 🔥 JIKA GAGAL → COBA KE IZIN
-          await axios.delete(
-            `http://localhost:5000/izinpresensi/${item.id}`
-          );
+          await axios.delete(`${BASE_URL}/izinpresensi/${item.id}`);
         }
 
         Swal.fire("Terhapus!", "Data berhasil dihapus.", "success");
@@ -323,12 +318,12 @@ const isThisYear = (dateStr) => {
     }
 
     const isoDate = convertToISODate(tanggalFilter);
-    hasil = hasil.filter(
-      (item) =>
-        typeof item.tanggal === "string" &&
-        item.tanggal.startsWith(isoDate)
-    );
-  }
+   hasil = hasil.filter((item) => {
+  if (!item.tanggal) return false;
+  const tgl = new Date(item.tanggal).toISOString().split("T")[0];
+  return tgl === isoDate;
+});
+ }
 
   // ================= STATUS =================
   if (statusFilter !== "semua") {
@@ -339,20 +334,31 @@ const isThisYear = (dateStr) => {
 
   // ================= ROLE =================
   if (roleFilter !== "semua") {
-    hasil = hasil.filter((item) => {
-      const nomor =
-        item.nomorUnik || item.nomor_unik || item.nomorunik;
-      return getRoleFromNomor(nomor) === roleFilter;
-    });
-  }
+  hasil = hasil.filter((item) => {
+    const nomor =
+      item.nomorUnik || item.nomor_unik || item.nomorunik;
+
+    const role = getRoleFromNomor(nomor);
+    if (!role) return true; // 🔥 JANGAN BUANG DATA
+
+    return role === roleFilter;
+  });
+}
+
 
   setFilteredData(hasil);
 }, [filter, tanggalFilter, statusFilter, roleFilter, data]);
 
 
-  const cleanedData = filteredData.filter(
-    (item) => item?.nomorUnik || item?.nomor_unik || item?.nomorunik
-  );
+  // ================= CLEAN DATA =================
+  const cleanedData = filteredData.map((item) => {
+    const nomor = item.nomorUnik || item.nomor_unik || item.nomorunik;
+    return {
+      ...item,
+      nomorUnik: nomor,
+    };
+  });
+  
 
   const [showNomor, setShowNomor] = useState({});
 

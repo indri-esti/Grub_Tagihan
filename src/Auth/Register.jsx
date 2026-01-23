@@ -3,6 +3,8 @@ import { useNavigate, Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import "./Register.css";
+import axios from "axios";
+import { BASE_URL } from "../config/api"; 
 
 const Register = () => {
   const [fullName, setFullName] = useState("");
@@ -15,7 +17,7 @@ const Register = () => {
 
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!fullName || !email || !password || !confirmPassword) {
@@ -28,37 +30,37 @@ const Register = () => {
       return;
     }
 
-    // Ambil akun lama dari localStorage
-    const storedUsers = JSON.parse(localStorage.getItem("users")) || [];
+    try {
+      console.log("REGISTER URL:", `${BASE_URL}/auth/register`);
+      await axios.post(`${BASE_URL}/auth/register`, {
+        nama: fullName,
+        email,
+        password,
+      });
 
-    // Cek apakah email sudah digunakan
-    const isEmailUsed = storedUsers.some((user) => user.email === email);
+      Swal.fire({
+        title: "Akun anda telah dibuat!",
+        text: "Silakan login dengan akun baru Anda.",
+        icon: "success",
+        confirmButtonText: "OK",
+      }).then(() => {
+        navigate("/login");
+      });
 
-    if (isEmailUsed) {
-      Swal.fire("Error", "Email sudah terdaftar, silakan login.", "error");
-      return;
+      setFullName("");
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
+
+    } catch (error) {
+      Swal.fire(
+        "Register Gagal",
+        error.response?.data?.message || "Terjadi kesalahan",
+        "error"
+      );
     }
-
-    // Tambah akun baru
-    const newUser = { fullName, email, password };
-    storedUsers.push(newUser);
-    localStorage.setItem("users", JSON.stringify(storedUsers));
-
-    Swal.fire({
-      title: "Akun anda telah dibuat!",
-      text: "Silakan login dengan akun baru Anda.",
-      icon: "success",
-      confirmButtonText: "OK",
-    }).then(() => {
-      navigate("/login");
-    });
-
-    // Reset form
-    setFullName("");
-    setEmail("");
-    setPassword("");
-    setConfirmPassword("");
   };
+
 
   return (
     <div className="register-container">
@@ -78,14 +80,14 @@ const Register = () => {
 
         <form onSubmit={handleSubmit}>
           <div className="input-group">
-            <label className="input-label">Nama Lengkap</label>
-            <input
-              type="text"
-              placeholder="Nama Lengkap"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              required
-            />
+           <label className="input-label">Nama Lengkap</label>
+<input
+  type="text"
+  placeholder="Masukkan nama lengkap"
+  value={fullName}
+  onChange={(e) => setFullName(e.target.value)}
+  required
+/>
           </div>
 
           <div className="input-group">

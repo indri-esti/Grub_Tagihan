@@ -4,6 +4,7 @@ import Swal from "sweetalert2";
 import axios from "axios";
 import SidebarT from "../../Component/Sidebar";
 import { FaFileSignature } from "react-icons/fa"; // 🔥 icon khusus kategori izin
+import { BASE_URL } from "../../config/api";
 
 const KategoriIzin = () => {
   const [kategori, setKategori] = useState([]);
@@ -12,21 +13,41 @@ const KategoriIzin = () => {
   const navigate = useNavigate();
 
   // Ambil data dari API → kategori_izin
-  const fetchData = async () => {
-    try {
-      const res = await axios.get("http://localhost:5000/kategori_izin");
-      setKategori(res.data);
-    } catch (err) {
-      console.error("Gagal mengambil data:", err);
-      Swal.fire({
-        icon: "error",
-        title: "Oops!",
-        text: "Gagal mengambil data dari server.",
-      });
-    } finally {
-      setLoading(false);
+ const fetchData = async () => {
+  setLoading(true);
+  try {
+    const res = await axios.get(`${BASE_URL}/kategoriizin`);
+
+    console.log("FULL RESPONSE:", res);
+    console.log("RESPONSE DATA:", res.data);
+
+    // 🔥 Normalisasi response
+    let data = [];
+
+    if (Array.isArray(res.data)) {
+      data = res.data;
+    } else if (Array.isArray(res.data.data)) {
+      data = res.data.data;
     }
-  };
+
+    // 🔥 Normalisasi field (jenisIzin → nama)
+    const normalizedData = data.map((item) => ({
+      id: item.id,
+      nama: item.nama ?? item.jenisIzin ?? "",
+      status: item.status ?? "",
+    }));
+
+    setKategori(normalizedData);
+  } catch (err) {
+    console.error("ERROR FETCH:", err);
+    Swal.fire("Oops!", "Gagal mengambil data dari server.", "error");
+  } finally {
+    setLoading(false);
+  }
+};
+
+
+
 
   useEffect(() => {
     fetchData();
@@ -34,38 +55,43 @@ const KategoriIzin = () => {
 
   // Hapus data
   const handleDelete = async (id) => {
-    Swal.fire({
-      title: "Yakin ingin menghapus?",
-      text: "Data ini akan dihapus permanen!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Ya, hapus!",
-      cancelButtonText: "Batal",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          await axios.delete(`http://localhost:5000/kategori_izin/${id}`);
-          setKategori(kategori.filter((item) => item.id !== id));
-          Swal.fire({
-            icon: "success",
-            title: "Berhasil!",
-            text: "Data berhasil dihapus.",
-            timer: 1500,
-            showConfirmButton: false,
-          });
-        } catch (err) {
-          console.error("Gagal hapus data:", err);
-          Swal.fire({
-            icon: "error",
-            title: "Gagal!",
-            text: "Tidak dapat menghapus data.",
-          });
-        }
+  Swal.fire({
+    title: "Yakin ingin menghapus?",
+    text: "Data ini akan dihapus permanen!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#d33",
+    cancelButtonColor: "#3085d6",
+    confirmButtonText: "Ya, hapus!",
+    cancelButtonText: "Batal",
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      try {
+        await axios.delete(`${BASE_URL}/kategoriizin/${id}`);
+
+        setKategori((prev) =>
+          prev.filter((item) => item.id !== id)
+        );
+
+        Swal.fire({
+          icon: "success",
+          title: "Berhasil!",
+          text: "Data berhasil dihapus.",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      } catch (err) {
+        console.error("Gagal hapus data:", err);
+        Swal.fire({
+          icon: "error",
+          title: "Gagal!",
+          text: "Tidak dapat menghapus data.",
+        });
       }
-    });
-  };
+    }
+  });
+};
+
 
   // Filter pencarian
   const filteredData = kategori.filter((item) =>

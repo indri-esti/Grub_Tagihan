@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useParams, useNavigate } from "react-router-dom";
+import { BASE_URL } from "../../config/api";
 
 /* ================= HELPER JAM ================= */
 const dotToColon = (jam) => {
@@ -33,10 +34,10 @@ const EditPresensi = () => {
     const kategori = String(data.kategori || "").toLowerCase();
 
     if (status === "izin" || status === "dispensasi" || kategori === "izin") {
-      return "http://localhost:5000/izinpresensi";
+      return "";
     }
 
-    return "http://localhost:5000/presensi";
+   return `${BASE_URL}/presensi`;
   };
 
   /* ================= FETCH DATA ================= */
@@ -45,11 +46,11 @@ const EditPresensi = () => {
       setLoading(true);
 
       const presensiRes = await axios
-        .get(`http://localhost:5000/presensi/${id}`)
+        .get(`${BASE_URL}/presensi/${id}`)
         .catch(() => null);
 
       const izinRes = await axios
-        .get(`http://localhost:5000/izinpresensi/${id}`)
+        .get(`${BASE_URL}/izinpresensi/${id}`)
         .catch(() => null);
 
       const res = presensiRes || izinRes;

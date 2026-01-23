@@ -4,6 +4,8 @@ import Swal from "sweetalert2";
 import axios from "axios";
 import SidebarT from "../../Component/Sidebar";
 import { FaFolderOpen } from "react-icons/fa";
+import { BASE_URL } from "../../config/api";
+
 
 const KategoriData = () => {
   const [data, setData] = useState([]);
@@ -11,22 +13,23 @@ const KategoriData = () => {
   const navigate = useNavigate();
 
   // Ambil data dari API
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      const res = await axios.get("http://localhost:5000/level");
-      setData(res.data || []);
-    } catch (err) {
-      console.error("Gagal mengambil data:", err);
-      Swal.fire({
-        icon: "error",
-        title: "Oops!",
-        text: "Gagal mengambil data dari server.",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+const fetchData = async () => {
+  try {
+    setLoading(true);
+    const res = await axios.get(`${BASE_URL}/level`);
+setData(Array.isArray(res.data) ? res.data : res.data.data || []);
+  } catch (err) {
+    console.error("Gagal mengambil data:", err);
+    Swal.fire({
+      icon: "error",
+      title: "Oops!",
+      text: "Gagal mengambil data dari server.",
+    });
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   useEffect(() => {
     fetchData();
@@ -34,38 +37,40 @@ const KategoriData = () => {
 
   // Hapus data
   const handleDelete = async (id) => {
-    const result = await Swal.fire({
-      title: "Yakin ingin menghapus?",
-      text: "Data ini akan dihapus permanen!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Ya, hapus!",
-      cancelButtonText: "Batal",
-    });
+  const result = await Swal.fire({
+    title: "Yakin ingin menghapus?",
+    text: "Data ini akan dihapus permanen!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#d33",
+    cancelButtonColor: "#3085d6",
+    confirmButtonText: "Ya, hapus!",
+    cancelButtonText: "Batal",
+  });
 
-    if (result.isConfirmed) {
-      try {
-        await axios.delete(`http://localhost:5000/level/${id}`);
-        setData((prev) => prev.filter((item) => item.id !== id));
-        Swal.fire({
-          icon: "success",
-          title: "Berhasil!",
-          text: "Data berhasil dihapus.",
-          timer: 1400,
-          showConfirmButton: false,
-        });
-      } catch (err) {
-        console.error("Gagal hapus data:", err);
-        Swal.fire({
-          icon: "error",
-          title: "Gagal!",
-          text: "Tidak dapat menghapus data.",
-        });
-      }
+  if (result.isConfirmed) {
+    try {
+      await axios.delete(`${BASE_URL}/level/${id}`);
+      setData((prev) => prev.filter((item) => item.id !== id));
+
+      Swal.fire({
+        icon: "success",
+        title: "Berhasil!",
+        text: "Data berhasil dihapus.",
+        timer: 1400,
+        showConfirmButton: false,
+      });
+    } catch (err) {
+      console.error("Gagal hapus data:", err);
+      Swal.fire({
+        icon: "error",
+        title: "Gagal!",
+        text: "Tidak dapat menghapus data.",
+      });
     }
-  };
+  }
+};
+
 
   return (
     <div className="pl-[calc(15rem+1%)] pr-[5%] pt-[5%] md:pt-10 transition-all duration-300">

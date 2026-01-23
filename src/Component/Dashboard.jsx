@@ -12,6 +12,7 @@ import {
   FaUserCheck,
 } from "react-icons/fa";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { BASE_URL } from "../config/api";
 
 
 export default function Dashboard() {
@@ -80,20 +81,15 @@ const GetStatusFromData = (item) => {
 
   // helper nomor unik
  const getNomorUnik = (obj) => {
-    if (!obj) return "-";
-    const keys = [
-      "nomorUnik",
-      "nomorUniqe",
-      "nomor_unik",
-      "nomor",
-      "kode",
-      "id_unik",
-    ];
-    for (const k of keys) {
-      if (obj[k]) return String(obj[k]);
-    }
-    return "-";
-  };
+  if (!obj) return "-";
+  return (
+    obj.nomor_unik ||
+    obj.nomorUnik ||
+    obj.nomor ||
+    "-"
+  ).toString();
+};
+
 
   const safeParseInt = (val) => {
     if (val === null || val === undefined) return 0;
@@ -102,129 +98,152 @@ const GetStatusFromData = (item) => {
     return Number.isNaN(n) ? 0 : n;
   };
 
-  const FetchMasterUser = async () => {
-    try {
-      const res = await axios.get("http://localhost:5000/kategori_data");
-      setMasterUser(res.data || []);
-    } catch (err) {
-      console.error("Gagal ambil master user:", err);
-    }
-  };
+  const formatTanggalIndo = (tanggal) => {
+  if (!tanggal) return "-";
+  const d = new Date(tanggal);
+  if (isNaN(d)) return "-";
+  return d.toLocaleDateString("id-ID", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+};
 
-  useEffect(() => {
-    const fetchAll = async () => {
-      try {
-        const [
-          kategoriRes,
-          tagihanRes,
-          presensiRes,
-          izinRes,
-        ] = await Promise.all([
-          axios.get("http://localhost:5000/kategori_data"),
-          axios.get("http://localhost:5000/tagihan"),
-          axios.get("http://localhost:5000/presensi"),
-          axios.get("http://localhost:5000/izinpresensi"),
-        ]);
+const ambilNomorUnik = (obj) => {
+  if (!obj) return "";
+  return String(
+    obj.nomor_unik ||
+    obj.nomorUnik ||
+    obj.nomor ||
+    ""
+  ).trim();
+};
 
-        const kategori = kategoriRes.data || [];
-        const tagihanData = tagihanRes.data || [];
-        const presensiData = presensiRes.data || [];
-        const izinData = izinRes.data || [];
 
-        /* === GABUNG PRESENSI + IZIN === */
-        const gabunganPresensi = [...presensiData, ...izinData];
+// ============================
+// KATEGORI HELPER (WAJIB DI ATAS)
+// ============================
+const getKategoriUser = (obj) => {
+  if (!obj) return "";
+  return String(obj.kategori || "")
+    .toLowerCase()
+    .trim();
+};
 
-gabunganPresensi.sort((a, b) => {
-   const dateA = new Date(a.tanggal).getTime();
-  const dateB = new Date(b.tanggal).getTime();
+const isKategori = (obj, kategori) => {
+  return getKategoriUser(obj) === kategori.toLowerCase();
+};
 
-  if (dateA !== dateB) {
-    return dateB - dateA;
+const totalSiswa = MasterUser.filter((u) => isKategori(u, "siswa")).length;
+const totalGuru = MasterUser.filter((u) => isKategori(u, "guru")).length;
+const totalKaryawan = MasterUser.filter((u) => isKategori(u, "karyawan")).length;
+
+
+
+  // ===== FETCH DASHBOARD =====
+const fetchDashboard = async () => {
+  try {
+    const res = await axios.get(`${BASE_URL}/dashboard`);
+    const data = res.data || {};
+      console.log("DASHBOARD DATA:", res.data);
+
+    setStats({
+      totalSiswa: data.totalSiswa ?? 0,
+      totalGuru: data.totalGuru ?? 0,
+      totalKaryawan: data.totalKaryawan ?? 0,
+      totalTagihan: data.totalTagihan ?? 0,
+      totalLunas: data.totalLunas ?? 0,
+      totalBelumLunas: data.totalBelumLunas ?? 0,
+    });
+
+    setPresensi(data.presensiTerbaru ?? []);
+  } catch (err) {
+    console.error("Gagal load dashboard:", err);
   }
+};
 
-  // 🔥 2. SORT JAM (TERBARU DI ATAS)
-  const toMinutes = (t) => {
-    if (!t) return 0;
-    const [h, m] = t.replace(".", ":").split(":").map(Number);
-    return h * 60 + m;
-  };
-
-  const timeA = toMinutes(a.jamMasuk || a.jamPulang);
-  const timeB = toMinutes(b.jamMasuk || b.jamPulang);
-
-  if (timeA !== timeB) {
-    return timeB - timeA;
+// ===== FETCH MASTER USER =====
+const fetchMasterUser = async () => {
+  try {
+    const res = await axios.get(`${BASE_URL}/masterdata`);
+    setMasterUser(res.data || []);
+    setKategoriData(res.data || []);
+  } catch (err) {
+    console.error("Gagal ambil master data:", err);
   }
+};
 
-  // 🔥 3. TERAKHIR BARU updatedAt (OPSIONAL)
-  const updatedA = a.updatedAt ? new Date(a.updatedAt).getTime() : 0;
-  const updatedB = b.updatedAt ? new Date(b.updatedAt).getTime() : 0;
+// ===== FETCH TAGIHAN =====
+const fetchTagihan = async () => {
+  try {
+    const res = await axios.get(`${BASE_URL}/tagihan`);
+    setTagihan(res.data || []);
+  } catch (err) {
+    console.error("Gagal ambil tagihan:", err);
+  }
+};
 
-  return updatedB - updatedA;
-});
+const hitungTotalTagihan = (data) => {
+  return data.reduce((total, item) => {
+    return total + safeParseInt(item.harga);
+  }, 0);
+};
 
-        setKategoriData(kategori);
-        setTagihan(tagihanData);
-        setPresensi(gabunganPresensi);
-        setMasterUser(kategori);
 
-        const totalSiswa = kategori.filter((x) => normalize(x.kategori) === "siswa").length;
-        const totalGuru = kategori.filter((x) => normalize(x.kategori) === "guru").length;
-        const totalKaryawan = kategori.filter((x) => normalize(x.kategori) === "karyawan").length;
+const fetchPresensi = async () => {
+  try {
+    const res = await axios.get(`${BASE_URL}/presensi`);
+    setPresensi(res.data || []);
+  } catch (err) {
+    console.error("Gagal ambil presensi:", err);
+  }
+};
 
-        const totalTagihan = tagihanData.reduce(
-          (a, b) => a + safeParseInt(b.harga),
-          0
-        );
-        const totalLunas = tagihanData.filter(
-          (t) => normalize(t.status) === "lunas"
-        ).length;
+const [IzinPresensi, setIzinPresensi] = useState([]);
 
-        setStats({
-          totalSiswa,
-          totalGuru,
-          totalKaryawan,
-          totalTagihan,
-          totalLunas,
-          totalBelumLunas: tagihanData.length - totalLunas,
-        });
-      } catch (err) {
-        console.error("Gagal load dashboard:", err);
-      }
-    };
+ const fetchIzinPresensi = async () => {
+  try {
+    const res = await axios.get(`${BASE_URL}/izinpresensi`);
+    setIzinPresensi(res.data || []);
+  } catch (err) {
+    console.error("Gagal ambil izin presensi:", err);
+  }
+};
 
-    fetchAll();
-  }, []);
-  const normalize = (str) => {
-    return String(str || "").toLowerCase().replace(/\s+/g, "_");
-  };
 
+useEffect(() => {
+  fetchDashboard();
+  fetchMasterUser();
+  fetchTagihan();
+  fetchPresensi();
+  fetchIzinPresensi(); 
+}, []);
 
   const cards = [
+     {
+    title: "Total Siswa",
+    value: totalSiswa,
+    icon: <FaUsers />,
+    gradient: "from-green-400 to-green-600",
+  },
+  {
+    title: "Total Guru",
+    value: totalGuru,
+    icon: <FaChalkboardTeacher />,
+    gradient: "from-blue-400 to-blue-600",
+  },
+  {
+    title: "Total Karyawan",
+    value: totalKaryawan,
+    icon: <FaUserTie />,
+    gradient: "from-yellow-400 to-yellow-600",
+  },
     {
-      title: "Total Siswa",
-      value: stats.totalSiswa,
-      icon: <FaUsers />,
-      gradient: "from-green-400 to-green-600",
-    },
-    {
-      title: "Total Guru",
-      value: stats.totalGuru,
-      icon: <FaChalkboardTeacher />,
-      gradient: "from-blue-400 to-blue-600",
-    },
-    {
-      title: "Total Karyawan",
-      value: stats.totalKaryawan,
-      icon: <FaUserTie />,
-      gradient: "from-yellow-400 to-yellow-600",
-    },
-    {
-      title: "Total Tagihan",
-      value: `Rp ${stats.totalTagihan.toLocaleString("id-ID")}`,
-      icon: <FaMoneyBillWave />,
-      gradient: "from-orange-400 to-orange-600",
-    },
+  title: "Total Tagihan",
+  value: `Rp ${hitungTotalTagihan(tagihan).toLocaleString("id-ID")}`,
+  icon: <FaMoneyBillWave />,
+  gradient: "from-orange-400 to-orange-600",
+},
     {
       title: "Total Lunas",
       value: stats.totalLunas,
@@ -239,39 +258,37 @@ gabunganPresensi.sort((a, b) => {
     },
   ];
 
-  const isKategori = (data, kategori) =>
-    String(data.kategori || "").toLowerCase() === kategori.toLowerCase();
 
- const filteredPresensi = Presensi.filter((p) => {
+
+const filteredPresensi = Presensi.filter((p) => {
+  // tampilkan semua
   if (filterPresensi === "semua") return true;
 
-  const nomor = getNomorUnik(p);
+  const nomorPresensi = ambilNomorUnik(p);
+  if (!nomorPresensi) return false;
 
   const user = MasterUser.find(
-    (u) =>
-      String(u.nomorUnik) === String(nomor) ||
-      String(u.nomorUniqe) === String(nomor) ||
-      String(u.nomor_unik) === String(nomor) ||
-      String(u.nomor) === String(nomor)
+    (u) => ambilNomorUnik(u) === nomorPresensi
   );
 
-  if (!user) return true;
+  if (!user) return false;
 
-  return String(user.kategori || "").toLowerCase() === filterPresensi;
+  return isKategori(user, filterPresensi);
 });
 
 
+
+
  const GetNamaByNomor = (nomor) => {
-    if (!nomor || nomor === "-") return "-";
-    const user = MasterUser.find(
-      (u) =>
-        String(u.nomorUnik) === String(nomor) ||
-        String(u.nomorUniqe) === String(nomor) ||
-        String(u.nomor_unik) === String(nomor) ||
-        String(u.nomor) === String(nomor)
-    );
-    return user?.nama || "-";
-  };
+  if (!nomor || nomor === "-") return "-";
+
+  const user = MasterUser.find(
+    (u) => String(u.nomor_unik) === String(nomor)
+  );
+
+  return user?.nama || "-";
+};
+
 
 
 
@@ -344,9 +361,8 @@ gabunganPresensi.sort((a, b) => {
                 </tr>
               ) : (
                 filteredPresensi.map((p, i) => {
-                  const tanggalIndo = p.tanggal
-                    ? new Date(p.tanggal).toLocaleDateString("id-ID")
-                    : "-";
+                 const tanggalIndo = formatTanggalIndo(p.tanggal);
+
 
                   const nomorUnik = getNomorUnik(p);
 
@@ -354,8 +370,9 @@ gabunganPresensi.sort((a, b) => {
                     <tr key={i} className="hover:bg-gray-50">
                       <td className="py-2 px-4 text-left">{i + 1}</td>
                       <td className="py-2 px-4 text-left">
-                        {GetNamaByNomor(nomorUnik)}
-                      </td>
+  {p.nama || GetNamaByNomor(nomorUnik)}
+</td>
+
                       <td className="px-4 py-3 text-center">
   <div className="flex items-center justify-center gap-2">
     <span className="font-mono tracking-widest">
@@ -556,7 +573,9 @@ gabunganPresensi.sort((a, b) => {
                   <td className="py-2 px-4 text-right">
                     Rp {safeParseInt(t.harga).toLocaleString("id-ID")}
                   </td>
-                  <td className="py-2 px-4 text-center">{t.tanggal}</td>
+                  <td className="py-2 px-4 text-center">
+  {formatTanggalIndo(t.tanggal)}
+</td>
                   <td
                     className={`py-2 px-4 text-center font-semibold ${
                       String(t.status).toLowerCase() === "lunas"

@@ -3,6 +3,8 @@ import axios from "axios";
 import SidebarT from "../../Component/Sidebar";
 import { FaClipboardList } from "react-icons/fa";
 import Swal from "sweetalert2";
+import { BASE_URL } from "../../config/api";
+
 
 const RekapTagihan = () => {
   const [data, setData] = useState([]);
@@ -14,7 +16,7 @@ const RekapTagihan = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:5000/tagihan");
+      const res = await axios.get(`${BASE_URL}/rekaptagihan`);
       const hasil = res.data || [];
       setData(hasil);
       setFilteredData(hasil);

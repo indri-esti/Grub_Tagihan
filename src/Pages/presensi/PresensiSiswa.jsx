@@ -13,6 +13,7 @@ import {
 } from "react-icons/fa";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import { BASE_URL } from "../../config/api";
 
 const PresensiSiswa = () => {
   const [Data, setData] = useState([]);
@@ -26,7 +27,7 @@ const PresensiSiswa = () => {
   const FetchData = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:5000/presensi");
+      const res = await axios.get(`${BASE_URL}/presensi`);
       const hasil = res.data || [];
 
       hasil.sort((a, b) => {
@@ -50,13 +51,13 @@ const PresensiSiswa = () => {
   };
 
   const FetchMasterUser = async () => {
-    try {
-      const res = await axios.get("http://localhost:5000/kategori_data");
-      setMasterUser(res.data || []);
-    } catch (err) {
-      console.error("Gagal ambil master user:", err);
-    }
-  };
+  try {
+    const res = await axios.get(`${BASE_URL}/kategoridata`);
+    setMasterUser(res.data || []);
+  } catch (err) {
+    console.error("Gagal ambil master user:", err);
+  }
+};
 
   useEffect(() => {
     FetchData();

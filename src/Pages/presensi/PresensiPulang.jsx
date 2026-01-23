@@ -3,6 +3,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { FaDoorClosed } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { BASE_URL } from "../../config/api";
 
 const PresensiPulang = () => {
   const navigate = useNavigate();
@@ -50,7 +51,7 @@ const PresensiPulang = () => {
   // ==============================
   const fetchData = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/presensi");
+      const res = await axios.get(`${BASE_URL}/presensi`);
       setData(res.data || []);
     } catch (err) {
       console.error(err);
@@ -120,7 +121,7 @@ const PresensiPulang = () => {
 
         const jamSekarang =
           now.getHours() * 60 + now.getMinutes();
-        const batasPulang = 15 * 60;
+        const batasPulang = 13 * 60;
 
         if (jamSekarang < batasPulang) {
           await Swal.fire(
@@ -137,10 +138,10 @@ const PresensiPulang = () => {
           minute: "2-digit",
         });
 
-        await axios.patch(
-          `http://localhost:5000/presensi/${presensiHariIni.id}`,
-          { jamPulang: jamPulangFix }
-        );
+        await axios.put(
+  `${BASE_URL}/presensi/${presensiHariIni.id}`,
+  { jamPulang: jamPulangFix }
+);
 
         playSound();
 

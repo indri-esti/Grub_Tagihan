@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useNavigate, useParams } from "react-router-dom";
+import { BASE_URL } from "../../config/api";
 
 const EditLevel = () => {
   const navigate = useNavigate();
@@ -10,8 +11,7 @@ const EditLevel = () => {
 
   // 🔹 Ambil data level berdasarkan ID
   useEffect(() => {
-    axios
-      .get(`http://localhost:5000/level/${id}`)
+   axios.get(`${BASE_URL}/level/${id}`)
       .then((res) => {
         setLevel(res.data.level || "");
       })
@@ -39,7 +39,7 @@ const EditLevel = () => {
     }
 
     try {
-      await axios.put(`http://localhost:5000/level/${id}`, { level });
+      await axios.put(`${BASE_URL}/level/${id}`, { level });
 
       Swal.fire({
         icon: "success",

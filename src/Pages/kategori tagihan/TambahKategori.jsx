@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import { BASE_URL } from "../../config/api";
+
 
 const TambahData = () => {
   const navigate = useNavigate();
@@ -22,7 +24,7 @@ const TambahData = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:5000/kategori_tagihan", formData);
+      await axios.post(`${BASE_URL}/kategoritagihan`, formData);
       Swal.fire({
         icon: "success",
         title: "Berhasil!",
@@ -72,8 +74,8 @@ const TambahData = () => {
               onChange={handleChange}
               className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
             >
-              <option value="Aktif">Aktif</option>
-              <option value="Nonaktif">Nonaktif</option>
+              <option value="AKTIF">Aktif</option>
+              <option value="NONAKTIF">Nonaktif</option>
             </select>
           </div>
 
