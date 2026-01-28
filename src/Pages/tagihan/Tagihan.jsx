@@ -6,30 +6,48 @@ import SidebarT from "../../Component/Sidebar";
 import { FaMoneyBillWave } from "react-icons/fa";
 import { BASE_URL } from "../../config/api";
 
-
 const Tagihan = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 
- const fetchData = async () => {
-  try {
-    setLoading(true);
-   const res = await axios.get(`${BASE_URL}/tagihan`);
-    setData(res.data || []);
-  } catch (err) {
-    console.error("Gagal ambil data:", err);
-    Swal.fire("Error", "Gagal ambil data dari server", "error");
-  } finally {
-    setLoading(false);
-  }
-};
-
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const res = await axios.get(`${BASE_URL}/tagihan`);
+      const sortedData = [...(res.data || [])].sort(
+        (a, b) => b.id - a.id
+      );
+      setData(sortedData);
+    } catch (err) {
+      console.error("Gagal ambil data:", err);
+      Swal.fire("Error", "Gagal ambil data dari server", "error");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchData();
   }, []);
+
+  // ===== LOADING (SAMA KAYAK HALAMAN LAIN) =====
+  if (loading) {
+    return (
+      <div className="pl-[calc(15rem+1%)] pr-[5%] pt-[5%] md:pt-10">
+        <SidebarT />
+        <div className="md:ml-6 flex items-center justify-center h-[60vh]">
+          <div className="bg-white/80 backdrop-blur-md shadow-xl rounded-2xl px-8 py-6 flex flex-col items-center gap-4">
+            <div className="w-12 h-12 rounded-full border-4 border-blue-300 border-t-blue-600 animate-spin" />
+            <p className="text-sm font-medium text-gray-600">
+              Memuat data ......
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const handleDelete = async (id) => {
     const result = await Swal.fire({
@@ -65,38 +83,37 @@ const Tagihan = () => {
     }
   };
 
-  // 🔥 Fitur baru: ubah status (Belum Lunas ⇆ Lunas)
   const handleStatusChange = async (item) => {
-  const statusBaru = item.status === "Lunas" ? "Belum Lunas" : "Lunas";
+    const statusBaru = item.status === "Lunas" ? "Belum Lunas" : "Lunas";
 
-  const konfirmasi = await Swal.fire({
-    title: "Ubah Status?",
-    text: `Ubah status ke ${statusBaru}?`,
-    icon: "question",
-    showCancelButton: true,
-    confirmButtonText: "Ya",
-  });
+    const konfirmasi = await Swal.fire({
+      title: "Ubah Status?",
+      text: `Ubah status ke ${statusBaru}?`,
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Ya",
+    });
 
-  if (!konfirmasi.isConfirmed) return;
+    if (!konfirmasi.isConfirmed) return;
 
-  try {
-   await axios.put(
-      `${BASE_URL}/tagihan/${item.id}`,
-  { ...item, status: statusBaru }
-);
+    try {
+      await axios.put(`${BASE_URL}/tagihan/${item.id}`, {
+        ...item,
+        status: statusBaru,
+      });
 
-    setData(prev =>
-      prev.map(x =>
-        x.id === item.id ? { ...x, status: statusBaru } : x
-      )
-    );
+      setData((prev) =>
+        prev.map((x) =>
+          x.id === item.id ? { ...x, status: statusBaru } : x
+        )
+      );
 
-    Swal.fire("Berhasil", "Status diperbarui", "success");
-  } catch (err) {
-    console.error("Gagal update status:", err);
-    Swal.fire("Error", "Gagal update status", "error");
-  }
-};
+      Swal.fire("Berhasil", "Status diperbarui", "success");
+    } catch (err) {
+      console.error("Gagal update status:", err);
+      Swal.fire("Error", "Gagal update status", "error");
+    }
+  };
 
   const getJenis = (item) => {
     return item.jenis || item.keterangan || "-";
@@ -159,95 +176,86 @@ const Tagihan = () => {
             />
           </div>
 
-          {loading ? (
-            <p className="text-center">Memuat data...</p>
-          ) : (
-            <div className="overflow-x-auto shadow-md rounded-lg">
-              <table className="table-auto w-full text-sm border-collapse">
-                <thead className="bg-blue-700 text-white">
-                  <tr>
-                    <th className="px-4 py-2 text-center">No</th>
-                    <th className="px-4 py-2 text-center">Nama</th>
-                    <th className="px-4 py-2 text-center">Jenis</th>
-                    <th className="px-4 py-2 text-center">Harga</th>
-                    <th className="px-4 py-2 text-center">Tanggal</th>
-                    <th className="px-4 py-2 text-center">Status</th>
-                    <th className="px-4 py-2 text-center">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredData.length > 0 ? (
-                    filteredData.map((item, index) => (
-                      <tr
-                        key={item.id || index}
-                        className="hover:bg-gray-50 transition-all border-b border-gray-100"
+          <div className="overflow-x-auto shadow-md rounded-lg">
+            <table className="table-auto w-full text-sm border-collapse">
+              <thead className="bg-blue-700 text-white">
+                <tr>
+                  <th className="px-4 py-2 text-center">No</th>
+                  <th className="px-4 py-2 text-center">Nama</th>
+                  <th className="px-4 py-2 text-center">Jenis</th>
+                  <th className="px-4 py-2 text-center">Harga</th>
+                  <th className="px-4 py-2 text-center">Tanggal</th>
+                  <th className="px-4 py-2 text-center">Status</th>
+                  <th className="px-4 py-2 text-center">Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredData.length > 0 ? (
+                  filteredData.map((item, index) => (
+                    <tr
+                      key={item.id || index}
+                      className="hover:bg-gray-50 transition-all border-b border-gray-100"
+                    >
+                      <td className="px-4 py-2">{index + 1}</td>
+                      <td className="px-4 py-2">{item.nama || "-"}</td>
+                      <td className="px-4 py-2">{getJenis(item)}</td>
+                      <td className="py-2 px-4 text-right">
+                        Rp{" "}
+                        {parseInt(item.harga || 0).toLocaleString("id-ID")}
+                      </td>
+                      <td className="px-4 py-2 text-center">
+                        {formatTanggal(item.tanggal)}
+                      </td>
+                      <td
+                        className={`py-2 px-4 font-semibold text-center ${
+                          (item.status || "").toLowerCase() === "lunas"
+                            ? "text-green-600"
+                            : "text-red-500"
+                        }`}
                       >
-                        <td className="px-4 py-2">{index + 1}</td>
-                        <td className="px-4 py-2">{item.nama || "-"}</td>
-                        <td className="px-4 py-2">{getJenis(item)}</td>
-                        <td className="py-2 px-4 text-right">
-                          Rp {parseInt(item.harga || 0).toLocaleString("id-ID")}
-                        </td>
-                        <td className="px-4 py-2 text-center">
-                          {formatTanggal(item.tanggal)}
-                        </td>
-                        <td
-                          className={`py-2 px-4 font-semibold text-center ${
-                            (item.status || "").toLowerCase() === "lunas"
-                              ? "text-green-600"
-                              : "text-red-500"
+                        {item.status || "-"}
+                      </td>
+                      <td className="px-4 py-2 flex justify-center gap-2">
+                        <button
+                          onClick={() => navigate(`/editdata/${item.id}`)}
+                          className="bg-gray-700 text-white px-3 py-2 rounded-md hover:bg-gray-600"
+                        >
+                          ✏
+                        </button>
+                        <button
+                          onClick={() => handleDelete(item.id)}
+                          className="bg-red-700 text-white px-3 py-2 rounded-md hover:bg-red-600"
+                        >
+                          🗑
+                        </button>
+                        <button
+                          onClick={() => handleStatusChange(item)}
+                          className={`text-white px-4 py-1 rounded-md text-sm transition ${
+                            item.status === "Lunas"
+                              ? "bg-red-700"
+                              : "bg-green-600"
                           }`}
                         >
-                          {item.status || "-"}
-                        </td>
-
-                        {/* 🔥 Aksi */}
-                        <td className="px-4 py-2 flex justify-center gap-2">
-
-                          {/* Edit */}
-                          <button
-                            onClick={() => navigate(`/editdata/${item.id}`)}
-                            className="bg-gray-700 text-white px-3 py-2 rounded-md hover:bg-gray-600 transition"
-                            title="Edit Data"
-                          >
-                            ✏
-                          </button>
-
-                          {/* Hapus */}
-                          <button
-                            onClick={() => handleDelete(item.id)}
-                            className="bg-red-700 text-white px-3 py-2 rounded-md hover:bg-red-600 transition"
-                            title="Hapus Data"
-                          >
-                            🗑
-                          </button>
-
-                          {/* 🔥 Tombol Ubah Status */}
-                          <button
-  onClick={() => handleStatusChange(item)}
-  className={`text-white px-4 py-1 rounded-md text-sm transition
-    ${item.status === "Lunas"
-      ? "bg-red-700 hover:bg-red-700"
-      : "bg-green-600 hover:bg-green-600"
-    }`}
->
-  {item.status === "Lunas" ? "Belum Lunas" : "Lunas"}
-</button>
-
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan="7" className="text-center py-4 text-gray-500 italic">
-                        Tidak ada data ditemukan.
+                          {item.status === "Lunas"
+                            ? "Belum Lunas"
+                            : "Lunas"}
+                        </button>
                       </td>
                     </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          )}
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan="7"
+                      className="text-center py-4 text-gray-500 italic"
+                    >
+                      Tidak ada data ditemukan.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>

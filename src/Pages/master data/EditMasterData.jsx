@@ -12,7 +12,7 @@ const EditMasterData = () => {
     nama: "",
     email: "",
     kategori: "",
-    jabatan_kelas: "",
+    jabatankelas: "",
     nomorUnik: "", // ⬅️ Tambahkan agar tidak hilang
   });
 
@@ -115,7 +115,7 @@ const EditMasterData = () => {
       return;
     }
 
-    if (["guru", "karyawan"].includes(kategori) && !formData.jabatan_kelas) {
+    if (["guru", "karyawan"].includes(kategori) && !formData.jabatankelas) {
       Swal.fire({
         icon: "warning",
         title: "Lengkapi Data!",
@@ -240,8 +240,8 @@ const EditMasterData = () => {
 
               {(formData.kategori || "").toLowerCase() === "siswa" ? (
                 <select
-                  name="jabatan_kelas"
-                  value={formData.jabatan_kelas}
+                  name="jabatankelas"
+                  value={formData.jabatankelas}
                   onChange={handleChange}
                   required
                   className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"
@@ -260,13 +260,13 @@ const EditMasterData = () => {
               ) : (
                 <input
                   type="text"
-                  name="jabatan_kelas"
+                  name="jabatankelas"
                   placeholder={
                     (formData.kategori || "").toLowerCase() === "guru"
                       ? "Masukkan Mapel (mis. Matematika)"
                       : "Masukkan Jabatan (mis. Staff TU)"
                   }
-                  value={formData.jabatan_kelas}
+                  value={formData.jabatankelas}
                   onChange={handleChange}
                   required
                   className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400 outline-none"

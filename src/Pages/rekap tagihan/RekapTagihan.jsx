@@ -5,7 +5,6 @@ import { FaClipboardList } from "react-icons/fa";
 import Swal from "sweetalert2";
 import { BASE_URL } from "../../config/api";
 
-
 const RekapTagihan = () => {
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
@@ -17,9 +16,9 @@ const RekapTagihan = () => {
     try {
       setLoading(true);
       const res = await axios.get(`${BASE_URL}/rekaptagihan`);
-      const hasil = res.data || [];
-      setData(hasil);
-      setFilteredData(hasil);
+      const sortedData = [...(res.data || [])].sort((a, b) => b.id - a.id);
+      setData(sortedData);
+      setFilteredData(sortedData);
     } catch (error) {
       console.error("Gagal mengambil data:", error);
       Swal.fire({
@@ -36,20 +35,16 @@ const RekapTagihan = () => {
     fetchData();
   }, []);
 
-  // ✅ Format tanggal ke format Indonesia (dd/mm/yyyy)
+  // ✅ Format tanggal ke format Indonesia
   const formatTanggal = (tgl) => {
     if (!tgl) return "-";
-
-    // Sudah dalam format dd/mm/yyyy
     if (/^\d{2}\/\d{2}\/\d{4}$/.test(tgl)) return tgl;
 
-    // Format yyyy-mm-dd atau yyyy-mm-ddTHH:mm:ss
     if (typeof tgl === "string" && /^\d{4}-\d{2}-\d{2}/.test(tgl)) {
       const [y, m, d] = tgl.split("T")[0].split("-");
-      return `${d.padStart(2, "0")}/${m.padStart(2, "0")}/${y}`;
+      return `${d}/${m}/${y}`;
     }
 
-    // Parsing otomatis Date object
     const dateObj = new Date(tgl);
     if (!isNaN(dateObj)) {
       const day = String(dateObj.getDate()).padStart(2, "0");
@@ -58,30 +53,25 @@ const RekapTagihan = () => {
       return `${day}/${month}/${year}`;
     }
 
-    return tgl; // fallback
+    return tgl;
   };
 
-  // 🔧 Baca tanggal dd/mm/yyyy atau format lain → Date object
   const parseTanggal = (tgl) => {
     if (!tgl) return null;
 
-    // Format dd/mm/yyyy
     if (/^\d{2}\/\d{2}\/\d{4}$/.test(tgl)) {
       const [d, m, y] = tgl.split("/");
       return new Date(`${y}-${m}-${d}T00:00:00`);
     }
 
-    // Format yyyy-mm-dd atau ISO
     if (/^\d{4}-\d{2}-\d{2}/.test(tgl)) {
       return new Date(tgl);
     }
 
-    // Fallback
     const dateObj = new Date(tgl);
     return isNaN(dateObj) ? null : dateObj;
   };
 
-  // 🔹 Filter data
   useEffect(() => {
     let hasil = [...data];
 
@@ -95,16 +85,12 @@ const RekapTagihan = () => {
       );
     } else if (filter === "bulanini") {
       const now = new Date();
-      const bulanSekarang = now.getMonth();
-      const tahunSekarang = now.getFullYear();
-
       hasil = hasil.filter((item) => {
         const tgl = parseTanggal(item.tanggal);
-        if (!tgl) return false;
-
         return (
-          tgl.getMonth() === bulanSekarang &&
-          tgl.getFullYear() === tahunSekarang
+          tgl &&
+          tgl.getMonth() === now.getMonth() &&
+          tgl.getFullYear() === now.getFullYear()
         );
       });
     }
@@ -115,7 +101,7 @@ const RekapTagihan = () => {
   return (
     <div className="pl-[calc(15rem+1%)] pr-[5%] pt-[5%] md:pt-10 transition-all duration-300">
       <div className="flex flex-col gap-6">
-      <SidebarT />
+        <SidebarT />
 
         <div className="flex-1 flex flex-col gap-3 md:ml-6 bg-white shadow-md rounded-2xl p-6">
           {/* Judul */}
@@ -132,7 +118,7 @@ const RekapTagihan = () => {
             <select
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
-              className="border border-gray-300 rounded-lg px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all"
+              className="border border-gray-300 rounded-lg px-3 py-2 shadow-sm focus:ring-2 focus:ring-blue-400"
             >
               <option value="semua">Semua</option>
               <option value="lunas">Lunas</option>
@@ -141,54 +127,60 @@ const RekapTagihan = () => {
             </select>
           </div>
 
-          {/* Tabel */}
+          {/* ✅ LOADING MODERN */}
           {loading ? (
-            <p className="text-center py-4 text-gray-500">Memuat data...</p>
+            <div className="flex items-center justify-center h-[45vh]">
+              <div className="bg-white/80 backdrop-blur-md shadow-xl rounded-2xl px-8 py-6 flex flex-col items-center gap-4">
+                <div className="w-12 h-12 rounded-full border-4 border-blue-300 border-t-blue-600 animate-spin" />
+                <p className="text-sm font-medium text-gray-600">
+                  Memuat data ......
+                </p>
+              </div>
+            </div>
           ) : (
-           <div className="overflow-x-auto shadow-md rounded-lg">
-              <table className="table-auto w-full text-sm border-collapse">
+            <div className="overflow-x-auto rounded-xl border border-gray-200">
+  <table className="min-w-full text-sm border-separate border-spacing-0">
+
                 <thead>
-                  <tr className="bg-blue-700 text-white">
-                    <th className="px-4 py-3 text-center font-semibold border-b border-gray-200">
-                      No
-                    </th>
-                    <th className="px-4 py-3 text-center font-semibold border-b border-gray-200">
-                      Nama
-                    </th>
-                    <th className="px-4 py-3 text-center font-semibold border-b border-gray-200">
-                      Jenis
-                    </th>
-                    <th className="px-4 py-3 text-center font-semibold border-b border-gray-200">
-                      Harga
-                    </th>
-                    <th className="px-4 py-3 text-center font-semibold border-b border-gray-200">
-                      Tanggal
-                    </th>
-                    <th className="px-4 py-3 text-center font-semibold border-b border-gray-200">
-                      Status
-                    </th>
+                  <tr className="bg-blue-600 text-white">
+                    <th className="px-4 py-3 text-center font-semibold border-b border-blue-500">
+  No
+</th>
+                    <th className="px-4 py-3 text-center">Nama</th>
+                    <th className="px-4 py-3 text-center">Jenis</th>
+                    <th className="px-4 py-3 text-center">Harga</th>
+                    <th className="px-4 py-3 text-center">Tanggal</th>
+                    <th className="px-4 py-3 text-center">Status</th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-100">
+                <tbody className="bg-white">
                   {filteredData.length > 0 ? (
                     filteredData.map((item, i) => (
                       <tr
-                        key={item.id || i}
-                        className="hover:bg-blue-50 transition-colors duration-150"
-                      >
-                        <td className="px-4 py-3 text-left">{i + 1}</td>
-                        <td className="px-4 py-3 text-left">{item.nama || "-"}</td>
-                        <td className="px-4 py-3 text-left">
+  key={item.id || i}
+  className="hover:bg-blue-50 transition-colors duration-150"
+>
+                        <td className="px-4 py-3 border-b border-gray-100">
+  {i + 1}
+</td>
+                        <td className="px-4 py-3 border-b border-gray-100
+">{item.nama || "-"}</td>
+                        <td className="px-4 py-3 border-b border-gray-100
+">
                           {item.jenis || item.keterangan || "-"}
                         </td>
-                        <td className="px-4 py-3 text-right">
-                          Rp {parseInt(item.harga || 0).toLocaleString("id-ID")}
+                        <td className="px-4 py-3 text-right border-b border-gray-100
+">
+                          Rp{" "}
+                          {parseInt(item.harga || 0).toLocaleString("id-ID")}
                         </td>
-                        <td className="px-4 py-3 text-center">
+                        <td className="px-4 py-3 text-center border-b border-gray-100
+">
                           {formatTanggal(item.tanggal)}
                         </td>
                         <td
-                          className={`px-4 py-3 text-center font-semibold ${
+                          className={`px-4 py-3 text-center border-b border-gray-100
+ font-semibold ${
                             (item.status || "").toLowerCase() === "lunas"
                               ? "text-green-600"
                               : "text-red-500"
@@ -200,10 +192,7 @@ const RekapTagihan = () => {
                     ))
                   ) : (
                     <tr>
-                      <td
-                        colSpan="6"
-                        className="text-center py-6 text-gray-500 italic"
-                      >
+                      <td colSpan="6" className="text-center py-6 italic text-gray-500">
                         Tidak ada data rekap tagihan
                       </td>
                     </tr>

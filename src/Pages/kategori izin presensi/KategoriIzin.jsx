@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import axios from "axios";
 import SidebarT from "../../Component/Sidebar";
-import { FaFileSignature } from "react-icons/fa"; // 🔥 icon khusus kategori izin
+import { FaFileSignature } from "react-icons/fa";
 import { BASE_URL } from "../../config/api";
 
 const KategoriIzin = () => {
@@ -13,41 +13,35 @@ const KategoriIzin = () => {
   const navigate = useNavigate();
 
   // Ambil data dari API → kategori_izin
- const fetchData = async () => {
-  setLoading(true);
-  try {
-    const res = await axios.get(`${BASE_URL}/kategoriizin`);
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.get(`${BASE_URL}/kategoriizin`);
+let data = [];
 
-    console.log("FULL RESPONSE:", res);
-    console.log("RESPONSE DATA:", res.data);
+if (Array.isArray(res.data)) {
+  data = res.data;
+} else if (Array.isArray(res.data.data)) {
+  data = res.data.data;
+}
 
-    // 🔥 Normalisasi response
-    let data = [];
+// 🔥 URUTKAN DATA TERBARU DI ATAS
+data = [...data].sort((a, b) => b.id - a.id);
 
-    if (Array.isArray(res.data)) {
-      data = res.data;
-    } else if (Array.isArray(res.data.data)) {
-      data = res.data.data;
+      const normalizedData = data.map((item) => ({
+        id: item.id,
+        nama: item.nama ?? item.jenisIzin ?? "",
+        status: item.status ?? "",
+      }));
+
+      setKategori(normalizedData);
+    } catch (err) {
+      console.error("ERROR FETCH:", err);
+      Swal.fire("Oops!", "Gagal mengambil data dari server.", "error");
+    } finally {
+      setLoading(false);
     }
-
-    // 🔥 Normalisasi field (jenisIzin → nama)
-    const normalizedData = data.map((item) => ({
-      id: item.id,
-      nama: item.nama ?? item.jenisIzin ?? "",
-      status: item.status ?? "",
-    }));
-
-    setKategori(normalizedData);
-  } catch (err) {
-    console.error("ERROR FETCH:", err);
-    Swal.fire("Oops!", "Gagal mengambil data dari server.", "error");
-  } finally {
-    setLoading(false);
-  }
-};
-
-
-
+  };
 
   useEffect(() => {
     fetchData();
@@ -55,45 +49,36 @@ const KategoriIzin = () => {
 
   // Hapus data
   const handleDelete = async (id) => {
-  Swal.fire({
-    title: "Yakin ingin menghapus?",
-    text: "Data ini akan dihapus permanen!",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#d33",
-    cancelButtonColor: "#3085d6",
-    confirmButtonText: "Ya, hapus!",
-    cancelButtonText: "Batal",
-  }).then(async (result) => {
-    if (result.isConfirmed) {
-      try {
-        await axios.delete(`${BASE_URL}/kategoriizin/${id}`);
+    Swal.fire({
+      title: "Yakin ingin menghapus?",
+      text: "Data ini akan dihapus permanen!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Ya, hapus!",
+      cancelButtonText: "Batal",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await axios.delete(`${BASE_URL}/kategoriizin/${id}`);
+          setKategori((prev) => prev.filter((item) => item.id !== id));
 
-        setKategori((prev) =>
-          prev.filter((item) => item.id !== id)
-        );
-
-        Swal.fire({
-          icon: "success",
-          title: "Berhasil!",
-          text: "Data berhasil dihapus.",
-          timer: 1500,
-          showConfirmButton: false,
-        });
-      } catch (err) {
-        console.error("Gagal hapus data:", err);
-        Swal.fire({
-          icon: "error",
-          title: "Gagal!",
-          text: "Tidak dapat menghapus data.",
-        });
+          Swal.fire({
+            icon: "success",
+            title: "Berhasil!",
+            text: "Data berhasil dihapus.",
+            timer: 1500,
+            showConfirmButton: false,
+          });
+        } catch (err) {
+          console.error("Gagal hapus data:", err);
+          Swal.fire("Gagal!", "Tidak dapat menghapus data.", "error");
+        }
       }
-    }
-  });
-};
+    });
+  };
 
-
-  // Filter pencarian
   const filteredData = kategori.filter((item) =>
     item.nama?.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -103,7 +88,6 @@ const KategoriIzin = () => {
       <div className="flex flex-col gap-6">
         <SidebarT />
 
-        {/* Konten utama */}
         <div className="flex-1 flex flex-col gap-3 md:ml-6 bg-white shadow-lg rounded-lg p-6">
           {/* Header */}
           <div className="flex justify-between items-center mb-3">
@@ -131,26 +115,25 @@ const KategoriIzin = () => {
             />
           </div>
 
-          {/* Tabel Data */}
+          {/* ✅ LOADING MODERN */}
           {loading ? (
-            <p className="text-center">Memuat data...</p>
+            <div className="flex items-center justify-center h-[45vh]">
+              <div className="bg-white/80 backdrop-blur-md shadow-xl rounded-2xl px-8 py-6 flex flex-col items-center gap-4">
+                <div className="w-12 h-12 rounded-full border-4 border-blue-300 border-t-blue-600 animate-spin" />
+                <p className="text-sm font-medium text-gray-600">
+                  Memuat data ......
+                </p>
+              </div>
+            </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="min-w-full text-sm text-gray-700 border border-gray-300/60 rounded-xl overflow-hidden shadow-sm">
                 <thead>
                   <tr className="bg-blue-700 text-white">
-                    <th className="px-4 py-3 text-center font-semibold tracking-wide">
-                      No
-                    </th>
-                    <th className="px-4 py-3 text-center font-semibold tracking-wide">
-                      Nama Kategori
-                    </th>
-                    <th className="px-4 py-3 text-center font-semibold tracking-wide">
-                      Status
-                    </th>
-                    <th className="px-4 py-3 text-center font-semibold tracking-wide">
-                      Aksi
-                    </th>
+                    <th className="px-4 py-3 text-center">No</th>
+                    <th className="px-4 py-3 text-center">Nama Kategori</th>
+                    <th className="px-4 py-3 text-center">Status</th>
+                    <th className="px-4 py-3 text-center">Aksi</th>
                   </tr>
                 </thead>
 
@@ -159,14 +142,10 @@ const KategoriIzin = () => {
                     filteredData.map((item, index) => (
                       <tr
                         key={item.id}
-                        className="hover:bg-blue-50 transition duration-150 ease-in-out"
+                        className="hover:bg-blue-50 transition"
                       >
-                        <td className="px-4 py-3 text-gray-700 text-center">
-                          {index + 1}
-                        </td>
-                        <td className="px-4 py-3 text-gray-800 font-medium">
-                          {item.nama}
-                        </td>
+                        <td className="px-4 py-3 text-center">{index + 1}</td>
+                        <td className="px-4 py-3 font-medium">{item.nama}</td>
                         <td className="px-4 py-3 text-center">
                           <span
                             className={`px-3 py-1.5 rounded-full text-xs font-semibold ${
@@ -178,19 +157,18 @@ const KategoriIzin = () => {
                             {item.status}
                           </span>
                         </td>
-
-                        <td className="px-4 py-3 text-center flex justify-center gap-2">
+                        <td className="px-4 py-3 flex justify-center gap-2">
                           <button
                             onClick={() =>
                               navigate(`/editkategoriizin/${item.id}`)
                             }
-                            className="bg-gray-700 text-white px-3 py-2 rounded-md hover:bg-gray-600 transition"
+                            className="bg-gray-700 text-white px-3 py-2 rounded-md hover:bg-gray-600"
                           >
                             ✏
                           </button>
                           <button
                             onClick={() => handleDelete(item.id)}
-                            className="bg-red-700 text-white px-3 py-2 rounded-md hover:bg-red-600 transition"
+                            className="bg-red-700 text-white px-3 py-2 rounded-md hover:bg-red-600"
                           >
                             🗑
                           </button>

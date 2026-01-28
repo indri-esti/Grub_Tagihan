@@ -4,7 +4,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(135deg, #6a82fb, #8e44ad);
+  background: linear-gradient(135deg, #2563EB, #5e97cc);
   font-family: "Poppins", sans-serif;
 }
 
@@ -96,7 +96,7 @@
   height: 35px;
   cursor: pointer;
 
-  background: linear-gradient(135deg, #6a82fb 0%, #b06ab3 100%);
+  background: linear-gradient(135deg, #2563EB 0%, #5e97cc 100%);
   border: none;
   border-radius: 6px;
   color: #fff;
@@ -117,7 +117,7 @@
 .register-btn {
   width: 100%;
   padding: 10px;
-  background: linear-gradient(90deg, #6a82fb, #8e44ad);
+  background: linear-gradient(90deg, #2563EB, #5e97cc);
   color: rgb(255, 254, 254);
   font-size: 1rem;
   font-weight: 600;
@@ -129,13 +129,13 @@
 }
 
 .register-btn:hover {
-  background: linear-gradient(90deg, #5a72f7, #7d3cb8);
+  background: linear-gradient(90deg, #2563EB, #5e97cc);
   transform: scale(1.02);
 }
 
 /* Link ke Login */
 .test {
-  color: #6a82fb;
+  color: #2563EB;
   font-weight: 600;
   text-decoration: none;
 }

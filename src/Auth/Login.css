@@ -3,7 +3,7 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, #6a82fb, #8e44ad);
+  background: linear-gradient(135deg, #2563EB, #5e97cc);
   font-family: "Poppins", sans-serif;
 }
 
@@ -76,7 +76,7 @@
   right: 10px;
   top: 50%;
   transform: translateY(-50%); /* kunci agar benar-benar tengah */
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #2563EB 0%, #5e97cc 100%);
   color: white;
   border-radius: 6px;
   padding: 6px;
@@ -100,7 +100,7 @@
 .login-btn {
   width: 100%;
   padding: 15px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #2563EB 0%, #5e97cc 100%);
   color: rgb(255, 254, 254);
   border: none;
   border-radius: 10px;
@@ -113,7 +113,7 @@
 
 .login-btn:hover {
   transform: scale(1.03);
-  background: linear-gradient(135deg, #5a72f7, #7d3cb8);
+  background: linear-gradient(135deg, #2563EB, #5e97cc);
 }
 
 /* Register Text */
@@ -125,7 +125,7 @@
 }
 
 .test1 {
-  color: #6a82fb;
+  color: #2563EB;
   font-weight: 600;
   text-decoration: none;
 }

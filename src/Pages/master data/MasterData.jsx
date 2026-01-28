@@ -12,13 +12,18 @@ const KategoriData = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("Semua");
+  const [showNomor, setShowNomor] = useState({});
   const navigate = useNavigate();
 
   const fetchData = async () => {
     try {
       setLoading(true);
       const res = await axios.get(`${BASE_URL}/masterdata`);
-      setData(res.data || []);
+
+      const sortedData = [...(res.data || [])].sort(
+        (a, b) => b.id - a.id
+      );
+      setData(sortedData);
     } catch (err) {
       console.error("Gagal mengambil data:", err);
       Swal.fire({
@@ -80,7 +85,35 @@ const KategoriData = () => {
     return matchSearch && matchFilter;
   });
 
-  const [showNomor, setShowNomor] = useState({});
+  // ================= LOADING =================
+  if (loading) {
+    return (
+      <div className="pl-[calc(15rem+1%)] pr-[5%] pt-[5%] md:pt-10 transition-all duration-300">
+        <div className="flex flex-col gap-6">
+          <SidebarT />
+
+          <div className="flex-1 flex flex-col gap-3 md:ml-6 bg-white shadow-lg rounded-lg p-6">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-2xl font-semibold text-gray-800 flex items-center gap-2">
+                <FaArchive className="text-green-400 text-3xl" />
+                Master Data
+              </h2>
+            </div>
+
+            <div className="flex items-center justify-center h-[60vh]">
+              <div className="bg-white/80 backdrop-blur-md shadow-xl rounded-2xl px-8 py-6 flex flex-col items-center gap-4">
+                <div className="w-12 h-12 rounded-full border-4 border-blue-300 border-t-blue-600 animate-spin" />
+                <p className="text-sm font-medium text-gray-600 tracking-wide">
+                  Memuat data...
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  // ================= END LOADING =================
 
   return (
     <div className="pl-[calc(15rem+1%)] pr-[5%] pt-[5%] md:pt-10 transition-all duration-300">
@@ -124,123 +157,109 @@ const KategoriData = () => {
             </div>
           </div>
 
-          {loading ? (
-            <p className="text-center py-4">Memuat data...</p>
-          ) : (
-            <div className="overflow-x-auto rounded-lg bg-white">
-              <table className="min-w-full text-sm border-separate border-spacing-y-1">
-                <thead>
-                  <tr className="bg-blue-600 text-white rounded-lg">
-                    <th className="px-4 py-2 text-center font-semibold">No</th>
-                    <th className="px-4 py-2 text-center font-semibold">
-                      Nama
-                    </th>
-                    <th className="px-4 py-2 text-center font-semibold">
-                      Email
-                    </th>
+          <div className="overflow-x-auto rounded-lg bg-white">
+            <table className="min-w-full text-sm border-separate border-spacing-y-1">
+              <thead>
+                <tr className="bg-blue-600 text-white rounded-lg">
+                  <th className="px-4 py-2 text-center font-semibold">No</th>
+                  <th className="px-4 py-2 text-center font-semibold">Nama</th>
+                  <th className="px-4 py-2 text-center font-semibold">Email</th>
+                  <th className="px-4 py-2 text-center font-semibold">
+                    Nomor Uniqe
+                  </th>
+                  <th className="px-4 py-2 text-center font-semibold">Level</th>
+                  <th className="px-4 py-2 text-center font-semibold">
+                    {filter === "Guru"
+                      ? "Mapel"
+                      : filter === "Siswa"
+                      ? "Kelas"
+                      : filter === "Karyawan"
+                      ? "Bagian"
+                      : "Mapel / Kelas"}
+                  </th>
+                  <th className="px-4 py-2 text-center font-semibold">Aksi</th>
+                </tr>
+              </thead>
 
-                    {/* ⭐ KOLOM BARU */}
-                    <th className="px-4 py-2 text-center font-semibold">
-                      Nomor Uniqe
-                    </th>
+              <tbody>
+                {filteredData.length > 0 ? (
+                  filteredData.map((item, index) => (
+                    <tr
+                      key={item.id || index}
+                      className="bg-gray-50 hover:bg-gray-100 rounded-md"
+                    >
+                      <td className="px-4 py-2 text-left">{index + 1}</td>
+                      <td className="px-4 py-2 text-left text-gray-700">
+                        {item.nama || "-"}
+                      </td>
+                      <td className="px-4 py-2 text-left text-gray-700">
+                        {item.email || "-"}
+                      </td>
 
-                    <th className="px-4 py-2 text-center font-semibold">
-                      Level
-                    </th>
-                    <th className="px-4 py-2 text-center font-semibold">
-                      {filter === "Guru"
-                        ? "Mapel"
-                        : filter === "Siswa"
-                        ? "Kelas"
-                        : filter === "Karyawan"
-                        ? "Bagian"
-                        : "Mapel / Kelas"}
-                    </th>
-                    <th className="px-4 py-2 text-center font-semibold">
-                      Aksi
-                    </th>
-                  </tr>
-                </thead>
+                      <td className="px-4 py-2 text-center text-gray-700">
+                        <div className="flex items-center justify-center gap-2">
+                          <span className="font-mono tracking-widest">
+                            {showNomor[index]
+                              ? item.nomorUnik || item.nomor || "-"
+                              : "••••••••"}
+                          </span>
+                          <button
+                            onClick={() =>
+                              setShowNomor((prev) => ({
+                                ...prev,
+                                [index]: !prev[index],
+                              }))
+                            }
+                            className="text-gray-600 hover:text-gray-900 transition"
+                          >
+                            {showNomor[index] ? (
+                              <FaEye size={18} />
+                            ) : (
+                              <FaEyeSlash size={18} />
+                            )}
+                          </button>
+                        </div>
+                      </td>
 
-                <tbody>
-                  {filteredData.length > 0 ? (
-                    filteredData.map((item, index) => (
-                      <tr
-                        key={item.id || index}
-                        className="bg-gray-50 hover:bg-gray-100 rounded-md"
-                      >
-                        <td className="px-4 py-2 text-left">{index + 1}</td>
-                        <td className="px-4 py-2 text-left text-gray-700">
-                          {item.nama || "-"}
-                        </td>
-                        <td className="px-4 py-2 text-left text-gray-700">
-                          {item.email || "-"}
-                        </td>
-
-                        {/* ⭐ KOLOM BARU */}
-                        <td className="px-4 py-2 text-center text-gray-700">
-  <div className="flex items-center justify-center gap-2">
-    <span className="font-mono tracking-widest">
-      {showNomor[index]
-        ? item.nomorUnik || item.nomorUnik || item.nomor || "-"
-        : "••••••••"}
-    </span>
-
-    <button
-      onClick={() =>
-        setShowNomor((prev) => ({
-          ...prev,
-          [index]: !prev[index],
-        }))
-      }
-      className="text-gray-600 hover:text-gray-900 transition"
-      title={showNomor[index] ? "Sembunyikan Nomor" : "Tampilkan Nomor"}
-    >
-      {showNomor[index] ? <FaEye size={18} /> : <FaEyeSlash size={18} />}
-    </button>
-  </div>
-</td>
-
-                        <td className="px-4 py-2 text-left text-gray-700">
-                          {item.kategori || "-"}
-                        </td>
-                        <td className="px-4 py-2 text-left text-gray-700">
-                          {item.jabatankelas || "-"}
-                        </td>
-                        <td className="px-4 py-3 text-left">
-                          <div className="flex justify-center gap-2">
-                            <button
-                              onClick={() =>
-                                navigate(`/editmasterdata/${item.id}`)
-                              }
-                              className="bg-gray-700 text-white px-3 py-2 rounded-md hover:bg-gray-600"
-                            >
-                              ✏
-                            </button>
-                            <button
-                              onClick={() => handleDelete(item.id)}
-                              className="bg-red-700 text-white px-3 py-2 rounded-md hover:bg-red-600"
-                            >
-                              🗑
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td
-                        colSpan="7"
-                        className="text-center py-5 text-gray-500 italic bg-gray-50 rounded-md"
-                      >
-                        Tidak ada data ditemukan.
+                      <td className="px-4 py-2 text-left text-gray-700">
+                        {item.kategori || "-"}
+                      </td>
+                      <td className="px-4 py-2 text-left text-gray-700">
+                        {item.jabatankelas || "-"}
+                      </td>
+                      <td className="px-4 py-3 text-left">
+                        <div className="flex justify-center gap-2">
+                          <button
+                            onClick={() =>
+                              navigate(`/editmasterdata/${item.id}`)
+                            }
+                            className="bg-gray-700 text-white px-3 py-2 rounded-md hover:bg-gray-600"
+                          >
+                            ✏
+                          </button>
+                          <button
+                            onClick={() => handleDelete(item.id)}
+                            className="bg-red-700 text-white px-3 py-2 rounded-md hover:bg-red-600"
+                          >
+                            🗑
+                          </button>
+                        </div>
                       </td>
                     </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          )}
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan="7"
+                      className="text-center py-5 text-gray-500 italic bg-gray-50 rounded-md"
+                    >
+                      Tidak ada data ditemukan.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>

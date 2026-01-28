@@ -6,7 +6,6 @@ import SidebarT from "../../Component/Sidebar";
 import { FaChartPie } from "react-icons/fa";
 import { BASE_URL } from "../../config/api";
 
-
 const KategoriTagihan = () => {
   const [kategori, setKategori] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -17,7 +16,10 @@ const KategoriTagihan = () => {
   const fetchData = async () => {
     try {
       const res = await axios.get(`${BASE_URL}/kategoritagihan`);
-      setKategori(res.data);
+       const sortedData = [...(res.data || [])].sort(
+        (a, b) => b.id - a.id
+      );
+      setKategori(sortedData);
     } catch (err) {
       console.error("Gagal mengambil data:", err);
       Swal.fire({
@@ -77,10 +79,8 @@ const KategoriTagihan = () => {
   return (
     <div className="pl-[calc(15rem+1%)] pr-[5%] pt-[5%] md:pt-10 transition-all duration-300">
       <div className="flex flex-col gap-6">
-        {/* Sidebar */}
         <SidebarT />
 
-        {/* Konten utama */}
         <div className="flex-1 flex flex-col gap-3 md:ml-6 bg-white shadow-lg rounded-lg p-6">
           {/* Header */}
           <div className="flex justify-between items-center mb-3">
@@ -107,24 +107,29 @@ const KategoriTagihan = () => {
             />
           </div>
 
-          {/* Tabel Data */}
+          {/* ===== LOADING MODERN ===== */}
           {loading ? (
-            <p className="text-center">Memuat data...</p>
+            <div className="flex items-center justify-center h-[60vh]">
+              <div className="bg-white/80 backdrop-blur-md shadow-xl rounded-2xl px-8 py-6 flex flex-col items-center gap-4">
+                <div className="w-12 h-12 rounded-full border-4 border-blue-300 border-t-blue-600 animate-spin" />
+                <p className="text-sm font-medium text-gray-600">
+                  Memuat data ......
+                </p>
+              </div>
+            </div>
           ) : (
             <div className="overflow-x-auto shadow-md rounded-lg">
               <table className="min-w-full border-collapse text-sm">
                 <thead>
                   <tr className="bg-blue-600 text-white">
-                    <th className="px-4 py-3 text-center font-semibold tracking-wide">
-                      No
-                    </th>
-                    <th className="px-4 py-3 text-center font-semibold tracking-wide">
+                    <th className="px-4 py-3 text-center font-semibold">No</th>
+                    <th className="px-4 py-3 text-center font-semibold">
                       Nama Kategori
                     </th>
-                    <th className="px-4 py-3 text-center font-semibold tracking-wide">
+                    <th className="px-4 py-3 text-center font-semibold">
                       Status
                     </th>
-                    <th className="px-4 py-3 text-center font-semibold tracking-wide">
+                    <th className="px-4 py-3 text-center font-semibold">
                       Aksi
                     </th>
                   </tr>
@@ -135,12 +140,10 @@ const KategoriTagihan = () => {
                     filteredData.map((item, index) => (
                       <tr
                         key={item.id}
-                        className="hover:bg-blue-50 transition duration-150 ease-in-out"
+                        className="hover:bg-blue-50 transition"
                       >
-                        <td className="px-4 py-3 text-gray-700 text-left">
-                          {index + 1}
-                        </td>
-                        <td className="px-4 py-3 text-gray-800 font-medium">
+                        <td className="px-4 py-3">{index + 1}</td>
+                        <td className="px-4 py-3 font-medium">
                           {item.nama}
                         </td>
                         <td className="px-4 py-3 text-center">
@@ -154,18 +157,18 @@ const KategoriTagihan = () => {
                             {item.status}
                           </span>
                         </td>
-                        <td className="px-4 py-3 text-center flex justify-center gap-2">
+                        <td className="px-4 py-3 flex justify-center gap-2">
                           <button
-                            onClick={() => navigate(`/editkategori/${item.id}`)}
-                            className="bg-gray-700 text-white px-3 py-2 rounded-md hover:bg-gray-600 transition"
-                            title="Edit Data"
+                            onClick={() =>
+                              navigate(`/editkategori/${item.id}`)
+                            }
+                            className="bg-gray-700 text-white px-3 py-2 rounded-md hover:bg-gray-600"
                           >
                             ✏
                           </button>
                           <button
                             onClick={() => handleDelete(item.id)}
-                            className="bg-red-700 text-white px-3 py-2 rounded-md hover:bg-red-600 transition"
-                            title="Hapus Data"
+                            className="bg-red-700 text-white px-3 py-2 rounded-md hover:bg-red-600"
                           >
                             🗑
                           </button>
@@ -176,7 +179,7 @@ const KategoriTagihan = () => {
                     <tr>
                       <td
                         colSpan="4"
-                        className="text-center py-5 text-gray-500 italic bg-gray-50 rounded-b-lg"
+                        className="text-center py-5 text-gray-500 italic bg-gray-50"
                       >
                         Tidak ada data kategori ditemukan.
                       </td>

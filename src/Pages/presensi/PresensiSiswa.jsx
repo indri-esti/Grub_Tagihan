@@ -64,6 +64,21 @@ const PresensiSiswa = () => {
     FetchMasterUser();
   }, []);
 
+  if (Loading) {
+  return (
+    <div className="flex items-center justify-center h-[60vh]">
+      <div className="bg-white/80 backdrop-blur-md shadow-xl rounded-2xl px-8 py-6 flex flex-col items-center gap-4">
+        <div className="w-12 h-12 rounded-full border-4 border-green-300 border-t-green-600 animate-spin" />
+        <p className="text-sm font-medium text-gray-600">
+          Menyiapkan sistem presensi...
+        </p>
+      </div>
+    </div>
+  );
+}
+
+
+
  return (
 
     <div className="flex flex-col gap-6">
@@ -84,7 +99,7 @@ const PresensiSiswa = () => {
 {/* RUNNING TEXT */}
         <div className="relative overflow-hidden bg-gradient-to-r from-green-50 to-green-100 rounded-xl py-3">
           <div className="whitespace-nowrap animate-marquee text-green-700 font-semibold text-sm md:text-base">
-            📢 Selamat datang di sistem presensi — Silakan pilih menu presensi di bawah — Pastikan data presensi Anda benar dan sesuai 
+            📢 Selamat datang di sistem presensi — Silakan pilih menu presensi di bawah — Pastikan Nomor Uniqe presensi Anda benar dan sesuai - Gunakan menu di bawah sesuai kebutuhan
           </div>
         </div>
 

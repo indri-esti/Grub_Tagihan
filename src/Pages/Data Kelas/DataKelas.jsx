@@ -6,7 +6,6 @@ import SidebarT from "../../Component/Sidebar";
 import { FaChalkboard } from "react-icons/fa";
 import { BASE_URL } from "../../config/api";
 
-
 const DataKelas = () => {
   const [kelasData, setKelasData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -83,6 +82,38 @@ const DataKelas = () => {
     return cocokKelas && cocokJurusan;
   });
 
+  // ================= LOADING =================
+  if (loading) {
+    return (
+      <div className="pl-[calc(15rem+1%)] pr-[5%] pt-[5%] md:pt-10 transition-all duration-300">
+        <div className="flex flex-col gap-6">
+          <SidebarT />
+
+          <div className="flex-1 flex flex-col gap-3 md:ml-6 bg-white shadow-lg rounded-lg p-6">
+            {/* Header */}
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-2xl font-semibold text-gray-800 flex items-center gap-2">
+                <FaChalkboard className="text-orange-400 text-3xl" />
+                Data Kelas
+              </h2>
+            </div>
+
+            {/* Loading Spinner */}
+            <div className="flex items-center justify-center h-[60vh]">
+              <div className="bg-white/80 backdrop-blur-md shadow-xl rounded-2xl px-8 py-6 flex flex-col items-center gap-4">
+                <div className="w-12 h-12 rounded-full border-4 border-blue-300 border-t-blue-600 animate-spin" />
+                <p className="text-sm font-medium text-gray-600 tracking-wide">
+                  Memuat data...
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  // ================= END LOADING =================
+
   return (
     <div className="pl-[calc(15rem+1%)] pr-[5%] pt-[5%] md:pt-10 transition-all duration-300">
       <div className="flex flex-col gap-6">
@@ -98,7 +129,6 @@ const DataKelas = () => {
 
           {/* Filter Bar */}
           <div className="flex flex-wrap items-center gap-3 mb-4">
-            {/* Filter Kelas */}
             <select
               value={selectedKelas}
               onChange={(e) => setSelectedKelas(e.target.value)}
@@ -111,7 +141,6 @@ const DataKelas = () => {
               ))}
             </select>
 
-            {/* Filter Jurusan */}
             <select
               value={selectedJurusan}
               onChange={(e) => setSelectedJurusan(e.target.value)}
@@ -124,7 +153,6 @@ const DataKelas = () => {
               ))}
             </select>
 
-            {/* Tombol Tambah */}
             <button
               onClick={() => navigate("/tambah_datakelas")}
               className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition ml-auto"
@@ -134,63 +162,57 @@ const DataKelas = () => {
           </div>
 
           {/* Tabel Data */}
-          {loading ? (
-            <p className="text-center py-6">Memuat data...</p>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full border-collapse text-sm text-gray-800 shadow-sm rounded-lg overflow-hidden">
-                <thead className="bg-blue-700 text-white">
-                  <tr>
-                    <th className="px-4 py-3 text-center font-medium">No</th>
-                    <th className="px-4 py-3 text-center font-medium">Kelas</th>
-                    <th className="px-4 py-3 text-center font-medium">
-                      Jurusan
-                    </th>
-                    <th className="px-4 py-3 text-center font-medium">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {filteredData.length > 0 ? (
-                    filteredData.map((item, index) => (
-                      <tr
-                        key={item.id}
-                        className="hover:bg-gray-50 transition-all duration-200"
-                      >
-                        <td className="px-4 py-3 text-left">{index + 1}</td>
-                        <td className="px-4 py-3 text-left">{item.kelas}</td>
-                        <td className="px-4 py-3 text-left">{item.jurusan}</td>
-                        <td className="px-4 py-3 text-center flex justify-center gap-2">
-                          <button
-                            onClick={() =>
-                              navigate(`/edit_datakelas/${item.id}`)
-                            }
-                            className="bg-gray-700 text-white px-3 py-1 rounded-md hover:bg-gray-800 transition"
-                          >
-                            ✏
-                          </button>
-                          <button
-                            onClick={() => handleDelete(item.id)}
-                            className="bg-red-600 text-white px-3 py-1 rounded-md hover:bg-red-700 transition"
-                          >
-                            🗑
-                          </button>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td
-                        colSpan="4"
-                        className="text-center py-4 text-gray-500 italic"
-                      >
-                        Tidak ada data kelas ditemukan.
+          <div className="overflow-x-auto">
+            <table className="min-w-full border-collapse text-sm text-gray-800 shadow-sm rounded-lg overflow-hidden">
+              <thead className="bg-blue-700 text-white">
+                <tr>
+                  <th className="px-4 py-3 text-center font-medium">No</th>
+                  <th className="px-4 py-3 text-center font-medium">Kelas</th>
+                  <th className="px-4 py-3 text-center font-medium">Jurusan</th>
+                  <th className="px-4 py-3 text-center font-medium">Aksi</th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {filteredData.length > 0 ? (
+                  filteredData.map((item, index) => (
+                    <tr
+                      key={item.id}
+                      className="hover:bg-gray-50 transition-all duration-200"
+                    >
+                      <td className="px-4 py-3 text-left">{index + 1}</td>
+                      <td className="px-4 py-3 text-left">{item.kelas}</td>
+                      <td className="px-4 py-3 text-left">{item.jurusan}</td>
+                      <td className="px-4 py-3 text-center flex justify-center gap-2">
+                        <button
+                          onClick={() =>
+                            navigate(`/edit_datakelas/${item.id}`)
+                          }
+                          className="bg-gray-700 text-white px-3 py-1 rounded-md hover:bg-gray-800 transition"
+                        >
+                          ✏
+                        </button>
+                        <button
+                          onClick={() => handleDelete(item.id)}
+                          className="bg-red-600 text-white px-3 py-1 rounded-md hover:bg-red-700 transition"
+                        >
+                          🗑
+                        </button>
                       </td>
                     </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          )}
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan="4"
+                      className="text-center py-4 text-gray-500 italic"
+                    >
+                      Tidak ada data kelas ditemukan.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>

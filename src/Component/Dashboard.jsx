@@ -289,18 +289,65 @@ const filteredPresensi = Presensi.filter((p) => {
   return user?.nama || "-";
 };
 
-
+const [darkMode, setDarkMode] = useState(false);
 
 
   return (
-    <div className="pl-[calc(15rem+2%)] pr-[4%] pt-[4%] bg-gray-100 min-h-screen transition-all duration-300">
+    <div
+  className={`pl-[calc(15rem+2%)] pr-[4%] pt-[4%] min-h-screen transition-all duration-300
+  ${darkMode ? "dark bg-gray-900" : "bg-gray-100"}`}
+>
       <SidebarT />
       
+  <button
+  onClick={() => setDarkMode(!darkMode)}
+  className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold
+    border shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200
+    ${
+      darkMode
+        ? "bg-gray-800 text-gray-100 border-gray-700"
+        : "bg-white text-gray-800 border-gray-200"
+    }
+  `}
+>
+  {darkMode ? "🌙 Mode Gelap" : "☀️ Mode Terang"}
+</button>
+
+
 
       <div className="p-6 md:p-10 max-w-10xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-800 text-center mb-10 flex items-center justify-center gap-2">
-          <FaChartBar className="text-blue-600" /> Dashboard
-        </h1>
+        <div className="mb-8 rounded-2xl bg-white/70 backdrop-blur-md shadow flex items-center justify-between px-6 py-4">
+      
+
+  {/* CONTAINER HEADER */}
+<div className="w-full flex flex-col items-center justify-center py-4 gap-2">
+  
+
+  {/* JUDUL TENGAH */}
+  <div className="flex items-center gap-3">
+    <FaChartBar className="text-blue-600 text-2xl" />
+    <h1 className="text-2xl font-bold text-gray-800">
+      Dashboard
+    </h1>
+  </div>
+
+  {/* MARQUEE DI BAWAH */}
+  <div className="w-full max-w-3xl overflow-hidden">
+    <div className="whitespace-nowrap animate-marquee text-sm text-gray-600 text-center">
+      📢 Selamat datang di School Web Dashboard —
+      🔔 Sistem monitoring data terpusat dan terintegrasi —
+      🕒 {new Date().toLocaleDateString("id-ID", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      })}
+    </div>
+  </div>
+</div>
+  </div>
+
+</div>
 
         {/* === KARTU === */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-12">
@@ -450,7 +497,7 @@ const filteredPresensi = Presensi.filter((p) => {
                       <td className="py-2 px-4 text-left">{s.nama}</td>
                       <td className="py-2 px-4 text-left">{s.email}</td>
                       <td className="py-2 px-4 text-left">{s.kategori}</td>
-                      <td className="py-2 px-4 text-left">{s.jabatan_kelas}</td>
+                      <td className="py-2 px-4 text-left">{s.jabatankelas}</td>
                     </tr>
                   ))
               )}
@@ -493,7 +540,7 @@ const filteredPresensi = Presensi.filter((p) => {
                       <td className="py-2 px-4 text-left">{g.nama}</td>
                       <td className="py-2 px-4 text-left">{g.email}</td>
                       <td className="py-2 px-4 text-left">{g.kategori}</td>
-                      <td className="py-2 px-4 text-left">{g.jabatan_kelas}</td>
+                      <td className="py-2 px-4 text-left">{g.jabatankelas}</td>
                     </tr>
                   ))
               )}
@@ -536,7 +583,7 @@ const filteredPresensi = Presensi.filter((p) => {
                       <td className="py-2 px-4 text-left">{k.nama}</td>
                       <td className="py-2 px-4 text-left">{k.email}</td>
                       <td className="py-2 px-4 text-left">{k.kategori}</td>
-                      <td className="py-2 px-4 text-left">{k.jabatan_kelas}</td>
+                      <td className="py-2 px-4 text-left">{k.jabatankelas}</td>
                     </tr>
                   ))
               )}
@@ -591,6 +638,5 @@ const filteredPresensi = Presensi.filter((p) => {
           </table>
         </div>
       </div>
-    </div>
   );
-}
+} 

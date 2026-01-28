@@ -375,8 +375,7 @@ const isThisYear = (dateStr) => {
               Rekap Presensi
             </h2>
           </div>
-
-          {/* FILTER */}
+          
           <div className="flex flex-col sm:flex-row gap-3 mb-5 items-start sm:items-center">
             <label className="font-medium text-gray-700">Filter Rekapan:</label>
 
@@ -428,10 +427,22 @@ const isThisYear = (dateStr) => {
 
           </div>
 
-          {/* TABLE */}
+
+          {/* ================= TABLE ================= */}
+           {/* ================= LOADING MODERN ================= */}
           {loading ? (
-            <p className="text-center py-4 text-gray-500">Memuat data...</p>
+            <div className="flex items-center justify-center h-[60vh]">
+              <div className="bg-white/80 backdrop-blur-md shadow-xl rounded-2xl px-8 py-6 flex flex-col items-center gap-4">
+                <div className="w-12 h-12 rounded-full border-4 border-blue-300 border-t-blue-600 animate-spin" />
+                <p className="text-sm font-medium text-gray-600 tracking-wide">
+                  Memuat data presensi...
+                </p>
+              </div>
+            </div>
+
           ) : (
+
+          
             <div className="overflow-x-auto">
               <table className="min-w-full text-sm text-gray-700 border border-gray-300/60 rounded-xl overflow-hidden shadow-sm">
                 <thead>
@@ -574,5 +585,5 @@ const isThisYear = (dateStr) => {
     </div>
   );
 };
-
+        
 export default RekapPresensi;
