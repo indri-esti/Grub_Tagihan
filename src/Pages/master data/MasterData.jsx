@@ -201,7 +201,7 @@ const KategoriData = () => {
                           <span className="font-mono tracking-widest">
                             {showNomor[index]
                               ? item.nomorUnik || item.nomor || "-"
-                              : "••••••••"}
+                              : "●●●●●●●●"}
                           </span>
                           <button
                             onClick={() =>
@@ -213,9 +213,9 @@ const KategoriData = () => {
                             className="text-gray-600 hover:text-gray-900 transition"
                           >
                             {showNomor[index] ? (
-                              <FaEye size={18} />
+                              <FaEye className="text-gray-700" size={16} />
                             ) : (
-                              <FaEyeSlash size={18} />
+                             <FaEyeSlash className="text-gray-700" size={16} />
                             )}
                           </button>
                         </div>

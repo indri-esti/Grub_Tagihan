@@ -476,7 +476,7 @@ const isThisYear = (dateStr) => {
                           <td className="px-4 py-3 text-center">
   <div className="flex items-center justify-center gap-2">
     <span className="font-mono tracking-widest">
-      {showNomor[item.id] ? nomor : "••••••••"}
+      {showNomor[item.id] ? nomor : "●●●●●●●●"}
     </span>
 
     <button
@@ -490,9 +490,9 @@ const isThisYear = (dateStr) => {
       title={showNomor[item.id] ? "Sembunyikan" : "Tampilkan"}
     >
       {showNomor[item.id] ? (
-        <FaEye size={18} /> 
+        <FaEye className="text-gray-700" size={16} />
       ) : (
-        <FaEyeSlash size={18} />
+       <FaEyeSlash className="text-gray-700" size={16} />
       )}
     </button>
   </div>

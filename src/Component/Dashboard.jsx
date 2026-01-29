@@ -423,20 +423,24 @@ const [darkMode, setDarkMode] = useState(false);
                       <td className="px-4 py-3 text-center">
   <div className="flex items-center justify-center gap-2">
     <span className="font-mono tracking-widest">
-      {showNomor[i] ? nomorUnik : "••••••••"}
+      {showNomor[i] ? nomorUnik : "●●●●●●●●"}
     </span>
 
-    <button
+     <button
       onClick={() =>
         setShowNomor((prev) => ({
           ...prev,
           [i]: !prev[i],
         }))
       }
-      className="text-gray-600 hover:text-gray-900 transition"
-      title={showNomor[i] ? "Sembunyikan Nomor" : "Tampilkan Nomor"}
+      className=" bg-gray-100 hover:bg-gray-200 transition"
+      title={showNomor[i] ? "Tampilkan" : "Sembunyikan"}
     >
-      {showNomor[i] ? <FaEye size={18} /> : <FaEyeSlash size={18} />}
+      {showNomor[i] ? (
+        <FaEye className="text-gray-700" size={16} />
+      ) : (
+        <FaEyeSlash className="text-gray-700" size={16} />
+      )}
     </button>
   </div>
 </td>
