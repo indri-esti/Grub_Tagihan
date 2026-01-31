@@ -143,91 +143,94 @@ const PresensiMasuk = () => {
   // UI (TAMPILAN TETAP)
   // ==============================
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-      <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-gray-200 p-8">
+  <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-black px-4">
+    <div className="w-full max-w-md bg-gray-950 rounded-3xl shadow-2xl border border-emerald-500/40 p-7 text-white">
 
-        {/* HEADER */}
-        <div className="flex flex-col items-center mb-7">
-          <div className="w-16 h-16 flex items-center justify-center rounded-full border-2 border-green-600 mb-3">
-            <FaDoorOpen className="text-3xl text-green-600" />
-          </div>
-          <h2 className="text-3xl font-extrabold text-gray-800 tracking-wide">
-            Presensi Masuk
-          </h2>
-          <div className="w-full overflow-hidden mt-2 rounded-lg border border-green-500 bg-black">
-  <div
-    className="whitespace-nowrap text-green-400 text-sm font-mono  py-2"
-    style={{
-      animation: "marquee 12s linear infinite",
-    }}
-  >
-    ⏱️ SISTEM KEHADIRAN DIGITAL • PRESENSI OTOMATIS • REALTIME • AMAN • AKURAT •
-  </div>
-</div>
-
+      {/* HEADER */}
+      <div className="flex flex-col items-center mb-6">
+        <div className="w-14 h-14 flex items-center justify-center rounded-xl border border-emerald-400 bg-black shadow-inner">
+          <FaDoorOpen className="text-2xl text-emerald-400" />
         </div>
 
-        {/* JAM */}
-        <div className="mb-8">
+        <h2 className="mt-3 text-xl font-bold tracking-widest text-emerald-400">
+          PRESENSI DIGITAL
+        </h2>
+
+        <p className="text-xs text-gray-400 tracking-wider mt-1">
+          SISTEM KEHADIRAN OTOMATIS
+        </p>
+      </div>
+
+      {/* JAM DIGITAL */}
+      <div className="mb-6">
+        <div
+          className="text-center text-4xl font-mono tracking-[6px] select-none"
+          style={{
+            background: "#000",
+            color: "#39ff14",
+            padding: "20px 0",
+            borderRadius: "14px",
+            border: "2px solid #00ff99",
+            boxShadow:
+              "inset 0 0 15px rgba(0,255,150,.8), 0 0 18px rgba(0,255,150,.6)",
+          }}
+        >
+          {jam}
+        </div>
+
+        {/* SCAN BAR (VISUAL ONLY) */}
+        <div className="mt-3 border border-emerald-500 rounded-lg overflow-hidden">
           <div
-            className="text-center text-4xl font-mono tracking-widest select-none"
-            style={{
-              background: "#000",
-              color: "#39ff14",
-              padding: "18px 0",
-              borderRadius: "16px",
-              fontWeight: "bold",
-              letterSpacing: "6px",
-              border: "2px solid #00ff00",
-              boxShadow:
-                "inset 0 0 12px rgba(0,255,0,0.8), 0 0 10px rgba(0,255,0,0.7)",
-            }}
+            className="text-center text-emerald-400 text-xs py-2 font-mono bg-black"
+            style={{ animation: "marquee 10s linear infinite" }}
           >
-            {jam}
+            ⏱️ SCANNING ID • REALTIME • TERENKRIPSI •
           </div>
-        </div>
-
-        {/* FORM */}
-        <div className="space-y-6">
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Nomor Unik
-            </label>
-            <input
-              type="text"
-              placeholder="Masukkan Nomor Unik"
-              value={form.nomorUnik}
-              onChange={handleNomorChange}
-              className="w-full px-5 py-3 text-lg rounded-2xl border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition shadow-sm"
-            />
-          </div>
-
-          {/* NAMA OTOMATIS */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Nama Siswa
-            </label>
-            <input
-              type="text"
-              value={nama}
-              readOnly
-              placeholder="Nama otomatis"
-              className="w-full px-5 py-3 text-lg rounded-2xl border border-gray-300 bg-gray-100 text-gray-700 cursor-not-allowed"
-            />
-          </div>
-
-          {/* TOMBOL SIMPAN DIHILANGKAN */}
-
-          <button
-            onClick={batal}
-            className="w-full py-3 rounded-2xl text-lg font-semibold bg-gray-200 hover:bg-gray-300 text-gray-700 transition"
-          >
-            Batal
-          </button>
         </div>
       </div>
+
+      {/* FORM */}
+      <div className="space-y-5">
+        <div>
+          <label className="block text-xs text-gray-400 mb-1 tracking-wider">
+            Nomor Unik
+          </label>
+          <input
+            type="text"
+            placeholder="SCAN / INPUT NOMOR"
+            value={form.nomorUnik}
+            onChange={handleNomorChange}
+            className="w-full px-5 py-3 text-lg rounded-xl bg-black border border-emerald-500/50
+            text-emerald-300 font-mono tracking-widest
+            focus:ring-2 focus:ring-emerald-500 outline-none"
+          />
+        </div>
+
+        <div>
+          <label className="block text-xs text-gray-400 mb-1 tracking-wider">
+            Nama Siswa
+          </label>
+          <input
+            type="text"
+            value={nama}
+            readOnly
+            placeholder="TERDETEKSI OTOMATIS"
+            className="w-full px-5 py-3 text-lg rounded-xl bg-gray-900 border border-gray-700
+            text-gray-300 cursor-not-allowed"
+          />
+        </div>
+
+        <button
+          onClick={batal}
+          className="w-full py-3 rounded-xl text-sm tracking-widest font-semibold
+          bg-gray-800 hover:bg-gray-700 text-gray-300 transition"
+        >
+          KEMBALI
+        </button>
+      </div>
     </div>
-  );
+  </div>
+);
 };
 
 export default PresensiMasuk;

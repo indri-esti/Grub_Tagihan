@@ -121,7 +121,7 @@ const PresensiPulang = () => {
 
         const jamSekarang =
           now.getHours() * 60 + now.getMinutes();
-        const batasPulang = 13 * 60;
+        const batasPulang = 10 * 60;
 
         if (jamSekarang < batasPulang) {
           await Swal.fire(
@@ -178,97 +178,105 @@ const PresensiPulang = () => {
   // UI FINAL (TIDAK DIUBAH)
   // ==============================
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-      <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-gray-200 p-8">
+  <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-black px-4">
+    <div className="w-full max-w-md bg-gray-950 rounded-3xl shadow-2xl border border-red-500/40 p-7 text-white">
 
-        <div className="flex flex-col items-center mb-7">
-          <div className="w-16 h-16 flex items-center justify-center rounded-full border-2 border-red-600 mb-3">
-            <FaDoorClosed className="text-3xl text-red-600" />
-          </div>
-          <h2 className="text-3xl font-extrabold text-gray-800 tracking-wide">
-            Presensi Pulang
-          </h2>
-         <div className="w-full overflow-hidden mt-2 rounded-lg border border-red-500 bg-black">
-
-  <div
-    className="whitespace-nowrap text-red-400 text-sm font-mono py-2"
-    style={{
-      animation: "marquee 12s linear infinite",
-    }}
-  >
-    ⏰ SISTEM PULANG DIGITAL • PRESENSI PULANG OTOMATIS • REALTIME • AMAN • AKURAT •
-  </div>
-</div>
-
+      {/* HEADER */}
+      <div className="flex flex-col items-center mb-6">
+        <div className="w-14 h-14 flex items-center justify-center rounded-xl border border-red-500 bg-black shadow-inner">
+          <FaDoorClosed className="text-2xl text-red-500" />
         </div>
 
-        <div className="mb-8">
+        <h2 className="mt-3 text-xl font-bold tracking-widest text-red-400">
+          PRESENSI PULANG
+        </h2>
+
+        <p className="text-xs text-gray-400 tracking-wider mt-1">
+          SISTEM PULANG DIGITAL
+        </p>
+      </div>
+
+      {/* JAM DIGITAL */}
+      <div className="mb-6">
+        <div
+          className="text-center text-4xl font-mono tracking-[6px] select-none"
+          style={{
+            background: "#000",
+            color: "#ff3b3b",
+            padding: "20px 0",
+            borderRadius: "14px",
+            border: "2px solid #ff3b3b",
+            boxShadow:
+              "inset 0 0 15px rgba(255,50,50,.8), 0 0 18px rgba(255,50,50,.6)",
+          }}
+        >
+          {jam}
+        </div>
+
+        {/* SCAN BAR */}
+        <div className="mt-3 border border-red-500 rounded-lg overflow-hidden">
           <div
-            className="text-center text-4xl font-mono tracking-widest select-none"
-            style={{
-              background: "#000",
-              color: "#ff3333",
-              padding: "18px 0",
-              borderRadius: "16px",
-              fontWeight: "bold",
-              letterSpacing: "6px",
-              border: "2px solid #ff0000",
-              boxShadow:
-                "inset 0 0 12px rgba(255,0,0,0.8), 0 0 10px rgba(255,0,0,0.6)",
-            }}
+            className="text-center text-red-400 text-xs py-2 font-mono bg-black"
+            style={{ animation: "marquee 10s linear infinite" }}
           >
-            {jam}
+            ⏰ SCAN PULANG • REALTIME • TERVALIDASI •
           </div>
-        </div>
-
-        <div className="space-y-6">
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Nomor Unik
-            </label>
-            <input
-              type="text"
-              inputMode="numeric"
-              pattern="[0-9]*"
-              placeholder="Masukkan Nomor Unik"
-              value={nomorUnik}
-              onChange={(e) => {
-                const onlyNumber = e.target.value.replace(/\D/g, "");
-                setNomorUnik(onlyNumber);
-              }}
-              onKeyDown={(e) => {
-  if (e.key === "Enter") {
-    e.preventDefault(); // ⬅️ INI KUNCINYA
-    setTriggerSubmit(true);
-  }
-}}
-              className="w-full px-5 py-3 text-lg rounded-2xl border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition shadow-sm"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Nama Siswa
-            </label>
-            <input
-              type="text"
-              value={nama}
-              readOnly
-              placeholder="Nama otomatis"
-              className="w-full px-5 py-3 text-lg rounded-2xl border border-gray-300 bg-gray-100 text-gray-700 cursor-not-allowed"
-            />
-          </div>
-
-          <button
-            onClick={batal}
-            className="w-full py-3 rounded-2xl text-lg font-semibold bg-gray-200 hover:bg-gray-300 text-gray-700 transition"
-          >
-            Batal
-          </button>
         </div>
       </div>
+
+      {/* FORM */}
+      <div className="space-y-5">
+        <div>
+          <label className="block text-xs text-gray-400 mb-1 tracking-wider">
+            Nomor Unik
+          </label>
+          <input
+            type="text"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            placeholder="SCAN / INPUT NOMOR"
+            value={nomorUnik}
+            onChange={(e) => {
+              const onlyNumber = e.target.value.replace(/\D/g, "");
+              setNomorUnik(onlyNumber);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                setTriggerSubmit(true);
+              }
+            }}
+            className="w-full px-5 py-3 text-lg rounded-xl bg-black border border-red-500/50
+            text-red-300 font-mono tracking-widest
+            focus:ring-2 focus:ring-red-500 outline-none"
+          />
+        </div>
+
+        <div>
+          <label className="block text-xs text-gray-400 mb-1 tracking-wider">
+            Nama Siswa
+          </label>
+          <input
+            type="text"
+            value={nama}
+            readOnly
+            placeholder="TERDETEKSI OTOMATIS"
+            className="w-full px-5 py-3 text-lg rounded-xl bg-gray-900 border border-gray-700
+            text-gray-300 cursor-not-allowed"
+          />
+        </div>
+
+        <button
+          onClick={batal}
+          className="w-full py-3 rounded-xl text-sm tracking-widest font-semibold
+          bg-gray-800 hover:bg-gray-700 text-gray-300 transition"
+        >
+          KEMBALI
+        </button>
+      </div>
     </div>
-  );
+  </div>
+);
 };
 
 export default PresensiPulang;
