@@ -241,11 +241,17 @@ const handleDelete = (item) => {
     }
     return "Alpa";
   };
-  const formatTanggal = (tgl) => {
+ const formatTanggal = (tgl) => {
   if (!tgl) return "";
   const d = new Date(tgl);
-  return d.toLocaleDateString("id-ID"); // dd/mm/yyyy
+  if (isNaN(d)) return "";
+  return d.toLocaleDateString("id-ID", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  }); // 02/02/2026
 };
+
 
 
 const isSameDay = (dateStr) => {

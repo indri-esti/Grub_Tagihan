@@ -17,7 +17,7 @@ const DataKelas = () => {
   const fetchData = async () => {
     try {
       const res = await axios.get(`${BASE_URL}/datakelas`);
-      setKelasData(res.data);
+      setKelasData([...res.data].reverse());
     } catch (err) {
       console.error("Gagal mengambil data:", err);
       Swal.fire({

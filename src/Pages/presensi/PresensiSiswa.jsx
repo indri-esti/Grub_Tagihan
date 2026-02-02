@@ -58,7 +58,7 @@ const PresensiSiswa = () => {
     console.error("Gagal ambil master user:", err);
   }
 };
-
+ 
   useEffect(() => {
     FetchData();
     FetchMasterUser();
