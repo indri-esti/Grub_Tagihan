@@ -142,30 +142,28 @@ return "Alpa";
     // ================= IZIN =================
     try {
       const izinRes = await axios.get(`${BASE_URL}/izinpresensi`);
-      izinData = izinRes.data || [];
-    } catch (err) {
-      console.warn("Izin presensi gagal:", err);
-    }
+  izinData = izinRes.data || [];
+} catch (err) {
+  console.warn("Izin presensi gagal:", err);
+}
 
-    const gabunganData = [...presensiData, ...izinData];
+// 🔥 GABUNG + SORT SEKALI SAJA
+const gabunganData = [...presensiData, ...izinData];
 
-    gabunganData.sort((a, b) => {
-      const dateA = a.tanggal ? new Date(a.tanggal).getTime() : 0;
-const dateB = b.tanggal ? new Date(b.tanggal).getTime() : 0;
-      if (dateA !== dateB) return dateB - dateA;
+gabunganData.sort((a, b) => {
+  // 🔥 1. UPDATED_AT (PALING PENTING)
+  const updatedA = new Date(a.updated_at || a.updatedAt || 0).getTime();
+  const updatedB = new Date(b.updated_at || b.updatedAt || 0).getTime();
+  if (updatedA !== updatedB) return updatedB - updatedA;
 
-      const toMinutes = (t) => {
-        if (!t) return 0;
-        const [h, m] = t.replace(".", ":").split(":").map(Number);
-        return h * 60 + m;
-      };
+  // 🔥 2. TANGGAL
+  const dateA = a.tanggal ? new Date(a.tanggal).getTime() : 0;
+  const dateB = b.tanggal ? new Date(b.tanggal).getTime() : 0;
+  if (dateA !== dateB) return dateB - dateA;
 
-      const timeA = toMinutes(a.jamMasuk || a.jamPulang);
-      const timeB = toMinutes(b.jamMasuk || b.jamPulang);
-      if (timeA !== timeB) return timeB - timeA;
-
-      return 0;
-    });
+  // 🔥 3. ID TERBESAR DI ATAS
+  return (b.id || 0) - (a.id || 0);
+});
 
     setData(gabunganData);
     setFilteredData(gabunganData);

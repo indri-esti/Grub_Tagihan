@@ -166,8 +166,8 @@ const fetchDashboard = async () => {
 const fetchMasterUser = async () => {
   try {
     const res = await axios.get(`${BASE_URL}/masterdata`);
-    setMasterUser(res.data || []);
-    setKategoriData(res.data || []);
+    setMasterUser([...res.data].reverse());
+    setKategoriData([...res.data].reverse());
   } catch (err) {
     console.error("Gagal ambil master data:", err);
   }
@@ -177,11 +177,13 @@ const fetchMasterUser = async () => {
 const fetchTagihan = async () => {
   try {
     const res = await axios.get(`${BASE_URL}/tagihan`);
-    setTagihan(res.data || []);
+    const sorted = [...(res.data || [])].sort((a, b) => b.id - a.id);
+    setTagihan(sorted);
   } catch (err) {
     console.error("Gagal ambil tagihan:", err);
   }
 };
+
 
 const hitungTotalTagihan = (data) => {
   return data.reduce((total, item) => {
@@ -193,22 +195,59 @@ const hitungTotalTagihan = (data) => {
 const fetchPresensi = async () => {
   try {
     const res = await axios.get(`${BASE_URL}/presensi`);
-    setPresensi(res.data || []);
+    const presensiData = res.data || [];
+
+    presensiData.sort((a, b) => {
+      // 1️⃣ terakhir diedit / dibuat
+      const updatedA = new Date(a.updated_at || a.updatedAt || 0).getTime();
+      const updatedB = new Date(b.updated_at || b.updatedAt || 0).getTime();
+      if (updatedA !== updatedB) return updatedB - updatedA;
+
+      // 2️⃣ tanggal presensi
+      const dateA = a.tanggal ? new Date(a.tanggal).getTime() : 0;
+      const dateB = b.tanggal ? new Date(b.tanggal).getTime() : 0;
+      if (dateA !== dateB) return dateB - dateA;
+
+      // 3️⃣ id terbesar di atas
+      return (b.id || 0) - (a.id || 0);
+    });
+
+    setPresensi(presensiData);
   } catch (err) {
     console.error("Gagal ambil presensi:", err);
   }
 };
+
 
 const [IzinPresensi, setIzinPresensi] = useState([]);
 
  const fetchIzinPresensi = async () => {
   try {
     const res = await axios.get(`${BASE_URL}/izinpresensi`);
-    setIzinPresensi(res.data || []);
+    const izinData = res.data || [];
+
+    izinData.sort((a, b) => {
+      // 🔥 prioritas terakhir diedit
+      const updatedA = new Date(a.updated_at || a.updatedAt || 0).getTime();
+      const updatedB = new Date(b.updated_at || b.updatedAt || 0).getTime();
+      if (updatedA !== updatedB) return updatedB - updatedA;
+
+      // 🔥 fallback tanggal
+      const dateA = a.tanggal ? new Date(a.tanggal).getTime() : 0;
+      const dateB = b.tanggal ? new Date(b.tanggal).getTime() : 0;
+      if (dateA !== dateB) return dateB - dateA;
+
+      // 🔥 terakhir id
+      return (b.id || 0) - (a.id || 0);
+    });
+
+    setIzinPresensi(izinData);
   } catch (err) {
     console.error("Gagal ambil izin presensi:", err);
   }
 };
+
+
 
 
 useEffect(() => {
@@ -290,6 +329,7 @@ const filteredPresensi = Presensi.filter((p) => {
 };
 
 const [darkMode, setDarkMode] = useState(false);
+
 
 
   return (
