@@ -2,620 +2,72 @@
   "users": [
     {
       "id": "aadb",
-      "name": "indri esti",
       "email": "",
-      "password": "",
-      "jurusan": "yghn",
-      "angkatan": "3536",
-      "status": "243546"
-    },
-    {
-      "id": "7842",
-      "name": "indri esti",
-      "email": "",
-      "password": "",
-      "jurusan": "yghn",
-      "angkatan": "3536",
-      "status": "243546"
-    },
-    {
-      "id": "de07",
-      "name": "indri esti",
-      "keterangan": "yiyi",
-      "nisn": "iyh67687686",
-      "nohp": "6868678",
-      "deskripsi": "ggf",
-      "harga": "400",
-      "tanggal": "2025-20-23",
-      "status": "Belum Lunas"
-    },
-    {
-      "id": "3261",
-      "name": "indri esti",
-      "keterangan": "yiyi",
-      "nisn": "4675",
-      "nohp": "808070779",
-      "deskripsi": "ggf",
-      "harga": "400",
-      "tanggal": "2025-20-23",
-      "status": "Sudah Lunas"
-    },
-    {
-      "id": "4619",
-      "name": "indri esti",
-      "keterangan": "yiyi",
-      "nisn": "4675",
-      "nohp": "6868678",
-      "deskripsi": "ggf",
-      "harga": "500",
-      "tanggal": "2025-20-23",
-      "status": "Sudah Lunas"
+      "nama": "",
+      "password": ""
+      
     }
   ],
   "tagihan": [
     {
       "id": "8703",
-      "nama": "indri esti",
-      "keterangan": "SPP",
-      "harga": "600000",
-      "tanggal": "06/11/2025",
-      "status": "Lunas"
-    },
-    {
-      "nama": "Miya",
-      "keterangan": "Seragam",
-      "harga": "2000000",
-      "tanggal": "07/11/2025",
-      "status": "Lunas",
-      "id": "1568"
-    },
-    {
-      "id": "c395",
-      "nama": "ixia",
-      "keterangan": "Uang gedung",
-      "harga": "700000",
-      "tanggal": "08/11/2025",
-      "status": "Lunas"
-    },
-    {
-      "id": "6cdc",
-      "nama": "Zilong",
-      "keterangan": "Kas Siswa",
-      "harga": "800000",
-      "tanggal": "08/11/2025",
-      "status": "Lunas"
-    },
-    {
-      "id": "3713",
-      "nama": "Amel",
-      "keterangan": "Biaya Ekstrakulikuler",
-      "harga": "900000",
-      "tanggal": "09/11/2025",
-      "status": "Belum Lunas"
-    },
-    {
-      "nama": "Roihan",
-      "keterangan": "Uang Semester 2",
-      "harga": "1500000",
-      "tanggal": "25/12/2025",
-      "status": "Lunas",
-      "id": "88b2"
+      "nama": "",
+      "keterangan": "",
+      "harga": "",
+      "status": "",
+      "tanggal": ""
     }
+    
   ],
-  "kategori_tagihan": [
+  "kategoritagihan": [
     {
       "id": "dd89",
-      "nama": "SPP",
-      "status": "Aktif"
-    },
-    {
-      "id": "81c4",
-      "nama": "Seragam",
-      "status": "Aktif"
-    },
-    {
-      "id": "b9d9",
-      "nama": "Uang gedung",
-      "status": "Aktif"
-    },
-    {
-      "id": "f5d4",
-      "nama": "Kas Siswa",
-      "status": "Aktif"
-    },
-    {
-      "id": "a9ea",
-      "nama": "Biaya Ekstrakulikuler",
-      "status": "Aktif"
-    },
-    {
-      "id": "8374",
-      "nama": "Biaya Les",
-      "status": "Aktif"
-    },
-    {
-      "id": "a965",
-      "nama": "Uang Pendaftaran",
-      "status": "Aktif"
-    },
-    {
-      "id": "0ed3",
-      "nama": "Biaya UKT",
-      "status": "Nonaktif"
-    },
-    {
-      "id": "40f4",
-      "nama": "Uang Semester 2",
-      "status": "Aktif"
+      "nama": "",
+      "status": ""
     }
   ],
-  "kategori_data": [
+  "masterdata": [
     {
-      "nama": "indri esti",
-      "email": "indriesti4@gmail.com",
-      "kategori": "Siswa",
-      "jabatan_kelas": "X TKJ",
-      "nomorUnik": "23456781",
-      "id": "2876"
-    },
-    {
-      "nama": "Miya",
-      "email": "Miya@gmail.com",
-      "kategori": "Siswa",
-      "jabatan_kelas": "XII RPL 1",
-      "nomorUnik": "76694514",
-      "id": "9ed5"
-    },
-    {
-      "nama": "ixia",
-      "email": "ixia@gmail.com",
-      "kategori": "Siswa",
-      "jabatan_kelas": "XI AKL 1",
-      "nomorUnik": "79755687",
-      "id": "2b08"
-    },
-    {
-      "nama": "Zilong",
-      "email": "Zilong@gmail.com",
-      "kategori": "Siswa",
-      "jabatan_kelas": "X TSM",
-      "nomorUnik": "820753089",
-      "id": "2913"
-    },
-    {
-      "nama": "Amel",
-      "email": "Amel@gmail.com",
-      "kategori": "Siswa",
-      "jabatan_kelas": "XII TKJ",
-      "nomorUnik": "9780090789",
-      "id": "3d61"
-    },
-    {
-      "nama": "Doni",
-      "email": "Doni@gmail.com",
-      "kategori": "Guru",
-      "jabatan_kelas": "Matematika",
-      "nomorUnik": "51192140",
-      "id": "9fa6"
-    },
-    {
-      "nama": "Miska",
-      "email": "Miska@gmail.com",
-      "kategori": "Guru",
-      "jabatan_kelas": "PPKN",
-      "nomorUnik": "97676407",
-      "id": "e472"
-    },
-    {
-      "nama": "Adit",
-      "email": "Adit@gmail.com",
-      "kategori": "Karyawan",
-      "jabatan_kelas": "Administrasi",
-      "nomorUnik": "62140693",
-      "id": "15a8"
-    },
-    {
-      "nama": "Maria",
-      "email": "Maria@gmail.com",
-      "kategori": "Karyawan",
-      "jabatan_kelas": "Manajer",
-      "nomorUnik": "18618513",
-      "id": "1353"
-    },
-    {
-      "nama": "Alicia",
-      "email": "Alicia@gmail.com",
-      "kategori": "Guru",
-      "jabatan_kelas": "Agama Islam",
-      "nomorUnik": "10576909",
-      "id": "02df"
-    },
-    {
-      "nama": "Fedrin",
-      "email": "Fedrin@gmail.com",
-      "kategori": "Guru",
-      "jabatan_kelas": "IPAS",
-      "nomorUnik": "82362969",
-      "id": "39b1"
-    },
-    {
-      "nama": "Hilda",
-      "email": "Hilda@gmail.com",
-      "kategori": "Guru",
-      "jabatan_kelas": "Bahasa indonesia",
-      "nomorUnik": "99851442",
-      "id": "226c"
-    },
-    {
-      "nama": "Riska",
-      "email": "Riska@gmail.com",
-      "kategori": "Karyawan",
-      "jabatan_kelas": "Dosen",
-      "nomorUnik": "23874657",
-      "id": "3b2a"
-    },
-    {
-      "nama": "Lolita",
-      "email": "Lolita@gmail.com",
-      "kategori": "Karyawan",
-      "jabatan_kelas": "Pengacara",
-      "nomorUnik": "4557357566",
-      "id": "c007"
-    },
-    {
-      "nama": "Bobi",
-      "email": "Bobi@gmail.com",
-      "kategori": "Karyawan",
-      "jabatan_kelas": "Pegawai bank",
-      "nomorUnik": "124453588",
-      "id": "6573"
-    },
-    {
-      "nama": "Brody",
-      "email": "Brody@gmail.com",
-      "kategori": "Siswa",
-      "jabatan_kelas": "X AKL 2",
-      "nomorUnik": "0954357652",
-      "id": "da6a"
-    },
-    {
-      "nama": "indra ",
-      "email": "indra@gmail.com",
-      "kategori": "Siswa",
-      "jabatan_kelas": "X DPB",
-      "nomorUnik": "878678746",
-      "id": "9a1d"
-    },
-    {
-      "nama": "Roihan",
-      "email": "roihan@gmail.com",
-      "kategori": "Siswa",
-      "jabatan_kelas": "X TKJ 2",
-      "nomorUnik": "2666152251",
-      "id": "4ed7"
-    },
-    {
-      "id": "8de8",
-      "nama": "Claudia",
-      "email": "Claudia@gmail.com",
-      "nomorUnik": "1324936072",
-      "kategori": "Karyawan",
-      "jabatan_kelas": "Bos Perusahaan"
-    },
-    {
-      "id": "df8c",
-      "nama": "Rido",
-      "email": "Rido@gmail.com",
-      "nomorUnik": "12324573445689",
-      "kategori": "Karyawan",
-      "jabatan_kelas": "Influencer"
+      "id":"",
+      "nama": "",
+      "email": "",
+      "nomor_unik": "",
+      "kategori":"",
+      "jabatan_kelas":""
+     
     }
   ],
   "data_kelas": [
     {
+      "id": "",
       "kelas": "X",
-      "jurusan": "TKJ",
-      "id": "3f94"
-    },
-    {
-      "kelas": "XII",
-      "jurusan": "RPL 1",
-      "id": "71a6"
-    },
-    {
-      "kelas": "XI",
-      "jurusan": "AKL 1",
-      "id": "fb27"
-    },
-    {
-      "kelas": "X",
-      "jurusan": "TSM",
-      "id": "3ccd"
-    },
-    {
-      "kelas": "XII",
-      "jurusan": "TKJ",
-      "id": "f4b5"
-    },
-    {
-      "id": "dc45",
-      "kelas": "X",
-      "jurusan": "DPB"
-    },
-    {
-      "id": "48ac",
-      "kelas": "X",
-      "jurusan": "AKL 2"
-    },
-    {
-      "kelas": "X",
-      "jurusan": "TKJ 2",
-      "id": "024d"
+      "jurusan": "TKJ"
+      
     }
   ],
   "level": [
     {
-      "level": "Siswa",
-      "id": "497c"
-    },
-    {
-      "level": "Guru",
-      "id": "7075"
-    },
-    {
-      "level": "Karyawan",
-      "id": "f2e2"
-    },
-    {
-      "level": "satpam",
-      "id": "1e32"
+      "id": "",
+      "level": ""
     }
   ],
   "presensi": [
     {
-      "id": "47a2",
-      "nama": "indra ",
-      "nomorUnik": "878678746",
-      "jamMasuk": "11.22",
-      "jamPulang": "15.00",
-      "tanggal": "2025-12-22",
-      "status": "hadir"
-    },
-    {
-      "id": "eee7",
-      "nama": "Hilda",
-      "nomorUnik": "99851442",
-      "jamMasuk": "11.23",
-      "jamPulang": "15.00",
-      "tanggal": "2025-12-22",
-      "status": "hadir"
-    },
-    {
-      "id": "f238",
-      "nama": "Bobi",
-      "nomorUnik": "124453588",
-      "jamMasuk": "11.24",
-      "jamPulang": "15.03",
-      "tanggal": "2025-12-22",
-      "status": "hadir"
-    },
-    {
-      "id": "97c7",
-      "nama": "Fedrin",
-      "nomorUnik": "82362969",
-      "jamMasuk": "11.28",
-      "jamPulang": "15.00",
-      "tanggal": "2025-12-22",
-      "status": "hadir"
-    },
-    {
-      "id": "79a1",
-      "nama": "Lolita",
-      "nomorUnik": "4557357566",
-      "jamMasuk": "11.29",
-      "jamPulang": "15.00",
-      "tanggal": "2025-12-22",
-      "status": "hadir"
-    },
-    {
-      "id": "68d4",
-      "nama": "Zilong",
-      "nomorUnik": "820753089",
-      "jamMasuk": "11.42",
-      "jamPulang": "15.00",
-      "tanggal": "2025-12-22",
-      "status": "hadir"
-    },
-    {
-      "id": "cb1d",
-      "nama": "Alicia",
-      "nomorUnik": "10576909",
-      "jamMasuk": "11.43",
-      "jamPulang": "15.00",
-      "tanggal": "2025-12-22",
-      "status": "hadir"
-    },
-    {
-      "id": "7c26",
-      "nama": "Riska",
-      "nomorUnik": "23874657",
-      "jamMasuk": "11.43",
-      "jamPulang": "15.00",
-      "tanggal": "2025-12-22",
-      "status": "hadir"
-    },
-    {
-      "id": "e60a",
-      "nama": "Miska",
-      "nomorUnik": "97676407",
-      "jamMasuk": "11.49",
-      "jamPulang": "15.00",
-      "tanggal": "2025-12-22",
-      "status": "hadir"
-    },
-    {
-      "id": "1e10",
-      "nama": "Maria",
-      "nomorUnik": "18618513",
-      "jamMasuk": "07.54",
-      "jamPulang": "",
-      "tanggal": "2025-12-23",
-      "status": "hadir"
-    },
-    {
-      "id": "8806",
-      "nama": "Roihan",
-      "nomorUnik": "2666152251",
-      "jamMasuk": "09.49",
-      "jamPulang": "",
-      "tanggal": "2025-12-23",
-      "status": "hadir"
-    },
-    {
-      "id": "4912",
-      "nama": "Miya",
-      "nomorUnik": "76694514",
-      "jamMasuk": "07.20",
-      "jamPulang": "15.00",
-      "tanggal": "2025-12-24",
-      "status": "hadir",
-      "updatedAt": "2025-12-24T02:43:34.451Z"
-    },
-    {
-      "id": "5aa0",
-      "nama": "indri esti",
-      "nomorUnik": "23456781",
-      "jamMasuk": "06.41",
-      "jamPulang": "11.41",
-      "tanggal": "2025-12-26",
-      "status": "hadir",
-      "updatedAt": "2025-12-26T04:42:10.174Z"
-    },
-    {
-      "id": "70ae",
-      "nama": "Rido",
-      "nomorUnik": "12324573445689",
-      "jamMasuk": "06.45",
-      "jamPulang": "15.00",
-      "tanggal": "2026-01-13",
-      "status": "hadir",
-      "updatedAt": "2026-01-13T06:19:19.707Z"
-    }
-  ],
-  "izinpresensi": [
-    {
-      "id": "9e0a",
-      "kategori": "izin",
-      "nama": "Brody",
-      "nomorUnik": "0954357652",
-      "keterangan": "Batuk ama demam",
-      "jamMasuk": "",
-      "jamPulang": "",
-      "tanggal": "2025-12-22",
-      "status": "sakit",
-      "jenisIzin": "sakit"
-    },
-    {
-      "id": "e125",
-      "kategori": "izin",
-      "nama": "Amel",
-      "nomorUnik": "9780090789",
-      "keterangan": "Karena bangun kesiangan",
-      "jamMasuk": "11.41",
-      "jamPulang": "",
-      "tanggal": "2025-12-22",
-      "status": "terlambat",
-      "jenisIzin": "Terlambat"
-    },
-    {
-      "id": "a2c5",
-      "kategori": "izin",
-      "nama": "ixia",
-      "nomorUnik": "79755687",
-      "keterangan": "-",
-      "jamMasuk": "",
-      "jamPulang": "",
-      "tanggal": "2025-12-22",
-      "status": "alpa",
-      "jenisIzin": "Alpa"
-    },
-    {
-      "id": "f34e",
-      "kategori": "izin",
-      "nama": "Miska",
-      "nomorUnik": "97676407",
-      "keterangan": "Ada keperluan mendadak",
-      "jamMasuk": "",
-      "jamPulang": "11.50",
-      "tanggal": "2025-12-22",
-      "status": "pulang awal",
-      "jenisIzin": "Pulang Awal"
-    },
-    {
-      "id": "cb45",
-      "kategori": "izin",
-      "nama": "Lolita",
-      "nomorUnik": "4557357566",
-      "keterangan": "Di ajak makan siang ama bos",
-      "jamMasuk": "11.52",
-      "jamPulang": "",
-      "tanggal": "2025-12-22",
-      "status": "izin",
-      "jenisIzin": "Izin"
-    },
-    {
-      "id": "db57",
-      "kategori": "izin",
-      "nama": "Doni",
-      "nomorUnik": "51192140",
-      "keterangan": "Mengikuti kegiatan rapat",
-      "jamMasuk": "",
-      "jamPulang": "",
-      "tanggal": "2025-12-22",
-      "status": "dispensasi",
-      "jenisIzin": "Dispensasi"
+      "id": "",
+      "jam_masuk": "",
+      "jam_pulang": "",
+      "keterangan": "",
+      "nama": "",
+      "nomor_unik": "",
+      "status": "",
+      "tanggal": ""
     }
   ],
   "kategori_izin": [
     {
       "id": "1",
-      "jenisIzin": "izin",
-      "status": "Aktif"
-    },
-    {
-      "id": "3e9e",
-      "nama": "Sakit",
-      "status": "Aktif"
-    },
-    {
-      "nama": "Izin",
-      "status": "Aktif",
-      "id": "084b"
-    },
-    {
-      "id": "6a0c",
-      "nama": "Dispensasi",
-      "status": "Aktif"
-    },
-    {
-      "id": "db8c",
-      "nama": "Terlambat",
-      "status": "Aktif"
-    },
-    {
-      "id": "1d7d",
-      "nama": "Alpa",
-      "status": "Aktif"
-    },
-    {
-      "id": "c83b",
-      "nama": "Pulang Awal",
-      "status": "Aktif"
-    },
-    {
-      "id": "0c61",
-      "nama": "Lomba Náional",
-      "status": "Aktif"
+      "nama": "",
+      "status": ""
     }
   ]
 }
