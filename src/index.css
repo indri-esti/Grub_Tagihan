@@ -25,4 +25,14 @@
   animation: marquee 18s linear infinite;
 }
 
+/* HIDE SCROLLBAR BUT KEEP SCROLL */
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE */
+  scrollbar-width: none; /* Firefox */
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome */
+}
+
+
 

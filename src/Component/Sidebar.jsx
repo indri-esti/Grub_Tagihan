@@ -38,46 +38,16 @@ export default function SidebarT() {
   const navigate = useNavigate();
   const Location = useLocation();
 
-  // CEK HALAMAN AKTIF
-  const isActive = (path) => Location.pathname === path;
-
-  // DARK MODE
   const [darkMode, setDarkMode] = useState(() => {
-    return localStorage.getItem("darkMode") === "true";
+    const savedMode = localStorage.getItem("darkMode");
+    return savedMode ? JSON.parse(savedMode) : false;
   });
 
-  // DROPDOWN
-  const [openDatabase, setOpenDatabase] = useState(() => {
-    return localStorage.getItem("openDatabase") === "true";
-  });
-
-  const [openKeuangan, setOpenKeuangan] = useState(() => {
-    return localStorage.getItem("openKeuangan") === "true";
-  });
-
-  const [openPresensi, setOpenPresensi] = useState(() => {
-    return localStorage.getItem("openPresensi") === "true";
-  });
-
-  // SAVE MODE
+  // SIMPAN MODE DI LOCAL STORAGE
   useEffect(() => {
-    localStorage.setItem("darkMode", darkMode);
-    if (darkMode) document.documentElement.classList.add("dark");
-    else document.documentElement.classList.remove("dark");
+    localStorage.setItem("darkMode", JSON.stringify(darkMode));
   }, [darkMode]);
 
-  // SAVE DROPDOWN
-  useEffect(() => {
-    localStorage.setItem("openDatabase", openDatabase);
-  }, [openDatabase]);
-
-  useEffect(() => {
-    localStorage.setItem("openKeuangan", openKeuangan);
-  }, [openKeuangan]);
-
-  useEffect(() => {
-    localStorage.setItem("openPresensi", openPresensi);
-  }, [openPresensi]);
 
   // LOGOUT
   const handleLogout = () => {
@@ -109,6 +79,9 @@ export default function SidebarT() {
   const sidebarBgClass = darkMode ? "bg-gray-900" : "bg-blue-800";
   const itemHoverClass = darkMode ? "hover:bg-gray-800" : "hover:bg-blue-600";
 
+
+
+
   return (
     <div className="flex">
       <div
@@ -127,161 +100,111 @@ export default function SidebarT() {
       </div>
 
         {/* MENU */}
-        <nav className="space-y-4 flex-1 pr-2">
-          {/* DASHBOARD */}
-          <div>
-            <Link
-              to="/dashboard"
-              className={`flex items-center justify-between w-full py-2.5 px-4 rounded-lg ${itemHoverClass}`}
-            >
-              <span className="flex items-center gap-3">
-                <FaChartBar className="text-cyan-300" /> Dashboard
-              </span>
-            </Link>
+<nav 
+className="flex-1 pr-2 overflow-y-auto scrollbar-hide space-y-6">
 
-            {isActive("/dashboard") && (
-              <div className="w-24 h-[3px] bg-white rounded-full ml-10"></div>
-            )}
-          </div>
+  {/* DASHBOARD */}
+  <Link
+    to="/dashboard"
+    className={`flex items-center gap-3 py-3 px-4 rounded-lg ${itemHoverClass}`}
+  >
+    <FaChartBar className="text-cyan-300" />
+    Dashboard
+  </Link>
 
-          {/* DATABASE */}
-          <div>
-            <button
-              onClick={() => setOpenDatabase(!openDatabase)}
-              className={`flex items-center justify-between w-full py-2.5 px-4 rounded-lg ${itemHoverClass}`}
-            >
-              <span className="flex items-center gap-3">
-                <FaServer className="text-[#FFA726]" /> Database
-              </span>
-              <FaChevronDown
-  className={`transition-transform duration-300 ${
-    openDatabase ? "rotate-180" : ""
-  }`}
-/>
-            </button>
+  {/* DATABASE */}
+  <div>
+    <p className="px-4 text-xs font-bold tracking-widest text-white/60 mb-2">
+      DATABASE
+    </p>
 
-            {(isActive("/kategoridata") ||
-              isActive("/datakelas") ||
-              isActive("/masterdata")) && (
-              <div className="w-24 h-[3px] bg-white rounded-full ml-10"></div>
-            )}
+    <div className="space-y-2 ml-2">
+      <Link
+        to="/kategoridata"
+        className={`flex items-center gap-3 py-2 px-4 rounded-lg ${itemHoverClass}`}
+      >
+        <FaFolderOpen className="text-yellow-300" />
+        Kategori Data
+      </Link>
 
-            {openDatabase && (
-              <div className="ml-6 mt-2 space-y-2">
-                <Link
-                  to="/kategoridata"
-                  className={`flex items-center gap-3 py-2 px-3 rounded-lg text-sm ${itemHoverClass}`}
-                >
-                  <FaFolderOpen className="text-yellow-300" /> Kategori Data
-                </Link>
+      <Link
+        to="/datakelas"
+        className={`flex items-center gap-3 py-2 px-4 rounded-lg ${itemHoverClass}`}
+      >
+        <FaChalkboard className="text-orange-300" />
+        Data Kelas
+      </Link>
 
-                <Link
-                  to="/datakelas"
-                  className={`flex items-center gap-3 py-2 px-3 rounded-lg text-sm ${itemHoverClass}`}
-                >
-                  <FaChalkboard className="text-orange-300" /> Data Kelas
-                </Link>
+      <Link
+        to="/masterdata"
+        className={`flex items-center gap-3 py-2 px-4 rounded-lg ${itemHoverClass}`}
+      >
+        <FaArchive className="text-green-300" />
+        Master Data
+      </Link>
+    </div>
+  </div>
 
-                <Link
-                  to="/masterdata"
-                  className={`flex items-center gap-3 py-2 px-3 rounded-lg text-sm ${itemHoverClass}`}
-                >
-                  <FaArchive className="text-green-300" /> Master Data
-                </Link>
-              </div>
-            )}
-          </div>
+  {/* KEUANGAN */}
+  <div>
+    <p className="px-4 text-xs font-bold tracking-widest text-white/60 mb-2">
+      KEUANGAN
+    </p>
 
-          {/* KEUANGAN */}
-          <div>
-            <button
-              onClick={() => setOpenKeuangan(!openKeuangan)}
-              className={`flex items-center justify-between w-full py-2.5 px-4 rounded-lg ${itemHoverClass}`}
-            >
-              <span className="flex items-center gap-3">
-                <FaCoins className="text-yellow-300" /> Keuangan
-              </span>
-              <FaChevronDown
-  className={`transition-transform duration-300 ${
-    openKeuangan ? "rotate-180" : ""
-  }`}
-/>
-            </button>
+    <div className="space-y-2 ml-2">
+      <Link
+        to="/kategoritagihan"
+        className={`flex items-center gap-3 py-2 px-4 rounded-lg ${itemHoverClass}`}
+      >
+        <FaChartPie className="text-purple-300" />
+        Kategori Tagihan
+      </Link>
 
-            {(isActive("/kategoritagihan") ||
-              isActive("/tagihan") ||
-              isActive("/rekaptagihan")) && (
-              <div className="w-24 h-[3px] bg-white rounded-full ml-10"></div>
-            )}
+      <Link
+        to="/tagihan"
+        className={`flex items-center gap-3 py-2 px-4 rounded-lg ${itemHoverClass}`}
+      >
+        <FaMoneyBillWave className="text-green-300" />
+        Tagihan
+      </Link>
 
-            {openKeuangan && (
-              <div className="ml-6 mt-2 space-y-2">
-                <Link
-                  to="/kategoritagihan"
-                  className={`flex items-center gap-3 py-2 px-3 rounded-lg text-sm ${itemHoverClass}`}
-                >
-                  <FaChartPie className="text-purple-300" /> Kategori Tagihan
-                </Link>
+      <Link
+        to="/rekaptagihan"
+        className={`flex items-center gap-3 py-2 px-4 rounded-lg ${itemHoverClass}`}
+      >
+        <FaClipboardList className="text-yellow-300" />
+        Rekap Tagihan
+      </Link>
+    </div>
+  </div>
 
-                <Link
-                  to="/tagihan"
-                  className={`flex items-center gap-3 py-2 px-3 rounded-lg text-sm ${itemHoverClass}`}
-                >
-                  <FaMoneyBillWave className="text-green-300" /> Tagihan
-                </Link>
+  {/* PRESENSI */}
+  <div>
+    <p className="px-4 text-xs font-bold tracking-widest text-white/60 mb-2">
+      PRESENSI
+    </p>
 
-                <Link
-                  to="/rekaptagihan"
-                  className={`flex items-center gap-3 py-2 px-3 rounded-lg text-sm ${itemHoverClass}`}
-                >
-                  <FaClipboardList className="text-yellow-300" /> Rekap Tagihan
-                </Link>
-              </div>
-            )}
-          </div>
+    <div className="space-y-2 ml-2">
+      <Link
+        to="/kategoriizin"
+        className={`flex items-center gap-3 py-2 px-4 rounded-lg ${itemHoverClass}`}
+      >
+        <FaFileSignature className="text-slate-200" />
+        Kategori Izin
+      </Link>
 
-          {/* PRESENSI */}
-          <div>
-            <button
-              onClick={() => setOpenPresensi(!openPresensi)}
-              className={`flex items-center justify-between w-full py-2.5 px-4 rounded-lg ${itemHoverClass}`}
-            >
-              <span className="flex items-center gap-3">
-                <FaClipboardCheck className="text-purple-200" /> Presensi
-              </span>
-              <FaChevronDown
-  className={`transition-transform duration-300 ${
-    openPresensi ? "rotate-180" : ""
-  }`}
-/>
-            </button>
+      <Link
+        to="/rekappresensi"
+        className={`flex items-center gap-3 py-2 px-4 rounded-lg ${itemHoverClass}`}
+      >
+        <FaRegCalendarCheck className="text-cyan-400" />
+        Rekap Presensi
+      </Link>
+    </div>
+  </div>
 
-            {(isActive("/kategoriizin") ||
-              isActive("/presensisemua") ||
-              isActive("/rekappresensi")) && (
-              <div className="w-24 h-[3px] bg-white rounded-full ml-10"></div>
-            )}
+</nav>
 
-            {openPresensi && (
-              <div className="ml-6 mt-2 space-y-2">
-                <Link
-                  to="/kategoriizin"
-                  className={`flex items-center gap-3 py-2 px-3 rounded-lg text-sm ${itemHoverClass}`}
-                >
-                  <FaFileSignature className="text-slate-200" /> Kategori Izin
-                </Link>
-
-                <Link
-                  to="/rekappresensi"
-                  className={`flex items-center gap-3 py-2 px-3 rounded-lg text-sm ${itemHoverClass}`}
-                >
-                  <FaRegCalendarCheck className="text-cyan-400" /> Rekap
-                  Presensi
-                </Link>
-              </div>
-            )}
-          </div>
-        </nav>
 
         {/* TOGGLE MODE */}
         <div className="flex items-center justify-between mt-4 mb-4">
