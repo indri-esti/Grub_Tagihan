@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useRef } from "react";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
 import {
@@ -38,6 +38,8 @@ export default function SidebarT() {
   const navigate = useNavigate();
   const Location = useLocation();
 
+  // MODE TERANG / GELAP
+
   const [darkMode, setDarkMode] = useState(() => {
     const savedMode = localStorage.getItem("darkMode");
     return savedMode ? JSON.parse(savedMode) : false;
@@ -47,6 +49,30 @@ export default function SidebarT() {
   useEffect(() => {
     localStorage.setItem("darkMode", JSON.stringify(darkMode));
   }, [darkMode]);
+
+  const sidebarRef = useRef(null);
+const location = useLocation();
+
+// SIMPAN & BALIKIN SCROLL SIDEBAR
+useEffect(() => {
+  const sidebar = sidebarRef.current;
+  if (!sidebar) return;
+
+  const savedScroll = sessionStorage.getItem("sidebar-scroll");
+  if (savedScroll) {
+    sidebar.scrollTop = Number(savedScroll);
+  }
+
+  const saveScroll = () => {
+    sessionStorage.setItem("sidebar-scroll", sidebar.scrollTop);
+  };
+
+  sidebar.addEventListener("scroll", saveScroll);
+
+  return () => {
+    sidebar.removeEventListener("scroll", saveScroll);
+  };
+}, [location.pathname]);
 
 
   // LOGOUT
@@ -101,16 +127,20 @@ export default function SidebarT() {
 
         {/* MENU */}
 <nav 
+ref={sidebarRef}
 className="flex-1 pr-2 overflow-y-auto scrollbar-hide space-y-6">
 
   {/* DASHBOARD */}
-  <Link
-    to="/dashboard"
-    className={`flex items-center gap-3 py-3 px-4 rounded-lg ${itemHoverClass}`}
-  >
-    <FaChartBar className="text-cyan-300" />
-    Dashboard
-  </Link>
+  <NavLink
+  to="/dashboard"
+  className={({ isActive }) =>
+    `flex items-center gap-3 py-3 px-4 rounded-lg transition
+     ${isActive ? "bg-white/20" : itemHoverClass}`
+  }
+>
+  <FaChartBar className="text-cyan-300" />
+  Dashboard
+</NavLink>
 
   {/* DATABASE */}
   <div>
@@ -119,29 +149,40 @@ className="flex-1 pr-2 overflow-y-auto scrollbar-hide space-y-6">
     </p>
 
     <div className="space-y-2 ml-2">
-      <Link
-        to="/kategoridata"
-        className={`flex items-center gap-3 py-2 px-4 rounded-lg ${itemHoverClass}`}
-      >
-        <FaFolderOpen className="text-yellow-300" />
-        Kategori Data
-      </Link>
+      <NavLink
+  to="/kategoridata"
+  className={({ isActive }) =>
+    `flex items-center gap-3 py-2 px-4 rounded-lg transition
+     ${isActive ? "bg-white/20" : itemHoverClass}`
+  }
+>
+  <FaFolderOpen className="text-yellow-300" />
+  Kategori Data
+</NavLink>
 
-      <Link
-        to="/datakelas"
-        className={`flex items-center gap-3 py-2 px-4 rounded-lg ${itemHoverClass}`}
-      >
-        <FaChalkboard className="text-orange-300" />
-        Data Kelas
-      </Link>
+      <NavLink
+  to="/datakelas"
+  className={({ isActive }) =>
+    `flex items-center gap-3 py-2 px-4 rounded-lg transition
+     ${isActive ? "bg-white/20" : itemHoverClass}`
+  }
+>
+  <FaChalkboard className="text-orange-300" />
+  Data Kelas
+</NavLink>
 
-      <Link
-        to="/masterdata"
-        className={`flex items-center gap-3 py-2 px-4 rounded-lg ${itemHoverClass}`}
-      >
-        <FaArchive className="text-green-300" />
-        Master Data
-      </Link>
+
+      <NavLink
+  to="/masterdata"
+  className={({ isActive }) =>
+    `flex items-center gap-3 py-2 px-4 rounded-lg transition
+     ${isActive ? "bg-white/20" : itemHoverClass}`
+  }
+>
+  <FaArchive className="text-green-300" />
+  Master Data
+</NavLink>
+
     </div>
   </div>
 
@@ -152,29 +193,40 @@ className="flex-1 pr-2 overflow-y-auto scrollbar-hide space-y-6">
     </p>
 
     <div className="space-y-2 ml-2">
-      <Link
-        to="/kategoritagihan"
-        className={`flex items-center gap-3 py-2 px-4 rounded-lg ${itemHoverClass}`}
-      >
-        <FaChartPie className="text-purple-300" />
-        Kategori Tagihan
-      </Link>
+      <NavLink
+  to="/kategoritagihan"
+  className={({ isActive }) =>
+    `flex items-center gap-3 py-2 px-4 rounded-lg transition
+     ${isActive ? "bg-white/20" : itemHoverClass}`
+  }
+>
+  <FaChartPie className="text-purple-300" />
+  Kategori Tagihan
+</NavLink>
 
-      <Link
-        to="/tagihan"
-        className={`flex items-center gap-3 py-2 px-4 rounded-lg ${itemHoverClass}`}
-      >
-        <FaMoneyBillWave className="text-green-300" />
-        Tagihan
-      </Link>
+      <NavLink
+  to="/tagihan"
+  className={({ isActive }) =>
+    `flex items-center gap-3 py-2 px-4 rounded-lg transition
+     ${isActive ? "bg-white/20" : itemHoverClass}`
+  }
+>
+  <FaMoneyBillWave className="text-green-300" />
+  Tagihan
+</NavLink>
 
-      <Link
-        to="/rekaptagihan"
-        className={`flex items-center gap-3 py-2 px-4 rounded-lg ${itemHoverClass}`}
-      >
-        <FaClipboardList className="text-yellow-300" />
-        Rekap Tagihan
-      </Link>
+
+      <NavLink
+  to="/rekaptagihan"
+  className={({ isActive }) =>
+    `flex items-center gap-3 py-2 px-4 rounded-lg transition
+     ${isActive ? "bg-white/20" : itemHoverClass}`
+  }
+>
+  <FaClipboardList className="text-yellow-300" />
+  Rekap Tagihan
+</NavLink>
+
     </div>
   </div>
 
@@ -185,21 +237,28 @@ className="flex-1 pr-2 overflow-y-auto scrollbar-hide space-y-6">
     </p>
 
     <div className="space-y-2 ml-2">
-      <Link
-        to="/kategoriizin"
-        className={`flex items-center gap-3 py-2 px-4 rounded-lg ${itemHoverClass}`}
-      >
-        <FaFileSignature className="text-slate-200" />
-        Kategori Izin
-      </Link>
+      <NavLink
+  to="/kategoriizin"
+  className={({ isActive }) =>
+    `flex items-center gap-3 py-2 px-4 rounded-lg transition
+    ${isActive ? "bg-white/20" : itemHoverClass}`
+  }
+>
+  <FaFileSignature className="text-slate-200" />
+  Kategori Izin
+</NavLink>
 
-      <Link
-        to="/rekappresensi"
-        className={`flex items-center gap-3 py-2 px-4 rounded-lg ${itemHoverClass}`}
-      >
-        <FaRegCalendarCheck className="text-cyan-400" />
-        Rekap Presensi
-      </Link>
+      <NavLink
+  to="/rekappresensi"
+  className={({ isActive }) =>
+    `flex items-center gap-3 py-2 px-4 rounded-lg transition
+    ${isActive ? "bg-white/20" : itemHoverClass}`
+  }
+>
+  <FaRegCalendarCheck className="text-cyan-400" />
+  Rekap Presensi
+</NavLink>
+
     </div>
   </div>
 

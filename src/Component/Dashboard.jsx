@@ -333,10 +333,11 @@ const [darkMode, setDarkMode] = useState(false);
 
 
   return (
-    <div
-  className={`pl-[calc(15rem+2%)] pr-[4%] pt-[4%] min-h-screen transition-all duration-300
-  ${darkMode ? "dark bg-gray-900" : "bg-gray-100"}`}
+   <div
+  className={`pl-[calc(15rem+2%)] pr-[4%] pt-[4%] min-h-screen transition-colors duration-300
+  ${darkMode ? "bg-gray-900" : "bg-white"}`}
 >
+
       <SidebarT />
       
   <button
@@ -355,8 +356,8 @@ const [darkMode, setDarkMode] = useState(false);
 
 
 
-      <div className="p-6 md:p-10 max-w-10xl mx-auto">
-        <div className="mb-8 rounded-2xl bg-white/70 backdrop-blur-md shadow flex items-center justify-between px-6 py-4">
+      <div className="p-6 md:p-10 max-w-10xl mx-screen">
+      <div className="mb-8 rounded-2xl bg-white/70 backdrop-blur-md shadow flex items-center justify-between px-6 py-4">
       
 
   {/* CONTAINER HEADER */}
@@ -372,7 +373,8 @@ const [darkMode, setDarkMode] = useState(false);
   </div>
 
   {/* MARQUEE DI BAWAH */}
-  <div className="w-full max-w-3xl overflow-hidden">
+ 
+ <div className="w-full overflow-hidden border-t border-b border-gray-300 py-2 mt-2">
     <div className="whitespace-nowrap animate-marquee text-sm text-gray-600 text-center">
       📢 Selamat datang di School Web Dashboard —
       🔔 Sistem monitoring data terpusat dan terintegrasi —
@@ -387,9 +389,10 @@ const [darkMode, setDarkMode] = useState(false);
 </div>
   </div>
 
-</div>
+
 
         {/* === KARTU === */}
+    <div className="p-6 md:p-10 max-w-10xl mx-screen">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-12">
           {cards.map((c, idx) => (
             <div
@@ -534,7 +537,6 @@ const [darkMode, setDarkMode] = useState(false);
               ) : (
                 kategoriData
                   .filter((x) => isKategori(x, "siswa"))
-                  .slice(0, 5)
                   .map((s, i) => (
                     <tr key={i} className="hover:bg-gray-50">
                       <td className="py-2 px-4 text-left">{i + 1}</td>
@@ -680,7 +682,9 @@ const [darkMode, setDarkMode] = useState(false);
               ))}
             </tbody>
           </table>
-        </div>
-      </div>
+       </div>
+    </div>
+    </div>
+    </div>
   );
-} 
+}
