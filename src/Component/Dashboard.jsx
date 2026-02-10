@@ -334,7 +334,7 @@ const [darkMode, setDarkMode] = useState(false);
 
   return (
    <div
-  className={`pl-[calc(15rem+2%)] pr-[4%] pt-[4%] min-h-screen transition-colors duration-300
+  className={`pl-[calc(15rem+2%)] pr-[4%] pt-[4%] min-h-screen  transition-colors duration-300
   ${darkMode ? "bg-gray-900" : "bg-white"}`}
 >
 
@@ -579,7 +579,6 @@ const [darkMode, setDarkMode] = useState(false);
               ) : (
                 kategoriData
                   .filter((x) => isKategori(x, "guru"))
-                  .slice(0, 5)
                   .map((g, i) => (
                     <tr key={i} className="hover:bg-gray-50">
                       <td className="py-2 px-4 text-left">{i + 1}</td>
@@ -622,7 +621,6 @@ const [darkMode, setDarkMode] = useState(false);
               ) : (
                 kategoriData
                   .filter((x) => isKategori(x, "karyawan"))
-                  .slice(0, 5)
                   .map((k, i) => (
                     <tr key={i} className="hover:bg-gray-50">
                       <td className="py-2 px-4 text-left">{i + 1}</td>
@@ -656,7 +654,7 @@ const [darkMode, setDarkMode] = useState(false);
             </thead>
 
             <tbody>
-              {tagihan.slice(0, 5).map((t, i) => (
+              {tagihan.map((t, i) => (
                 <tr key={i} className="hover:bg-gray-50">
                   <td className="py-2 px-4 text-left">{i + 1}</td>
                   <td className="py-2 px-4">{t.nama}</td>
